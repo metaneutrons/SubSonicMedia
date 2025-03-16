@@ -128,6 +128,7 @@ namespace SubSonicMedia.TestKit
             _tests.Add(new BrowsingTest(_client, _settings));
             _tests.Add(new SearchTest(_client, _settings));
             _tests.Add(new MediaTest(_client, _settings));
+            _tests.Add(new PlaylistTest(_client, _settings));
             
             // More tests can be added here
         }

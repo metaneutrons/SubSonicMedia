@@ -1,0 +1,150 @@
+// <copyright file="PlaylistTest.cs" company="Fabian Schmieder">
+// SubSonicMedia - A .NET client library for the Subsonic API
+// Copyright (C) 2025 Fabian Schmieder
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// </copyright>
+
+using SubSonicMedia.TestKit.Helpers;
+using SubSonicMedia.TestKit.Models;
+using Spectre.Console;
+
+namespace SubSonicMedia.TestKit.Tests
+{
+    /// <summary>
+    /// Tests the playlist capabilities of the Subsonic API.
+    /// </summary>
+    public class PlaylistTest : TestBase
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PlaylistTest"/> class.
+        /// </summary>
+        /// <param name="client">The Subsonic client.</param>
+        /// <param name="settings">The application settings.</param>
+        public PlaylistTest(SubsonicClient client, AppSettings settings)
+            : base(client, settings)
+        {
+        }
+
+        /// <inheritdoc/>
+        public override string Name => "Playlist Test";
+
+        /// <inheritdoc/>
+        public override string Description => "Tests playlist capabilities including listing playlists and viewing playlist details";
+
+        /// <inheritdoc/>
+        protected override async Task<bool> ExecuteTestAsync()
+        {
+            // Test 1: Get all playlists
+            ConsoleHelper.LogInfo("Testing GetPlaylists...");
+            var playlistsResponse = await Client.Playlists.GetPlaylistsAsync();
+            RecordTestResult(playlistsResponse, "playlists_list");
+            
+            if (!playlistsResponse.IsSuccess)
+            {
+                ConsoleHelper.LogError($"Failed to get playlists: {playlistsResponse.Error?.Message}");
+                return false;
+            }
+            
+            ConsoleHelper.LogSuccess($"Successfully retrieved {playlistsResponse.Playlists.Playlist.Count} playlists");
+            
+            // Display playlist information in a table
+            if (playlistsResponse.Playlists.Playlist.Count > 0)
+            {
+                var table = new Table();
+                table.AddColumn("ID");
+                table.AddColumn("Name");
+                table.AddColumn("Owner");
+                table.AddColumn("Songs");
+                table.AddColumn("Duration");
+                table.AddColumn("Public");
+                
+                foreach (var playlist in playlistsResponse.Playlists.Playlist)
+                {
+                    // Format duration from seconds to mm:ss
+                    TimeSpan duration = TimeSpan.FromSeconds(playlist.Duration);
+                    string formattedDuration = $"{(int)duration.TotalMinutes}:{duration.Seconds:D2}";
+                    
+                    table.AddRow(
+                        playlist.Id ?? "",
+                        playlist.Name ?? "",
+                        playlist.Owner ?? "",
+                        playlist.SongCount.ToString(),
+                        formattedDuration,
+                        playlist.Public ? "Yes" : "No"
+                    );
+                }
+                
+                AnsiConsole.Write(table);
+                
+                // Test 2: Get details of the first playlist
+                var firstPlaylist = playlistsResponse.Playlists.Playlist[0];
+                ConsoleHelper.LogInfo($"Testing GetPlaylist for '{firstPlaylist.Name}'...");
+                
+                var playlistResponse = await Client.Playlists.GetPlaylistAsync(firstPlaylist.Id);
+                RecordTestResult(playlistResponse, "playlist_details");
+                
+                if (!playlistResponse.IsSuccess)
+                {
+                    ConsoleHelper.LogError($"Failed to get playlist details: {playlistResponse.Error?.Message}");
+                    return false;
+                }
+                
+                ConsoleHelper.LogSuccess($"Successfully retrieved playlist '{playlistResponse.Playlist.Name}' with {playlistResponse.Playlist.Entry.Count} songs");
+                
+                // Display song information in a table if there are songs
+                if (playlistResponse.Playlist.Entry.Count > 0)
+                {
+                    var songsTable = new Table();
+                    songsTable.AddColumn("#");
+                    songsTable.AddColumn("Title");
+                    songsTable.AddColumn("Artist");
+                    songsTable.AddColumn("Album");
+                    songsTable.AddColumn("Duration");
+                    
+                    int songNumber = 1;
+                    foreach (var song in playlistResponse.Playlist.Entry)
+                    {
+                        // Format duration from seconds to mm:ss
+                        TimeSpan songDuration = TimeSpan.FromSeconds(song.Duration);
+                        string formattedSongDuration = $"{(int)songDuration.TotalMinutes}:{songDuration.Seconds:D2}";
+                        
+                        songsTable.AddRow(
+                            songNumber.ToString(),
+                            song.Title ?? "",
+                            song.Artist ?? "",
+                            song.Album ?? "",
+                            formattedSongDuration
+                        );
+                        
+                        songNumber++;
+                    }
+                    
+                    AnsiConsole.Write(songsTable);
+                }
+                else
+                {
+                    ConsoleHelper.LogWarning("Playlist is empty (contains no songs)");
+                }
+            }
+            else
+            {
+                ConsoleHelper.LogWarning("No playlists found. Skipping playlist details test.");
+                ConsoleHelper.LogInfo("This appears to be a test environment without playlists.");
+            }
+            
+            return true;
+        }
+    }
+}

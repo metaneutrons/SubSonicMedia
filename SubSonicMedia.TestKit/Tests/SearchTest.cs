@@ -40,36 +40,39 @@ namespace SubSonicMedia.TestKit.Tests
             : base(client, settings)
         {
             // Use a default query if none was provided
-            _searchQuery = string.IsNullOrEmpty(searchQuery) ? "a" : searchQuery;
+            _searchQuery = string.IsNullOrEmpty(searchQuery) ? "Keith" : searchQuery;
         }
 
         /// <inheritdoc/>
         public override string Name => "Search Test";
 
         /// <inheritdoc/>
-        public override string Description => $"Tests search functionality using query: '{_searchQuery}'";
+        public override string Description =>
+            $"Tests search functionality using query: '{_searchQuery}'";
 
         /// <inheritdoc/>
         protected override async Task<bool> ExecuteTestAsync()
         {
             bool allTestsPassed = true;
-            
+
             // Test 1: Basic Search3
             ConsoleHelper.LogInfo($"Testing Search3 with query: '{_searchQuery}'...");
             try
             {
                 var searchResponse = await Client.Search.Search3Async(_searchQuery);
                 RecordTestResult(searchResponse, "search_results");
-                
+
                 if (searchResponse.IsSuccess && searchResponse.SearchResult != null)
                 {
                     // Get counts of each result type
                     int artistCount = searchResponse.SearchResult.Artists?.Count ?? 0;
                     int albumCount = searchResponse.SearchResult.Albums?.Count ?? 0;
                     int songCount = searchResponse.SearchResult.Songs?.Count ?? 0;
-                    
-                    ConsoleHelper.LogSuccess($"Search successful: Found {artistCount} artists, {albumCount} albums, and {songCount} songs");
-                    
+
+                    ConsoleHelper.LogSuccess(
+                        $"Search successful: Found {artistCount} artists, {albumCount} albums, and {songCount} songs"
+                    );
+
                     // Display artists if found
                     if (artistCount > 0 && searchResponse.SearchResult.Artists != null)
                     {
@@ -77,17 +80,15 @@ namespace SubSonicMedia.TestKit.Tests
                         var table = new Table();
                         table.AddColumn("Name");
                         table.AddColumn("Albums");
-                        
+
                         foreach (var artist in searchResponse.SearchResult.Artists.Take(5))
                         {
-                            table.AddRow(
-                                artist.Name ?? "Unknown Artist",
-                                "N/A");
+                            table.AddRow(artist.Name ?? "Unknown Artist", "N/A");
                         }
-                        
+
                         AnsiConsole.Write(table);
                     }
-                    
+
                     // Display albums if found
                     if (albumCount > 0 && searchResponse.SearchResult.Albums != null)
                     {
@@ -96,18 +97,19 @@ namespace SubSonicMedia.TestKit.Tests
                         table.AddColumn("Album");
                         table.AddColumn("Artist");
                         table.AddColumn("Year");
-                        
+
                         foreach (var album in searchResponse.SearchResult.Albums.Take(5))
                         {
                             table.AddRow(
                                 album.Name ?? "Unknown Album",
                                 album.Artist ?? "Unknown Artist",
-                                album.Year.ToString());
+                                album.Year.ToString()
+                            );
                         }
-                        
+
                         AnsiConsole.Write(table);
                     }
-                    
+
                     // Display songs if found
                     if (songCount > 0 && searchResponse.SearchResult.Songs != null)
                     {
@@ -117,7 +119,7 @@ namespace SubSonicMedia.TestKit.Tests
                         table.AddColumn("Artist");
                         table.AddColumn("Album");
                         table.AddColumn("Duration");
-                        
+
                         foreach (var song in searchResponse.SearchResult.Songs.Take(5))
                         {
                             // Format duration from seconds to mm:ss
@@ -127,17 +129,18 @@ namespace SubSonicMedia.TestKit.Tests
                                 TimeSpan time = TimeSpan.FromSeconds(song.Duration);
                                 duration = $"{(int)time.TotalMinutes}:{time.Seconds:D2}";
                             }
-                            
+
                             table.AddRow(
                                 song.Title ?? "Unknown Title",
                                 song.Artist ?? "Unknown Artist",
                                 song.Album ?? "Unknown Album",
-                                duration);
+                                duration
+                            );
                         }
-                        
+
                         AnsiConsole.Write(table);
                     }
-                    
+
                     // If no results were found, consider it a warning but not a failure
                     if (artistCount == 0 && albumCount == 0 && songCount == 0)
                     {
@@ -155,7 +158,7 @@ namespace SubSonicMedia.TestKit.Tests
                 ConsoleHelper.LogError($"Error during search: {ex.Message}");
                 allTestsPassed = false;
             }
-            
+
             return allTestsPassed;
         }
     }
