@@ -1,0 +1,16 @@
+{
+  "SearchResult": {
+    "Artists": [],
+    "Albums": [],
+    "Songs": [],
+    "ArtistOffset": 0,
+    "AlbumOffset": 0,
+    "SongOffset": 0,
+    "ArtistCount": 0,
+    "AlbumCount": 0,
+    "SongCount": 0
+  },
+  "status": "ok",
+  "version": "1.16.1",
+  "error": null
+}

@@ -224,7 +224,17 @@ namespace SubSonicMedia
                 string content = await response
                     .Content.ReadAsStringAsync(cancellationToken)
                     .ConfigureAwait(false);
-                var result = XmlParser.Parse<T>(content);
+
+                T result;
+                // Use the appropriate parser based on the response format
+                if (_connectionInfo.ResponseFormat?.ToLower() == "json")
+                {
+                    result = JsonParser.Parse<T>(content);
+                }
+                else
+                {
+                    result = XmlParser.Parse<T>(content);
+                }
 
                 if (!result.IsSuccess)
                 {
@@ -291,17 +301,31 @@ namespace SubSonicMedia
 
                 if (!response.IsSuccessStatusCode)
                 {
+                    // Check for error responses in either XML or JSON format
+                    var contentType = response.Content.Headers.ContentType?.MediaType;
                     if (
-                        response
-                            .Content.Headers.ContentType?.MediaType
-                            ?.StartsWith("text/xml", StringComparison.OrdinalIgnoreCase) == true
+                        contentType?.StartsWith("text/xml", StringComparison.OrdinalIgnoreCase)
+                            == true
+                        || contentType?.StartsWith(
+                            "application/json",
+                            StringComparison.OrdinalIgnoreCase
+                        ) == true
                     )
                     {
                         // This is an error response
                         string content = await response
                             .Content.ReadAsStringAsync(cancellationToken)
                             .ConfigureAwait(false);
-                        var errorResponse = XmlParser.Parse<SubsonicResponse>(content);
+
+                        SubsonicResponse errorResponse;
+                        if (_connectionInfo.ResponseFormat?.ToLower() == "json")
+                        {
+                            errorResponse = JsonParser.Parse<SubsonicResponse>(content);
+                        }
+                        else
+                        {
+                            errorResponse = XmlParser.Parse<SubsonicResponse>(content);
+                        }
 
                         if (!errorResponse.IsSuccess && errorResponse.Error != null)
                         {
