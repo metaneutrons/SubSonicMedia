@@ -18,6 +18,12 @@
          "command": "pwsh",
          "args": [ "-File", "scripts/Fix-StyleCopIssues.ps1", "-Fix", "FileHeader"],
          "cwd": "../"
+      },
+      {
+         "name": "shell-script-check",
+         "command": "pwsh",
+         "args": [ "-Command", "if ((git diff --staged --name-only | Select-String '\\.sh$').Count -gt 0) { Write-Host '❌ ERROR: Shell script files detected in commit. This project only supports PowerShell scripts (.ps1).' -ForegroundColor Red; exit 1 } else { Write-Host '✅ No shell scripts found.' -ForegroundColor Green }"],
+         "cwd": "../"
       }
    ]
 }
