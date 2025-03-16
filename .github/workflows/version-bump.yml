@@ -1,0 +1,129 @@
+name: Semantic Version Bump
+
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: "Apply version bump and create tag"
+        required: true
+        default: false
+        type: boolean
+      force_bump:
+        description: "Force bump type (leave empty for auto-detection)"
+        required: false
+        type: choice
+        options:
+          - auto
+          - patch
+          - minor
+          - major
+
+jobs:
+  analyze-commits:
+    runs-on: ubuntu-latest
+    outputs:
+      bump_type: ${{ steps.determine-bump.outputs.bump_type }}
+      current_version: ${{ steps.get-current-version.outputs.version }}
+      new_version: ${{ steps.calculate-version.outputs.new_version }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history for analyzing commits
+
+      - name: Get current version
+        id: get-current-version
+        run: |
+          VERSION=$(grep -m 1 '<VersionPrefix>' SubSonicMedia/Directory.Build.props | sed -E 's/.*<VersionPrefix>(.*)<\/VersionPrefix>.*/\1/')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Current version: $VERSION"
+
+      - name: Determine bump type from commits
+        id: determine-bump
+        run: |
+          # Get force bump type or use auto-detection
+          BUMP_TYPE="${{ github.event.inputs.force_bump }}"
+
+          if [ "$BUMP_TYPE" = "auto" ]; then
+            # Get all commits since last tag
+            LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+
+            if [ -z "$LAST_TAG" ]; then
+              # No tags yet, analyze all commits
+              COMMITS=$(git log --pretty=format:"%s")
+            else
+              # Analyze commits since last tag
+              COMMITS=$(git log $LAST_TAG..HEAD --pretty=format:"%s")
+            fi
+
+            # Check for breaking changes or feat! (major bump)
+            if echo "$COMMITS" | grep -E "^(BREAKING CHANGE:|feat!:|fix!:|refactor!:)" > /dev/null; then
+              BUMP_TYPE="major"
+            # Check for new features (minor bump)
+            elif echo "$COMMITS" | grep -E "^feat(\([^)]+\))?:" > /dev/null; then
+              BUMP_TYPE="minor"
+            # Default to patch for fixes, docs, etc.
+            else
+              BUMP_TYPE="patch"
+            fi
+          fi
+
+          echo "bump_type=$BUMP_TYPE" >> $GITHUB_OUTPUT
+          echo "Determined bump type: $BUMP_TYPE"
+
+      - name: Calculate new version
+        id: calculate-version
+        run: |
+          CURRENT_VERSION="${{ steps.get-current-version.outputs.version }}"
+          BUMP_TYPE="${{ steps.determine-bump.outputs.bump_type }}"
+
+          # Split version into components
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
+
+          # Bump version according to type
+          if [ "$BUMP_TYPE" == "major" ]; then
+            NEW_VERSION="$((MAJOR + 1)).0.0"
+          elif [ "$BUMP_TYPE" == "minor" ]; then
+            NEW_VERSION="$MAJOR.$((MINOR + 1)).0"
+          else
+            NEW_VERSION="$MAJOR.$MINOR.$((PATCH + 1))"
+          fi
+
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "New version will be: $NEW_VERSION"
+
+  apply-version:
+    needs: analyze-commits
+    if: github.event.inputs.apply == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update version in Directory.Build.props
+        run: |
+          NEW_VERSION="${{ needs.analyze-commits.outputs.new_version }}"
+          sed -i "s|<VersionPrefix>.*</VersionPrefix>|<VersionPrefix>$NEW_VERSION</VersionPrefix>|g" SubSonicMedia/Directory.Build.props
+
+          # If this is the first release, also remove alpha suffix
+          sed -i "s|<VersionSuffix>alpha</VersionSuffix>|<VersionSuffix></VersionSuffix>|g" SubSonicMedia/Directory.Build.props
+
+          echo "Updated version to $NEW_VERSION in Directory.Build.props"
+
+      - name: Commit version change
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add SubSonicMedia/Directory.Build.props
+          git commit -m "chore: bump version to ${{ needs.analyze-commits.outputs.new_version }} [skip ci]"
+
+      - name: Create tag
+        run: |
+          git tag v${{ needs.analyze-commits.outputs.new_version }}
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+          tags: true

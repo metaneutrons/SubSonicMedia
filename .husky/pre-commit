@@ -1,0 +1,37 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Format code with CSharpier
+echo "🎨 Running CSharpier to format code..."
+dotnet csharpier .
+
+# Verify that all files have GPL-3.0 headers
+echo "📝 Checking for GPL-3.0 headers..."
+MISSING_HEADERS=$(find ./SubSonicMedia -name "*.cs" -type f -not -path "*/obj/*" -not -path "*/bin/*" -print0 | xargs -0 grep -L "GNU General Public License" | grep -v "SubSonicMedia.AssemblyInfo.cs" | grep -v "SubSonicMedia.GlobalUsings.g.cs" | tr '\n' ' ')
+
+if [ -n "$MISSING_HEADERS" ]; then
+  echo "⚠️ The following files are missing GPL-3.0 headers:"
+  echo "$MISSING_HEADERS" | tr '\n' ' '
+  echo ""
+  echo "Running Fix-StyleCopIssues.ps1 to add headers..."
+  pwsh -File "scripts/Fix-StyleCopIssues.ps1" -Fix FileHeader -SourceDirectory "./SubSonicMedia"
+  echo "✅ Headers added. Please review the changes."
+fi
+
+# Run formatting and style checks but don't block commits
+echo "📋 Running code style verification..."
+dotnet build SubSonicMedia/SubSonicMedia.csproj /p:TreatWarningsAsErrors=false || true
+
+# Check for potential secrets
+echo "🔐 Checking for potential secrets or credentials..."
+SECRETS=$(grep -r --include="*.cs" --include="*.json" --include="*.xml" -E "(password|secret|key|token|credential).*=.*['\"][a-zA-Z0-9]{16,}['\"]" --color=always ./SubSonicMedia || true)
+
+if [ -n "$SECRETS" ]; then
+  echo "⚠️ Potential secrets or credentials found:"
+  echo "$SECRETS"
+  echo "Please verify these are not actual secrets before committing."
+  exit 1
+fi
+
+# Success message
+echo "✅ Pre-commit checks passed!"

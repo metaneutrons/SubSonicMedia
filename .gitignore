@@ -1,0 +1,189 @@
+# Build results
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]uild/
+msbuild.log
+msbuild.err
+msbuild.wrn
+[Ll]og/
+[Ll]ogs/
+*.dll
+*.exe
+*.pdb
+*.so
+*.dylib
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Visual Studio files
+.vs/
+*.user
+*.userosscache
+*.suo
+*.userprefs
+*.sln.docstates
+*.sln.ide/
+*.vssscc
+*_i.c
+*_p.c
+*.ncb
+*.tlb
+*.tlh
+*.bak
+*.cache
+*.ilk
+*.pdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*_wpftmp.csproj
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
+
+# Chutzpah Test files
+_Chutzpah*
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+.history/
+*.vsix
+.ionide/
+
+# Visual Studio profiler
+*.psess
+*.vsp
+*.vspx
+*.sap
+
+# ReSharper is a .NET coding add-in
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# NuGet Packages
+*.nupkg
+*.snupkg
+# The packages folder can be ignored because of Package Restore
+**/[Pp]ackages/*
+# except build/, which is used as an MSBuild target.
+!**/[Pp]ackages/build/
+# Uncomment if necessary however generally it will be regenerated when needed
+#!**/[Pp]ackages/repositories.config
+# NuGet v3's project.json files produces more ignorable files
+*.nuget.props
+*.nuget.targets
+
+# NuGet Symbol Packages
+*.snupkg
+
+# Paket dependency manager
+.paket/paket.exe
+paket-files/
+
+# Environment files
+**/.env
+*.env
+!**/.env.example
+appsettings.*.json
+!appsettings.example.json
+
+# Databases
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# Logs
+*.log
+*.logs
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.VisualState.xml
+TestResult.xml
+nunit-*.xml
+*.coverage
+*.coveragexml
+*.TestResults.xml
+coverage*.json
+coverage*.info
+coverage*.xml
+*.dotCover
+
+# .NET Core
+.dotnet/
+.packages/
+project.lock.json
+project.assets.json
+.ntvs_analysis.dat
+node_repl_history
+*.plg
+*.opt
+
+# Docker
+docker-compose.override.yml
+docker-compose.override.*.yml
+.docker/.env
+
+# Dedicated tool caches
+.husky/node_modules
+
+# Tool Specific Files
+.config/.DS_Store
+.config/dotnet-tools.json.user
+
+# StyleCop
+StyleCopReport.xml
+
+# Temporary Files
+*.swp
+*.*~
+~*
+~$*
+.~lock.*
+
+# Misc
+.DS_Store
+.run/
+thumbs.db
+tye.yaml

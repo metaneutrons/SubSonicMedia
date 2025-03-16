@@ -1,0 +1,23 @@
+{
+   "$schema": "https://alirezanet.github.io/Husky.Net/schema.json",
+   "tasks": [
+      {
+         "name": "format-check",
+         "command": "dotnet",
+         "args": [ "csharpier", "."],
+         "cwd": "../"
+      },
+      {
+         "name": "style-check",
+         "command": "dotnet",
+         "args": [ "build", "SubSonicMedia.sln", "/p:TreatWarningsAsErrors=false"],
+         "cwd": "../"
+      },
+      {
+         "name": "license-check",
+         "command": "pwsh",
+         "args": [ "-File", "scripts/Fix-StyleCopIssues.ps1", "-Fix", "FileHeader"],
+         "cwd": "../"
+      }
+   ]
+}

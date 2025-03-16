@@ -1,0 +1,24 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Run a full build to catch any compilation errors
+echo "🏗️ Building project..."
+dotnet build SubSonicMedia.sln /p:TreatWarningsAsErrors=true
+
+BUILD_RESULT=$?
+if [ $BUILD_RESULT -ne 0 ]; then
+  echo "❌ Build failed! Fix the errors before pushing."
+  exit 1
+fi
+
+# Run StyleCop check with warnings as errors
+echo "🔍 Running StyleCop check..."
+dotnet build SubSonicMedia/SubSonicMedia.csproj /p:TreatWarningsAsErrors=true
+
+STYLECOP_RESULT=$?
+if [ $STYLECOP_RESULT -ne 0 ]; then
+  echo "❌ StyleCop check failed! Fix the style issues before pushing."
+  exit 1
+fi
+
+echo "✅ Pre-push checks passed!"

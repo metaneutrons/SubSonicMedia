@@ -1,0 +1,34 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run TestKit",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/SubSonicMedia.TestKit/bin/Debug/net8.0/SubSonicMedia.TestKit.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/SubSonicMedia.TestKit",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "env": {
+                "DOTNET_ENVIRONMENT": "Development"
+            }
+        },
+        {
+            "name": "Debug TestKit",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/SubSonicMedia.TestKit/bin/Debug/net8.0/SubSonicMedia.TestKit.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/SubSonicMedia.TestKit",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "env": {
+                "DOTNET_ENVIRONMENT": "Development"
+            },
+            "justMyCode": false
+        }
+    ]
+}
