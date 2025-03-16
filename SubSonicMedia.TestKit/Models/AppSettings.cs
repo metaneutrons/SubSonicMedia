@@ -21,6 +21,27 @@ using SubSonicMedia.Models;
 namespace SubSonicMedia.TestKit.Models
 {
     /// <summary>
+    /// Represents the result of a test execution.
+    /// </summary>
+    public enum TestResult
+    {
+        /// <summary>
+        /// The test was executed successfully.
+        /// </summary>
+        Pass,
+        
+        /// <summary>
+        /// The test failed during execution.
+        /// </summary>
+        Fail,
+        
+        /// <summary>
+        /// The test was skipped due to feature being unavailable or not implemented.
+        /// </summary>
+        Skipped
+    }
+    
+    /// <summary>
     /// Application configuration settings.
     /// </summary>
     public class AppSettings
@@ -59,6 +80,16 @@ namespace SubSonicMedia.TestKit.Models
         /// Gets or sets the directory where test results should be saved.
         /// </summary>
         public string OutputDirectory { get; set; } = "./Outputs";
+        
+        /// <summary>
+        /// Gets or sets a value indicating whether to exit immediately on first test failure.
+        /// </summary>
+        public bool FailFast { get; set; } = false;
+        
+        /// <summary>
+        /// Gets or sets a value indicating whether to generate JUnit XML output for CI/CD integration.
+        /// </summary>
+        public bool JUnitXmlOutput { get; set; } = false;
 
         /// <summary>
         /// Gets the connection information for the Subsonic client.

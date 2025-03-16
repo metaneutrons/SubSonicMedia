@@ -68,34 +68,19 @@ You have three options for managing version bumps:
 
 ### 1. Local Scripts (Recommended for Development)
 
-#### Unix/macOS (Bash)
-
-```bash
-# Analyze commits and suggest a version bump
-./scripts/bump-version.sh
-
-# Apply the suggested version bump
-./scripts/bump-version.sh --apply
-
-# Force a specific bump type
-./scripts/bump-version.sh --force-bump minor --apply
-```
-
-#### Windows (PowerShell)
-
 ```powershell
 # Analyze commits and suggest a version bump
-.\scripts\Bump-Version.ps1
+./scripts/Bump-Version.ps1
 
 # Apply the suggested version bump
-.\scripts\Bump-Version.ps1 -Apply
+./scripts/Bump-Version.ps1 -Apply
 
 # Force a specific bump type
-.\scripts\Bump-Version.ps1 -ForceBump minor -Apply
+./scripts/Bump-Version.ps1 -ForceBump minor -Apply
 ```
 
 After running with the apply option, you'll need to push the changes:
-```bash
+```powershell
 git push && git push --tags
 ```
 

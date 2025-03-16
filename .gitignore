@@ -149,6 +149,9 @@ coverage*.json
 coverage*.info
 coverage*.xml
 *.dotCover
+SubSonicMedia.TestKit/outputs/*
+SubSonicMedia.TestKit/[Oo]utputs/
+junit_report_*.xml
 
 # .NET Core
 .dotnet/

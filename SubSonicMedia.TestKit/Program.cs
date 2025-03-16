@@ -87,7 +87,12 @@ if (commandArgs.Length > 0)
         var testName = commandArgs[1];
         ConsoleHelper.LogInfo($"Running specific test: {testName}");
         var result = await testRunner.RunTestAsync(testName);
+        
+        // Exit with appropriate code (0 for pass/skip, 1 for fail)
+        // The RunTestAsync method returns false for both "test failed" and "test not found"
+        // But it already logs the appropriate error message
         Environment.Exit(result ? 0 : 1);
+        
         return;
     }
     
@@ -122,6 +127,9 @@ ConsoleHelper.LogInfo("Running all tests...");
 bool allTestsPassed = await testRunner.RunAllTestsAsync();
 
 // Exit with appropriate code
+// 0 - All tests passed or skipped (no failures)
+// 1 - One or more tests failed
+// 2 - Other errors (should be used if the test runner itself had an issue)
 Environment.Exit(allTestsPassed ? 0 : 1);
 
 // Helper method to load configuration
@@ -156,7 +164,9 @@ AppSettings? LoadConfiguration()
             ApiVersion = config["SUBSONIC_API_VERSION"] ?? "1.16.1", // Set a default API version
             ResponseFormat = config["SUBSONIC_RESPONSE_FORMAT"] ?? "json",
             RecordTestResults = bool.TryParse(config["RECORD_TEST_RESULTS"], out bool record) ? record : true,
-            OutputDirectory = config["OUTPUT_DIRECTORY"] ?? Path.Combine(assemblyDirectory, "TestResults")
+            OutputDirectory = config["OUTPUT_DIRECTORY"] ?? Path.Combine(assemblyDirectory, "TestResults"),
+            FailFast = bool.TryParse(config["FAIL_FAST"], out bool failFast) ? failFast : false,
+            JUnitXmlOutput = bool.TryParse(config["JUNIT_XML_OUTPUT"], out bool junitOutput) ? junitOutput : false
         };
         
         return settings;
@@ -182,6 +192,17 @@ void DisplayHelp()
     AnsiConsole.WriteLine("Configuration:");
     AnsiConsole.WriteLine("  Settings are loaded from the .env file in the application directory.");
     AnsiConsole.WriteLine("  See .env.example for required settings.");
+    AnsiConsole.WriteLine();
+    AnsiConsole.WriteLine("Environment Variables:");
+    AnsiConsole.WriteLine("  SUBSONIC_SERVER_URL      URL of the Subsonic server (required)");
+    AnsiConsole.WriteLine("  SUBSONIC_USERNAME        Username for authentication (required)");
+    AnsiConsole.WriteLine("  SUBSONIC_PASSWORD        Password for authentication (required)");
+    AnsiConsole.WriteLine("  SUBSONIC_API_VERSION     API version to use (optional, defaults to 1.16.1)");
+    AnsiConsole.WriteLine("  SUBSONIC_RESPONSE_FORMAT Response format (optional, defaults to json)");
+    AnsiConsole.WriteLine("  RECORD_TEST_RESULTS      Whether to record test results (optional, defaults to true)");
+    AnsiConsole.WriteLine("  OUTPUT_DIRECTORY         Directory to save test results (optional)");
+    AnsiConsole.WriteLine("  FAIL_FAST                Exit on first test failure (optional, defaults to false)");
+    AnsiConsole.WriteLine("  JUNIT_XML_OUTPUT         Generate JUnit XML report (optional, defaults to false)");
 }
 
 /// <summary>

@@ -44,17 +44,34 @@ namespace SubSonicMedia.TestKit.Tests
         public override string Description => "Tests playlist capabilities including listing playlists and viewing playlist details";
 
         /// <inheritdoc/>
-        protected override async Task<bool> ExecuteTestAsync()
+        protected override async Task<TestResult> ExecuteTestAsync()
         {
             // Test 1: Get all playlists
             ConsoleHelper.LogInfo("Testing GetPlaylists...");
+            
+            // Enable detailed debugging
+            ConsoleHelper.LogInfo("Debugging connection:");
+            ConsoleHelper.LogInfo($"  Server URL: {Settings.ServerUrl}");
+            ConsoleHelper.LogInfo($"  Username: {Settings.Username}");
+            ConsoleHelper.LogInfo($"  API Version: {Settings.ApiVersion}");
+            ConsoleHelper.LogInfo($"  Response Format: {Settings.ResponseFormat}");
+            
             var playlistsResponse = await Client.Playlists.GetPlaylistsAsync();
+            
+            // Print the raw response for debugging
+            try {
+                var jsonOptions = new System.Text.Json.JsonSerializerOptions { WriteIndented = true };
+                ConsoleHelper.LogInfo("Response received successfully");
+            } catch (Exception ex) {
+                ConsoleHelper.LogError($"Error serializing response: {ex.Message}");
+            }
+            
             RecordTestResult(playlistsResponse, "playlists_list");
             
             if (!playlistsResponse.IsSuccess)
             {
                 ConsoleHelper.LogError($"Failed to get playlists: {playlistsResponse.Error?.Message}");
-                return false;
+                return TestResult.Fail;
             }
             
             ConsoleHelper.LogSuccess($"Successfully retrieved {playlistsResponse.Playlists.Playlist.Count} playlists");
@@ -98,7 +115,7 @@ namespace SubSonicMedia.TestKit.Tests
                 if (!playlistResponse.IsSuccess)
                 {
                     ConsoleHelper.LogError($"Failed to get playlist details: {playlistResponse.Error?.Message}");
-                    return false;
+                    return TestResult.Fail;
                 }
                 
                 ConsoleHelper.LogSuccess($"Successfully retrieved playlist '{playlistResponse.Playlist.Name}' with {playlistResponse.Playlist.Entry.Count} songs");
@@ -144,7 +161,7 @@ namespace SubSonicMedia.TestKit.Tests
                 ConsoleHelper.LogInfo("This appears to be a test environment without playlists.");
             }
             
-            return true;
+            return TestResult.Pass;
         }
     }
 }

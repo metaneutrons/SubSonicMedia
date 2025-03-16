@@ -44,7 +44,7 @@ namespace SubSonicMedia.TestKit.Tests
         public override string Description => "Tests browsing music folders, artists, and albums";
 
         /// <inheritdoc/>
-        protected override async Task<bool> ExecuteTestAsync()
+        protected override async Task<TestResult> ExecuteTestAsync()
         {
             bool allTestsPassed = true;
             
@@ -69,7 +69,7 @@ namespace SubSonicMedia.TestKit.Tests
                         
                         foreach (var folder in foldersResponse.MusicFolders.Take(5))
                         {
-                            table.AddRow(folder.Id, folder.Name ?? "Unnamed Folder");
+                            table.AddRow(folder.Id.ToString(), folder.Name ?? "Unnamed Folder");
                         }
                         
                         AnsiConsole.Write(table);
@@ -215,7 +215,7 @@ namespace SubSonicMedia.TestKit.Tests
                 }
             }
             
-            return allTestsPassed;
+            return allTestsPassed ? TestResult.Pass : TestResult.Fail;
         }
     }
 }

@@ -51,7 +51,7 @@ namespace SubSonicMedia.TestKit.Tests
             $"Tests search functionality using query: '{_searchQuery}'";
 
         /// <inheritdoc/>
-        protected override async Task<bool> ExecuteTestAsync()
+        protected override async Task<TestResult> ExecuteTestAsync()
         {
             bool allTestsPassed = true;
 
@@ -159,7 +159,7 @@ namespace SubSonicMedia.TestKit.Tests
                 allTestsPassed = false;
             }
 
-            return allTestsPassed;
+            return allTestsPassed ? TestResult.Pass : TestResult.Fail;
         }
     }
 }

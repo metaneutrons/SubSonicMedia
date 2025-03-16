@@ -50,29 +50,48 @@ namespace SubSonicMedia.TestKit
         /// <summary>
         /// Runs all registered tests.
         /// </summary>
-        /// <returns>True if all tests pass, false otherwise.</returns>
+        /// <returns>True if all tests pass or are skipped, false if any test fails.</returns>
         public async Task<bool> RunAllTestsAsync()
         {
             ConsoleHelper.LogInfo("Starting test suite execution...");
             _totalStopwatch.Restart();
             
-            var results = new Dictionary<string, bool>();
+            var results = new Dictionary<string, TestResult>();
             int passCount = 0;
+            int skipCount = 0;
+            int failCount = 0;
             
             foreach (var test in _tests)
             {
-                bool success = await test.RunAsync();
-                results[test.Name] = success;
+                TestResult result = await test.RunAsync();
+                results[test.Name] = result;
                 
-                if (success)
+                switch (result)
                 {
-                    passCount++;
+                    case TestResult.Pass:
+                        passCount++;
+                        break;
+                    case TestResult.Skipped:
+                        skipCount++;
+                        break;
+                    case TestResult.Fail:
+                        failCount++;
+                        
+                        // If fail-fast is enabled, stop on the first failure
+                        if (_settings.FailFast)
+                        {
+                            ConsoleHelper.LogWarning("Fail-fast mode enabled, stopping tests after first failure.");
+                            // Exit the loop early
+                            goto EndTests;
+                        }
+                        break;
                 }
                 
                 // Add a small separator between tests
                 Console.WriteLine();
             }
             
+            EndTests:
             _totalStopwatch.Stop();
             
             // Display summary
@@ -80,15 +99,36 @@ namespace SubSonicMedia.TestKit
             Console.WriteLine();
             ConsoleHelper.LogInfo($"Total execution time: {_totalStopwatch.ElapsedMilliseconds}ms");
             
-            // Determine overall success
-            bool allPassed = passCount == _tests.Count;
-            if (allPassed)
+            // Calculate statistics excluding skipped tests
+            int totalRun = passCount + failCount;
+            
+            // Generate JUnit XML report if enabled
+            if (_settings.JUnitXmlOutput)
+            {
+                JUnitReportHelper.GenerateJUnitXmlReport(
+                    results, 
+                    _tests,
+                    _totalStopwatch.ElapsedMilliseconds, 
+                    _settings.OutputDirectory);
+            }
+            
+            // Determine overall success - skip does not count as failure
+            bool allPassed = failCount == 0;
+            if (allPassed && skipCount == 0)
             {
                 ConsoleHelper.LogSuccess("ALL TESTS PASSED");
             }
+            else if (allPassed)
+            {
+                ConsoleHelper.LogSuccess($"ALL EXECUTED TESTS PASSED ({skipCount} SKIPPED)");
+            }
             else
             {
-                ConsoleHelper.LogError($"TESTS FAILED: {_tests.Count - passCount} of {_tests.Count} tests failed");
+                ConsoleHelper.LogError($"TESTS FAILED: {failCount} of {totalRun} executed tests failed");
+                if (skipCount > 0)
+                {
+                    ConsoleHelper.LogWarning($"{skipCount} tests were skipped");
+                }
             }
             
             return allPassed;
@@ -98,7 +138,7 @@ namespace SubSonicMedia.TestKit
         /// Runs a specific test by name.
         /// </summary>
         /// <param name="testName">The name of the test to run.</param>
-        /// <returns>True if the test passes, false otherwise or if the test is not found.</returns>
+        /// <returns>True if the test passes or is skipped, false if it fails or is not found.</returns>
         public async Task<bool> RunTestAsync(string testName)
         {
             var test = _tests.FirstOrDefault(t => t.Name.Equals(testName, StringComparison.OrdinalIgnoreCase));
@@ -109,7 +149,28 @@ namespace SubSonicMedia.TestKit
                 return false;
             }
             
-            return await test.RunAsync();
+            // Start timing for this test run
+            _totalStopwatch.Restart();
+            
+            // Run the test
+            TestResult result = await test.RunAsync();
+            
+            // Stop timing
+            _totalStopwatch.Stop();
+            
+            // Generate JUnit XML report for single test if enabled
+            if (_settings.JUnitXmlOutput)
+            {
+                var results = new Dictionary<string, TestResult> { { test.Name, result } };
+                JUnitReportHelper.GenerateJUnitXmlReport(
+                    results, 
+                    new[] { test },
+                    _totalStopwatch.ElapsedMilliseconds, 
+                    _settings.OutputDirectory);
+            }
+            
+            // Return true for Pass or Skipped, false only for Fail
+            return result != TestResult.Fail;
         }
         
         /// <summary>
@@ -130,7 +191,15 @@ namespace SubSonicMedia.TestKit
             _tests.Add(new MediaTest(_client, _settings));
             _tests.Add(new PlaylistTest(_client, _settings));
             
-            // More tests can be added here
+            // Additional client tests
+            _tests.Add(new BookmarkTest(_client, _settings));
+            _tests.Add(new ChatTest(_client, _settings));
+            _tests.Add(new JukeboxTest(_client, _settings));
+            _tests.Add(new PodcastTest(_client, _settings));
+            _tests.Add(new RadioTest(_client, _settings));
+            _tests.Add(new SystemTest(_client, _settings));
+            _tests.Add(new UserTest(_client, _settings));
+            _tests.Add(new VideoTest(_client, _settings));
         }
     }
 }

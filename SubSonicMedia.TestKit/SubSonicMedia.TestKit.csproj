@@ -32,4 +32,20 @@
     <AdditionalFiles Include="$(MSBuildThisFileDirectory)\..\stylecop.json" Link="stylecop.json" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update=".env" Condition="Exists('$(MSBuildProjectDirectory)/.env')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <!-- Custom MSBuild target for running tests conditionally -->
+  <Target Name="RunTestsConditionally" Condition="Exists('$(MSBuildProjectDirectory)/.env')">
+    <Message Importance="high" Text="Running SubSonicMedia TestKit..." />
+    <Exec Command="dotnet run" WorkingDirectory="$(MSBuildProjectDirectory)" IgnoreExitCode="true">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+    </Exec>
+    <Message Importance="high" Text="Tests completed successfully!" Condition="'$(ErrorCode)' == '0'" />
+    <Error Text="Tests failed with exit code $(ErrorCode)" Condition="'$(ErrorCode)' != '0'" />
+  </Target>
+
 </Project>

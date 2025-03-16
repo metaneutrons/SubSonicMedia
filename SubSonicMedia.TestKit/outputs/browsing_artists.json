@@ -1,7 +1,43 @@
 {
   "Artists": {
     "Ignorable": false,
-    "Index": []
+    "IgnoredArticles": "The El La Los Las Le Les Os As O A",
+    "LastModified": 0,
+    "Index": [
+      {
+        "Name": "K",
+        "Artist": [
+          {
+            "Id": "1y5ZiGNiyUQquqOiJ1bGb2",
+            "Name": "Keith Jarrett",
+            "CoverArt": "ar-1y5ZiGNiyUQquqOiJ1bGb2_0",
+            "AlbumCount": 12,
+            "ArtistImageUrl": "https://music.schmieder.eu/share/img/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImFyLTF5NVppR05peVVRcXVxT2lKMWJHYjJfMCIsImlzcyI6Ik5EIn0.d2RRsBP94L1WxLS4FLh3CgkURPiodW-YAoOzsOOB-ME?size=600"
+          },
+          {
+            "Id": "0AN7Hq6T5LhjwjfXIqskD5",
+            "Name": "Keith Jarrett \u0026 Charlie Haden",
+            "CoverArt": "ar-0AN7Hq6T5LhjwjfXIqskD5_0",
+            "AlbumCount": 1,
+            "ArtistImageUrl": "https://music.schmieder.eu/share/img/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImFyLTBBTjdIcTZUNUxoandqZlhJcXNrRDVfMCIsImlzcyI6Ik5EIn0.n0_mIygXXEoPFpUFb21QEabXJ2GAoLSkRw6UkegQ2GE?size=600"
+          },
+          {
+            "Id": "53pPWrg2lL7M6jQhNiZgGO",
+            "Name": "Keith Jarrett, Charlie Haden \u0026 Paul Motian",
+            "CoverArt": "ar-53pPWrg2lL7M6jQhNiZgGO_0",
+            "AlbumCount": 1,
+            "ArtistImageUrl": "https://music.schmieder.eu/share/img/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImFyLTUzcFBXcmcybEw3TTZqUWhOaVpnR09fMCIsImlzcyI6Ik5EIn0.QDGJow5EyK0Hf5lbSJT3aik0rc2ydXHaP4sc1FpiXG8?size=600"
+          },
+          {
+            "Id": "2Ycs1yTg45y7IzpwvmAXlq",
+            "Name": "Keith Jarrett, Gary Peacock \u0026 Jack DeJohnette",
+            "CoverArt": "ar-2Ycs1yTg45y7IzpwvmAXlq_0",
+            "AlbumCount": 1,
+            "ArtistImageUrl": "https://music.schmieder.eu/share/img/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImFyLTJZY3MxeVRnNDV5N0l6cHd2bUFYbHFfMCIsImlzcyI6Ik5EIn0.nBeTXCTVCQTEPz3yKQ_JxqYos0yWgRhCt2beZk4T1CU?size=600"
+          }
+        ]
+      }
+    ]
   },
   "status": "ok",
   "version": "1.16.1",

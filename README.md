@@ -121,7 +121,7 @@ We provide tools to automatically analyze commit messages and determine the appr
 
 See [docs/VERSIONING.md](docs/VERSIONING.md) for details on:
 - Commit message conventions
-- Local version bump scripts (bash and PowerShell)
+- Local version bump PowerShell script
 - GitHub workflow for automated versioning
 - Complete release process
 

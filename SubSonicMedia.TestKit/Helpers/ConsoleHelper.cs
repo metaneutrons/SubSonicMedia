@@ -17,6 +17,7 @@
 // </copyright>
 
 using Spectre.Console;
+using SubSonicMedia.TestKit.Models;
 
 namespace SubSonicMedia.TestKit.Helpers
 {
@@ -129,12 +130,34 @@ namespace SubSonicMedia.TestKit.Helpers
         /// </summary>
         /// <param name="testName">The name of the test.</param>
         /// <param name="elapsedMilliseconds">The elapsed time in milliseconds.</param>
-        /// <param name="success">Whether the test was successful.</param>
-        public static void LogTestCompletion(string testName, long elapsedMilliseconds, bool success)
+        /// <param name="result">The test result.</param>
+        public static void LogTestCompletion(string testName, long elapsedMilliseconds, TestResult result)
         {
-            string icon = success ? SuccessIcon : ErrorIcon;
-            string color = success ? "green" : "red";
-            AnsiConsole.MarkupLine($"[{color}]{icon} Test completed: [bold]{testName}[/] {TimerIcon} [italic]{elapsedMilliseconds}ms[/][/]");
+            string icon;
+            string color;
+            string status;
+            
+            switch (result)
+            {
+                case TestResult.Pass:
+                    icon = SuccessIcon;
+                    color = "green";
+                    status = "PASSED";
+                    break;
+                case TestResult.Skipped:
+                    icon = WarningIcon;
+                    color = "yellow";
+                    status = "SKIPPED";
+                    break;
+                case TestResult.Fail:
+                default:
+                    icon = ErrorIcon;
+                    color = "red";
+                    status = "FAILED";
+                    break;
+            }
+            
+            AnsiConsole.MarkupLine($"[{color}]{icon} Test {status}: [bold]{testName}[/] {TimerIcon} [italic]{elapsedMilliseconds}ms[/][/]");
         }
         
         /// <summary>
@@ -159,8 +182,8 @@ namespace SubSonicMedia.TestKit.Helpers
         /// <summary>
         /// Displays a table of test results.
         /// </summary>
-        /// <param name="results">The dictionary of test results with test names as keys and success status as values.</param>
-        public static void DisplayTestResults(Dictionary<string, bool> results)
+        /// <param name="results">The dictionary of test results with test names as keys and result status as values.</param>
+        public static void DisplayTestResults(Dictionary<string, TestResult> results)
         {
             var table = new Table();
             
@@ -168,25 +191,60 @@ namespace SubSonicMedia.TestKit.Helpers
             table.AddColumn("Status");
             
             int passCount = 0;
-            foreach (var (testName, success) in results)
+            int skipCount = 0;
+            int failCount = 0;
+            
+            foreach (var (testName, result) in results)
             {
-                string status = success ? $"[green]{SuccessIcon} PASS[/]" : $"[red]{ErrorIcon} FAIL[/]";
-                table.AddRow(testName, status);
-                
-                if (success)
+                string status;
+                switch (result)
                 {
-                    passCount++;
+                    case TestResult.Pass:
+                        status = $"[green]{SuccessIcon} PASS[/]";
+                        passCount++;
+                        break;
+                    case TestResult.Skipped:
+                        status = $"[yellow]{WarningIcon} SKIPPED[/]";
+                        skipCount++;
+                        break;
+                    case TestResult.Fail:
+                    default:
+                        status = $"[red]{ErrorIcon} FAIL[/]";
+                        failCount++;
+                        break;
                 }
+                
+                table.AddRow(testName, status);
             }
             
             AnsiConsole.WriteLine();
             AnsiConsole.Write(table);
             
-            int total = results.Count;
-            double percentage = total > 0 ? (double)passCount / total * 100 : 0;
+            int totalRun = passCount + failCount; // Don't count skipped tests in the total
+            int totalTests = results.Count;
+            double percentage = totalRun > 0 ? (double)passCount / totalRun * 100 : 0;
             
             AnsiConsole.WriteLine();
-            AnsiConsole.MarkupLine($"[bold]Test Results: {passCount}/{total} passed ({percentage:F2}%)[/]");
+            AnsiConsole.MarkupLine($"[bold]Test Results: {passCount}/{totalRun} passed ({percentage:F2}%)[/]");
+            
+            if (skipCount > 0)
+            {
+                AnsiConsole.MarkupLine($"[yellow]Skipped Tests: {skipCount}/{totalTests} skipped[/]");
+            }
+        }
+        
+        /// <summary>
+        /// Displays a table of test results.
+        /// </summary>
+        /// <param name="results">The dictionary of test results with test names as keys and success status as values.</param>
+        public static void DisplayTestResults(Dictionary<string, bool> results)
+        {
+            // Convert bool results to TestResult for backward compatibility
+            var convertedResults = results.ToDictionary(
+                kvp => kvp.Key,
+                kvp => kvp.Value ? TestResult.Pass : TestResult.Fail);
+                
+            DisplayTestResults(convertedResults);
         }
         
         /// <summary>

@@ -43,7 +43,7 @@ namespace SubSonicMedia.TestKit.Tests
         public override string Description => "Tests connection to the Subsonic server and API version compatibility";
 
         /// <inheritdoc/>
-        protected override async Task<bool> ExecuteTestAsync()
+        protected override async Task<TestResult> ExecuteTestAsync()
         {
             ConsoleHelper.LogInfo("Testing server connection...");
             ConsoleHelper.LogServerConnection(Settings.ServerUrl);
@@ -56,12 +56,12 @@ namespace SubSonicMedia.TestKit.Tests
             if (response.IsSuccess)
             {
                 ConsoleHelper.LogSuccess($"Successfully connected to server version: {response.Version}");
-                return true;
+                return TestResult.Pass;
             }
             else
             {
                 ConsoleHelper.LogError($"Connection failed: {response.Error?.Message}");
-                return false;
+                return TestResult.Fail;
             }
         }
     }

@@ -10,7 +10,7 @@
 - Run specific test: `cd SubSonicMedia.TestKit && dotnet run run "Connection Test"`
 - List available tests: `cd SubSonicMedia.TestKit && dotnet run list`
 - Display test help: `cd SubSonicMedia.TestKit && dotnet run help`
-- Bump version: `./scripts/bump-version.sh` or `./scripts/Bump-Version.ps1`
+- Bump version: `./scripts/Bump-Version.ps1`
 
 ## Code Style Guidelines
 - **Formatting**: 4-space indentation, no tabs, newline at end of file
