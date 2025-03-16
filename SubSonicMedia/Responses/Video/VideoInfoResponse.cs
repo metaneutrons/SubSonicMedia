@@ -37,10 +37,70 @@ namespace SubSonicMedia.Responses.Video
     public class VideoInfo
     {
         /// <summary>
+        /// Gets or sets the video ID.
+        /// </summary>
+        [XmlAttribute("id")]
+        public string Id { get; set; }
+
+        /// <summary>
+        /// Gets or sets the bit rate in kilobits per second.
+        /// </summary>
+        [XmlAttribute("bitRate")]
+        public int Bitrate { get; set; }
+
+        /// <summary>
+        /// Gets or sets the duration in seconds.
+        /// </summary>
+        [XmlAttribute("duration")]
+        public int Duration { get; set; }
+
+        /// <summary>
+        /// Gets or sets the size in bytes.
+        /// </summary>
+        [XmlAttribute("size")]
+        public long Size { get; set; }
+
+        /// <summary>
+        /// Gets or sets the width in pixels.
+        /// </summary>
+        [XmlAttribute("width")]
+        public int Width { get; set; }
+
+        /// <summary>
+        /// Gets or sets the height in pixels.
+        /// </summary>
+        [XmlAttribute("height")]
+        public int Height { get; set; }
+
+        /// <summary>
+        /// Gets or sets the video codec name.
+        /// </summary>
+        [XmlAttribute("videoCodec")]
+        public string VideoCodec { get; set; }
+
+        /// <summary>
+        /// Gets or sets the audio codec name.
+        /// </summary>
+        [XmlAttribute("audioCodec")]
+        public string AudioCodec { get; set; }
+
+        /// <summary>
+        /// Gets or sets the converted bit rate.
+        /// </summary>
+        [XmlAttribute("convertedBitRate")]
+        public int? ConvertedBitrate { get; set; }
+
+        /// <summary>
+        /// Gets or sets the converted size.
+        /// </summary>
+        [XmlAttribute("convertedSize")]
+        public long? ConvertedSize { get; set; }
+
+        /// <summary>
         /// Gets or sets the list of audio tracks.
         /// </summary>
         [XmlElement("audioTrack")]
-        public List<AudioTrack> AudioTracks { get; set; } = new List<AudioTrack>();
+        public List<AudioTrack> AudioTrack { get; set; } = new List<AudioTrack>();
 
         /// <summary>
         /// Gets or sets the list of captions.
@@ -52,7 +112,7 @@ namespace SubSonicMedia.Responses.Video
         /// Gets or sets the list of conversion formats.
         /// </summary>
         [XmlElement("conversion")]
-        public List<Conversion> Conversions { get; set; } = new List<Conversion>();
+        public List<Conversion> Conversion { get; set; } = new List<Conversion>();
     }
 
     /// <summary>
@@ -64,7 +124,7 @@ namespace SubSonicMedia.Responses.Video
         /// Gets or sets the audio track ID.
         /// </summary>
         [XmlAttribute("id")]
-        public string Id { get; set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// Gets or sets the audio track name.
@@ -77,6 +137,12 @@ namespace SubSonicMedia.Responses.Video
         /// </summary>
         [XmlAttribute("languageCode")]
         public string LanguageCode { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this is the default audio track.
+        /// </summary>
+        [XmlAttribute("default")]
+        public bool Default { get; set; }
     }
 
     /// <summary>
@@ -88,13 +154,19 @@ namespace SubSonicMedia.Responses.Video
         /// Gets or sets the caption ID.
         /// </summary>
         [XmlAttribute("id")]
-        public string Id { get; set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// Gets or sets the caption name.
         /// </summary>
         [XmlAttribute("name")]
         public string Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets the language code.
+        /// </summary>
+        [XmlAttribute("languageCode")]
+        public string LanguageCode { get; set; }
     }
 
     /// <summary>
@@ -112,7 +184,7 @@ namespace SubSonicMedia.Responses.Video
         /// Gets or sets the bit rate in kilobits per second.
         /// </summary>
         [XmlAttribute("bitRate")]
-        public int BitRate { get; set; }
+        public int Bitrate { get; set; }
 
         /// <summary>
         /// Gets or sets the audio track ID to use in the conversion.

@@ -56,6 +56,8 @@ namespace SubSonicMedia.Authentication
             parameters["v"] = connectionInfo.ApiVersion;
             parameters["c"] = connectionInfo.ClientName;
             parameters["f"] = connectionInfo.ResponseFormat ?? "json";
+
+            // Authentication parameters have been added to the request
         }
 
         /// <summary>

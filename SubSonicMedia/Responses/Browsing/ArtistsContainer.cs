@@ -1,4 +1,4 @@
-// <copyright file="MusicFoldersResponse.cs" company="Fabian Schmieder">
+// <copyright file="ArtistsContainer.cs" company="Fabian Schmieder">
 // This file is part of SubSonicMedia.
 //
 // SubSonicMedia is free software: you can redistribute it and/or modify
@@ -20,29 +20,28 @@ using System.Collections.Generic;
 namespace SubSonicMedia.Responses.Browsing
 {
     /// <summary>
-    /// Response containing music folders.
+    /// Container for all artists.
     /// </summary>
-    public class MusicFoldersResponse : SubsonicResponse
+    public class ArtistsContainer
     {
         /// <summary>
-        /// Gets or sets the music folders.
+        /// Gets or sets a value indicating whether the content is ignorable.
         /// </summary>
-        public List<MusicFolder> MusicFolders { get; set; } = new List<MusicFolder>();
-    }
-
-    /// <summary>
-    /// Represents a music folder.
-    /// </summary>
-    public class MusicFolder
-    {
-        /// <summary>
-        /// Gets or sets the ID of the music folder.
-        /// </summary>
-        public int Id { get; set; }
+        public bool Ignorable { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of the music folder.
+        /// Gets or sets the ignored articles string (e.g., "The,El,La").
         /// </summary>
-        public string Name { get; set; }
+        public string IgnoredArticles { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the last modified timestamp.
+        /// </summary>
+        public long LastModified { get; set; }
+
+        /// <summary>
+        /// Gets or sets the artist indexes.
+        /// </summary>
+        public List<Index> Index { get; set; } = new List<Index>();
     }
 }

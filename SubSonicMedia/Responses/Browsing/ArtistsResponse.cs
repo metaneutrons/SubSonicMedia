@@ -29,20 +29,4 @@ namespace SubSonicMedia.Responses.Browsing
         /// </summary>
         public ArtistsContainer Artists { get; set; } = new ArtistsContainer();
     }
-
-    /// <summary>
-    /// Container for all artists.
-    /// </summary>
-    public class ArtistsContainer
-    {
-        /// <summary>
-        /// Gets or sets a value indicating whether the content is ignorable.
-        /// </summary>
-        public bool Ignorable { get; set; }
-
-        /// <summary>
-        /// Gets or sets the artist indexes.
-        /// </summary>
-        public List<Index> Index { get; set; } = new List<Index>();
-    }
 }

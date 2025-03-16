@@ -44,6 +44,11 @@ namespace SubSonicMedia.Responses.System
         public int Count { get; set; }
 
         /// <summary>
+        /// Gets or sets the number of folders scanned.
+        /// </summary>
+        public int FolderCount { get; set; }
+
+        /// <summary>
         /// Gets or sets the folder that is currently being scanned.
         /// </summary>
         public string Folder { get; set; }

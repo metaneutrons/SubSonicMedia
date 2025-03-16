@@ -207,7 +207,8 @@ namespace SubSonicMedia
                 }
 
                 string requestUrl = requestBuilder.BuildRequestUrl();
-                _logger.LogDebug("Executing request: {RequestUrl}", requestUrl);
+                string fullUrl = $"{_httpClient.BaseAddress}{requestUrl}";
+                _logger.LogDebug("Executing request: {RequestUrl}", fullUrl);
 
                 using var response = await _httpClient
                     .GetAsync(requestUrl, cancellationToken)

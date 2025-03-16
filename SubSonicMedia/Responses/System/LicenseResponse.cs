@@ -56,6 +56,11 @@ namespace SubSonicMedia.Responses.System
         public DateTime? Expires { get; set; }
 
         /// <summary>
+        /// Gets or sets the license expiration date from the server.
+        /// </summary>
+        public DateTime? LicenseExpires { get; set; }
+
+        /// <summary>
         /// Gets or sets the name of the licensed server product.
         /// </summary>
         public string LicenseVersion { get; set; }
@@ -64,5 +69,10 @@ namespace SubSonicMedia.Responses.System
         /// Gets or sets the trial period information.
         /// </summary>
         public string Trial { get; set; }
+
+        /// <summary>
+        /// Gets or sets the trial expiration date.
+        /// </summary>
+        public DateTime? TrialExpires { get; set; }
     }
 }

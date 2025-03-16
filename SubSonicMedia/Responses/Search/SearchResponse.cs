@@ -65,5 +65,15 @@ namespace SubSonicMedia.Responses.Search
         /// Gets or sets the artist name.
         /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets the artist's album count.
+        /// </summary>
+        public int AlbumCount { get; set; }
+
+        /// <summary>
+        /// Gets or sets the artist's cover art identifier.
+        /// </summary>
+        public string CoverArt { get; set; }
     }
 }
