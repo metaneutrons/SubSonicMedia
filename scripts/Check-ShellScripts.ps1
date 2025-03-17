@@ -6,9 +6,9 @@ param (
 )
 
 # Find all .sh files in the repository (excluding .git directory)
-$shellScripts = Get-ChildItem -Path $PSScriptRoot\.. -Recurse -Filter "*.sh" -File | 
-                Where-Object { $_.FullName -notlike "*\.git\*" } |
-                Select-Object -ExpandProperty FullName
+$shellScripts = Get-ChildItem -Path $PSScriptRoot\.. -Recurse -Filter "*.sh" -File |
+Where-Object { $_.FullName -notlike "*\.git\*" } |
+Select-Object -ExpandProperty FullName
 
 if ($shellScripts.Count -eq 0) {
     Write-Host "✅ No shell script files found in the repository." -ForegroundColor Green
@@ -25,7 +25,8 @@ if ($Remove) {
         Write-Host "   - Removed: $_" -ForegroundColor Red
     }
     Write-Host "✅ All shell script files have been removed." -ForegroundColor Green
-} else {
+}
+else {
     Write-Host ""
     Write-Host "ℹ️  To remove these files, run: ./scripts/Check-ShellScripts.ps1 -Remove" -ForegroundColor Cyan
     exit 1
