@@ -115,3 +115,16 @@ csharp_space_between_method_call_empty_parameter_list_parentheses = false
 # Wrapping preferences
 csharp_preserve_single_line_statements = false
 csharp_preserve_single_line_blocks = true
+
+# Disable StyleCop formatting rules that conflict with CSharpier
+dotnet_diagnostic.SA1000.severity = none # Keywords should be spaced correctly
+dotnet_diagnostic.SA1009.severity = none # Closing parenthesis should be spaced correctly
+dotnet_diagnostic.SA1111.severity = none # Closing parenthesis should be on line of last parameter
+dotnet_diagnostic.SA1118.severity = none # Parameter should not span multiple lines
+dotnet_diagnostic.SA1137.severity = none # Elements should have the same indentation
+dotnet_diagnostic.SA1501.severity = none # Statement should not be on a single line
+dotnet_diagnostic.SA1502.severity = none # Element should not be on a single line
+dotnet_diagnostic.SA1504.severity = none # All accessors should be single-line or multi-line
+dotnet_diagnostic.SA1519.severity = none # Braces should not be omitted from multi-line child statement
+dotnet_diagnostic.SA1520.severity = none # Use braces consistently
+dotnet_diagnostic.SA1028.severity = none # Code should not contain trailing whitespace

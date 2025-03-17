@@ -13,7 +13,8 @@
       "documentPrivateFields": false
     },
     "layoutRules": {
-      "newlineAtEndOfFile": "require"
+      "newlineAtEndOfFile": "require",
+      "allowConsecutiveUsings": true
     },
     "orderingRules": {
       "usingDirectivesPlacement": "outsideNamespace",
@@ -29,11 +30,23 @@
     },
     "namingRules": {
       "allowCommonHungarianPrefixes": true,
-      "allowedHungarianPrefixes": [ "db", "at", "or", "up", "it", "un", "x", "y", "id", "ip", "ui" ],
-      "allowedNamespaceComponents": [ "My", "io" ]
+      "allowedHungarianPrefixes": [
+        "db",
+        "at",
+        "or",
+        "up",
+        "it",
+        "un",
+        "x",
+        "y",
+        "id",
+        "ip",
+        "ui"
+      ],
+      "allowedNamespaceComponents": ["My", "io"]
     },
     "maintainabilityRules": {
-      "topLevelTypes": [ "class", "interface", "struct", "enum" ]
+      "topLevelTypes": ["class", "interface", "struct", "enum"]
     },
     "indentation": {
       "indentationSize": 4,
