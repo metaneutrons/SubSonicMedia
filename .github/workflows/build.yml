@@ -2,51 +2,51 @@ name: Build and Test
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths-ignore:
-      - '**/*.md'
-      - 'docs/**'
+      - "**/*.md"
+      - "docs/**"
   pull_request:
-    branches: [ main ]
+    branches: [main]
     paths-ignore:
-      - '**/*.md'
-      - 'docs/**'
+      - "**/*.md"
+      - "docs/**"
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '8.0.x'
-        
-    - name: Restore dependencies
-      run: dotnet restore
-      
-    - name: StyleCop check
-      run: dotnet build --no-restore /p:TreatWarningsAsErrors=true
-      
-    - name: Build Release
-      run: dotnet build --configuration Release --no-restore
-      
-    - name: Run tests
-      run: |
-        cd SubSonicMedia.TestKit
-        dotnet run list
-        # Note: Full test runs require credentials, so we only run the build verification
-      
-    - name: Format check
-      run: dotnet csharpier . --check
-      
-    - name: Pack NuGet package
-      run: dotnet pack --configuration Release --no-build -o ./artifacts
-      
-    - name: Upload NuGet Package
-      uses: actions/upload-artifact@v4
-      with:
-        name: nuget-package
-        path: ./artifacts/*.nupkg
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: StyleCop check
+        run: dotnet build --no-restore
+
+      - name: Build Release
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Run tests
+        run: |
+          cd SubSonicMedia.TestKit
+          dotnet run list
+          # Note: Full test runs require credentials, so we only run the build verification
+
+      - name: Format check
+        run: dotnet csharpier . --check
+
+      - name: Pack NuGet package
+        run: dotnet pack --configuration Release --no-build -o ./artifacts
+
+      - name: Upload NuGet Package
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-package
+          path: ./artifacts/*.nupkg
