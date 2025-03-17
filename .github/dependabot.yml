@@ -1,22 +1,37 @@
 version: 2
 updates:
+  # Enable updates for NuGet
   - package-ecosystem: "nuget"
     directory: "/"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
     target-branch: "main"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
     labels:
       - "dependencies"
       - "automated"
     versioning-strategy: auto
+    groups:
+      nuget-dependencies:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "Microsoft.NET.Test.Sdk"
     
+  # Enable updates for GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "monthly"
     open-pull-requests-limit: 5
     target-branch: "main"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
     labels:
       - "dependencies"
       - "automated"
+      - "ci"

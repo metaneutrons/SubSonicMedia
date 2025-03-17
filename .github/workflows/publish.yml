@@ -22,7 +22,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '9.0.x'
+        dotnet-version: '8.0.x'
         
     - name: Extract version from tag
       id: get_version
@@ -38,15 +38,22 @@ jobs:
       if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
       run: |
         sed -i "s|<VersionPrefix>.*</VersionPrefix>|<VersionPrefix>${{ steps.get_version.outputs.VERSION }}</VersionPrefix>|g" SubSonicMedia/Directory.Build.props
+        # If this is the first release, also remove alpha suffix
+        if grep -q '<VersionSuffix>alpha</VersionSuffix>' SubSonicMedia/Directory.Build.props; then
+          sed -i "s|<VersionSuffix>alpha</VersionSuffix>|<VersionSuffix></VersionSuffix>|g" SubSonicMedia/Directory.Build.props
+        fi
         
     - name: Restore dependencies
       run: dotnet restore
       
-    - name: Build
+    - name: StyleCop check
+      run: dotnet build /p:TreatWarningsAsErrors=true --no-restore
+      
+    - name: Build Release
       run: dotnet build --configuration Release --no-restore
       
-    - name: Run StyleCop check
-      run: dotnet build /p:TreatWarningsAsErrors=true --no-restore
+    - name: Format check
+      run: dotnet csharpier . --check
       
     - name: Pack NuGet package
       run: dotnet pack --configuration Release --no-build -o ./artifacts
@@ -58,8 +65,10 @@ jobs:
         # Note: You'll need to add a NUGET_API_KEY secret in your GitHub repository settings
         if [ -z "$NUGET_API_KEY" ]; then
           echo "NuGet API key not found. Package was built but not published."
+          exit 1
         else
           dotnet nuget push ./artifacts/*.nupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json
+          echo "Package published to NuGet.org successfully"
         fi
       env:
         NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
@@ -69,3 +78,15 @@ jobs:
       with:
         name: nuget-package
         path: ./artifacts/*.nupkg
+        
+    - name: Create GitHub Release
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: ./artifacts/*.nupkg
+        name: Release ${{ steps.get_version.outputs.VERSION }}
+        draft: false
+        prerelease: false
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

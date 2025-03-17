@@ -10,120 +10,67 @@ on:
         type: boolean
       force_bump:
         description: "Force bump type (leave empty for auto-detection)"
-        required: false
+        required: true
         type: choice
         options:
           - auto
           - patch
           - minor
           - major
+        default: "auto"
 
 jobs:
-  analyze-commits:
-    runs-on: ubuntu-latest
-    outputs:
-      bump_type: ${{ steps.determine-bump.outputs.bump_type }}
-      current_version: ${{ steps.get-current-version.outputs.version }}
-      new_version: ${{ steps.calculate-version.outputs.new_version }}
-
+  bump-version:
+    runs-on: windows-latest
+    
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Fetch all history for analyzing commits
+          fetch-depth: 0  # Need full history for version detection
 
-      - name: Get current version
-        id: get-current-version
-        run: |
-          VERSION=$(grep -m 1 '<VersionPrefix>' SubSonicMedia/Directory.Build.props | sed -E 's/.*<VersionPrefix>(.*)<\/VersionPrefix>.*/\1/')
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "Current version: $VERSION"
-
-      - name: Determine bump type from commits
-        id: determine-bump
-        run: |
-          # Get force bump type or use auto-detection
-          BUMP_TYPE="${{ github.event.inputs.force_bump }}"
-
-          if [ "$BUMP_TYPE" = "auto" ]; then
-            # Get all commits since last tag
-            LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-
-            if [ -z "$LAST_TAG" ]; then
-              # No tags yet, analyze all commits
-              COMMITS=$(git log --pretty=format:"%s")
-            else
-              # Analyze commits since last tag
-              COMMITS=$(git log $LAST_TAG..HEAD --pretty=format:"%s")
-            fi
-
-            # Check for breaking changes or feat! (major bump)
-            if echo "$COMMITS" | grep -E "^(BREAKING CHANGE:|feat!:|fix!:|refactor!:)" > /dev/null; then
-              BUMP_TYPE="major"
-            # Check for new features (minor bump)
-            elif echo "$COMMITS" | grep -E "^feat(\([^)]+\))?:" > /dev/null; then
-              BUMP_TYPE="minor"
-            # Default to patch for fixes, docs, etc.
-            else
-              BUMP_TYPE="patch"
-            fi
-          fi
-
-          echo "bump_type=$BUMP_TYPE" >> $GITHUB_OUTPUT
-          echo "Determined bump type: $BUMP_TYPE"
-
-      - name: Calculate new version
-        id: calculate-version
-        run: |
-          CURRENT_VERSION="${{ steps.get-current-version.outputs.version }}"
-          BUMP_TYPE="${{ steps.determine-bump.outputs.bump_type }}"
-
-          # Split version into components
-          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
-
-          # Bump version according to type
-          if [ "$BUMP_TYPE" == "major" ]; then
-            NEW_VERSION="$((MAJOR + 1)).0.0"
-          elif [ "$BUMP_TYPE" == "minor" ]; then
-            NEW_VERSION="$MAJOR.$((MINOR + 1)).0"
-          else
-            NEW_VERSION="$MAJOR.$MINOR.$((PATCH + 1))"
-          fi
-
-          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
-          echo "New version will be: $NEW_VERSION"
-
-  apply-version:
-    needs: analyze-commits
-    if: github.event.inputs.apply == 'true'
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Update version in Directory.Build.props
-        run: |
-          NEW_VERSION="${{ needs.analyze-commits.outputs.new_version }}"
-          sed -i "s|<VersionPrefix>.*</VersionPrefix>|<VersionPrefix>$NEW_VERSION</VersionPrefix>|g" SubSonicMedia/Directory.Build.props
-
-          # If this is the first release, also remove alpha suffix
-          sed -i "s|<VersionSuffix>alpha</VersionSuffix>|<VersionSuffix></VersionSuffix>|g" SubSonicMedia/Directory.Build.props
-
-          echo "Updated version to $NEW_VERSION in Directory.Build.props"
-
-      - name: Commit version change
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add SubSonicMedia/Directory.Build.props
-          git commit -m "chore: bump version to ${{ needs.analyze-commits.outputs.new_version }} [skip ci]"
-
-      - name: Create tag
-        run: |
-          git tag v${{ needs.analyze-commits.outputs.new_version }}
-
-      - name: Push changes
-        uses: ad-m/github-push-action@master
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref }}
-          tags: true
+          dotnet-version: '8.0.x'
+
+      - name: Run version bump script
+        id: bump
+        shell: pwsh
+        run: |
+          $ApplyParam = $${{ inputs.apply }} ? "-Apply" : ""
+          $ForceParam = "${{ inputs.force_bump }}"
+          if ($ForceParam -eq "auto") { $ForceParam = "" }
+          if ($ForceParam) { $ForceParam = "-ForceBump $ForceParam" }
+          
+          $command = "./scripts/Bump-Version.ps1 $ApplyParam $ForceParam"
+          Write-Host "Running: $command"
+          Invoke-Expression $command
+          
+          # Extract the new version for the GitHub release step
+          if ("${{ inputs.apply }}" -eq "true") {
+            [xml]$PropsXml = Get-Content "SubSonicMedia/Directory.Build.props"
+            $NewVersion = $PropsXml.Project.PropertyGroup.VersionPrefix
+            "new_version=$NewVersion" >> $env:GITHUB_OUTPUT
+          }
+
+      - name: Push changes (if applied)
+        if: ${{ inputs.apply }}
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'github-actions@users.noreply.github.com'
+          git push
+          git push --tags
+          
+      - name: Create GitHub Release
+        if: ${{ inputs.apply }}
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ./artifacts/*.nupkg
+          name: Release v${{ steps.bump.outputs.new_version }}
+          tag_name: v${{ steps.bump.outputs.new_version }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

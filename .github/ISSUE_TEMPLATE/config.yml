@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: SubSonicMedia Documentation
+    url: https://github.com/metaneutrons/SubSonicMedia#readme
+    about: Check the README for usage information and examples
+  - name: Subsonic API Documentation
+    url: http://www.subsonic.org/pages/api.jsp
+    about: Reference for the Subsonic API that this library implements

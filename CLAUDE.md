@@ -42,6 +42,45 @@
 - Automatic version bumps based on conventional commits
 - Package publishing triggered by version tags
 
+### GitHub Workflows
+
+- **Build and Test** (.github/workflows/build.yml)
+  - Triggered on push to main branch and PRs
+  - Validates code with StyleCop and CSharpier
+  - Builds solution and runs basic tests
+  - Creates NuGet packages for verification
+
+- **Semantic Version Bump** (.github/workflows/version-bump.yml)
+  - Manually triggered from GitHub Actions tab
+  - Options to apply version bump and create tags
+  - Force specific bump type (auto, patch, minor, major) 
+  - Uses ./scripts/Bump-Version.ps1 to analyze commits
+  - Creates GitHub release when version is bumped
+
+- **Build and Publish NuGet Package** (.github/workflows/publish.yml)
+  - Triggered by version tags (v*) or manually
+  - Builds and validates code
+  - Publishes package to NuGet.org
+  - Creates GitHub release for tag
+
+- **Dependabot**
+  - Auto-updates NuGet packages (weekly)
+  - Auto-updates GitHub Actions (monthly)
+  - Uses conventional commit format
+
+### GitHub Templates
+
+- **Issue Templates**
+  - Bug report template (.github/ISSUE_TEMPLATE/bug_report.md)
+  - Feature request template (.github/ISSUE_TEMPLATE/feature_request.md)
+  
+- **Pull Request Template** (.github/pull_request_template.md)
+  - Structured checklist for contributors
+  - Ensures code quality standards are met
+  
+- **CODEOWNERS** (.github/CODEOWNERS)
+  - Automatically assigns reviewers based on file paths
+
 ## Configuration
 
 - .env file required for testing with required keys: SUBSONIC_SERVER_URL, SUBSONIC_USERNAME, SUBSONIC_PASSWORD

@@ -3,8 +3,14 @@ name: Build and Test
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
   pull_request:
     branches: [ main ]
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
 
 jobs:
   build:
@@ -16,16 +22,25 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '9.0.x'
+        dotnet-version: '8.0.x'
         
     - name: Restore dependencies
       run: dotnet restore
       
-    - name: Build
+    - name: StyleCop check
       run: dotnet build --no-restore /p:TreatWarningsAsErrors=true
       
     - name: Build Release
       run: dotnet build --configuration Release --no-restore
+      
+    - name: Run tests
+      run: |
+        cd SubSonicMedia.TestKit
+        dotnet run list
+        # Note: Full test runs require credentials, so we only run the build verification
+      
+    - name: Format check
+      run: dotnet csharpier . --check
       
     - name: Pack NuGet package
       run: dotnet pack --configuration Release --no-build -o ./artifacts
