@@ -1,7 +1,9 @@
 {
     "editor.formatOnSave": true,
     "editor.formatOnType": true,
-    "editor.rulers": [120],
+    "editor.rulers": [
+        120
+    ],
     "editor.tabSize": 4,
     "editor.insertSpaces": true,
     "editor.detectIndentation": false,
@@ -24,5 +26,15 @@
     "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": true,
     "[csharp]": {
         "editor.defaultFormatter": "csharpier.csharpier-vscode"
-    }
+    },
+    "cSpell.words": [
+        "Ansi",
+        "csharpier",
+        "dotnet",
+        "grey",
+        "nullable",
+        "pwsh",
+        "Schmieder",
+        "stylecop"
+    ]
 }
