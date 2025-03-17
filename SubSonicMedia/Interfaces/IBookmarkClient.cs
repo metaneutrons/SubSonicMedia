@@ -45,7 +45,7 @@ namespace SubSonicMedia.Interfaces
         Task<BaseResponse> CreateBookmarkAsync(
             string id,
             long position,
-            string comment = null,
+            string? comment = null,
             CancellationToken cancellationToken = default
         );
 

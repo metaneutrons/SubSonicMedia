@@ -43,7 +43,7 @@ namespace SubSonicMedia.Clients
         /// <inheritdoc/>
         public Task<PodcastsResponse> GetPodcastsAsync(
             bool? includeEpisodes = null,
-            string id = null,
+            string? id = null,
             CancellationToken cancellationToken = default
         )
         {
@@ -153,7 +153,7 @@ namespace SubSonicMedia.Clients
         {
             return this._client.ExecuteRequestAsync<RefreshPodcastsResponse>(
                 "refreshPodcasts",
-                null,
+                new Dictionary<string, string>(),
                 cancellationToken
             );
         }

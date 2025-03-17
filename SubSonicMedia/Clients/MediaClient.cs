@@ -44,9 +44,9 @@ namespace SubSonicMedia.Clients
         public Task<Stream> StreamAsync(
             string id,
             int? maxBitRate = null,
-            string format = null,
+            string? format = null,
             int? timeOffset = null,
-            string size = null,
+            string? size = null,
             bool? estimateContentLength = null,
             bool? converted = null,
             CancellationToken cancellationToken = default

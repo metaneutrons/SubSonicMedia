@@ -40,22 +40,22 @@ namespace SubSonicMedia.Responses.Playlists
         /// <summary>
         /// Gets or sets the playlist ID.
         /// </summary>
-        public string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the playlist name.
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the playlist comment.
         /// </summary>
-        public string Comment { get; set; }
+        public string? Comment { get; set; }
 
         /// <summary>
         /// Gets or sets the playlist owner.
         /// </summary>
-        public string Owner { get; set; }
+        public string? Owner { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the playlist is public.
@@ -85,7 +85,7 @@ namespace SubSonicMedia.Responses.Playlists
         /// <summary>
         /// Gets or sets the playlist's cover art ID.
         /// </summary>
-        public string CoverArt { get; set; }
+        public string? CoverArt { get; set; }
 
         /// <summary>
         /// Gets or sets the songs in the playlist.

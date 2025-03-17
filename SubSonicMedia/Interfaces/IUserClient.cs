@@ -85,7 +85,7 @@ namespace SubSonicMedia.Interfaces
             bool? podcastRole = null,
             bool? shareRole = null,
             bool? videoConversionRole = null,
-            string musicFolderIds = null,
+            string? musicFolderIds = null,
             CancellationToken cancellationToken = default
         );
 
@@ -114,8 +114,8 @@ namespace SubSonicMedia.Interfaces
         /// <returns>A basic response indicating success or failure.</returns>
         Task<BaseResponse> UpdateUserAsync(
             string username,
-            string password = null,
-            string email = null,
+            string? password = null,
+            string? email = null,
             bool? ldapAuthenticated = null,
             bool? adminRole = null,
             bool? settingsRole = null,
@@ -129,7 +129,7 @@ namespace SubSonicMedia.Interfaces
             bool? podcastRole = null,
             bool? shareRole = null,
             bool? videoConversionRole = null,
-            string musicFolderIds = null,
+            string? musicFolderIds = null,
             int? maxBitRate = null,
             CancellationToken cancellationToken = default
         );

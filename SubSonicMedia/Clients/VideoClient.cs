@@ -46,7 +46,7 @@ namespace SubSonicMedia.Clients
         {
             return this._client.ExecuteRequestAsync<VideosResponse>(
                 "getVideos",
-                null,
+                new Dictionary<string, string>(),
                 cancellationToken
             );
         }
@@ -84,9 +84,9 @@ namespace SubSonicMedia.Clients
         public Task<string> GetVideoStreamUrlAsync(
             string id,
             int? maxBitRate = null,
-            string format = null,
+            string? format = null,
             int? timeOffset = null,
-            string size = null,
+            string? size = null,
             bool? estimateContentLength = null,
             CancellationToken cancellationToken = default
         )
@@ -154,7 +154,7 @@ namespace SubSonicMedia.Clients
         /// <inheritdoc/>
         public async Task<Stream> GetCaptionsAsync(
             string id,
-            string format = null,
+            string? format = null,
             CancellationToken cancellationToken = default
         )
         {

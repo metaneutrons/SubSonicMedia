@@ -47,7 +47,7 @@ namespace SubSonicMedia.Clients
         {
             return this._client.ExecuteRequestAsync<InternetRadioStationsResponse>(
                 "getInternetRadioStations",
-                null,
+                new Dictionary<string, string>(),
                 cancellationToken
             );
         }
@@ -56,7 +56,7 @@ namespace SubSonicMedia.Clients
         public Task<BaseResponse> CreateInternetRadioStationAsync(
             string streamUrl,
             string name,
-            string homepageUrl = null,
+            string? homepageUrl = null,
             CancellationToken cancellationToken = default
         )
         {
@@ -83,7 +83,7 @@ namespace SubSonicMedia.Clients
             string id,
             string streamUrl,
             string name,
-            string homepageUrl = null,
+            string? homepageUrl = null,
             CancellationToken cancellationToken = default
         )
         {

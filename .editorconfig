@@ -122,6 +122,7 @@ dotnet_diagnostic.SA1009.severity = none # Closing parenthesis should be spaced 
 dotnet_diagnostic.SA1111.severity = none # Closing parenthesis should be on line of last parameter
 dotnet_diagnostic.SA1118.severity = none # Parameter should not span multiple lines
 dotnet_diagnostic.SA1137.severity = none # Elements should have the same indentation
+dotnet_diagnostic.SA1309.severity = none # Field names should not begin with underscore
 dotnet_diagnostic.SA1501.severity = none # Statement should not be on a single line
 dotnet_diagnostic.SA1502.severity = none # Element should not be on a single line
 dotnet_diagnostic.SA1504.severity = none # All accessors should be single-line or multi-line

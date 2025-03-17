@@ -70,7 +70,7 @@ namespace SubSonicMedia.Interfaces
         Task CreateUserAsync(
             string username,
             string password,
-            string email = null,
+            string? email = null,
             bool? ldapAuthenticated = null,
             bool? adminRole = null,
             bool? settingsRole = null,
@@ -84,7 +84,7 @@ namespace SubSonicMedia.Interfaces
             bool? podcastRole = null,
             bool? shareRole = null,
             bool? videoConversionRole = null,
-            IEnumerable<string> musicFolderIds = null,
+            IEnumerable<string>? musicFolderIds = null,
             CancellationToken cancellationToken = default
         );
 
@@ -113,8 +113,8 @@ namespace SubSonicMedia.Interfaces
         /// <returns>A task representing the asynchronous operation.</returns>
         Task UpdateUserAsync(
             string username,
-            string password = null,
-            string email = null,
+            string? password = null,
+            string? email = null,
             bool? ldapAuthenticated = null,
             bool? adminRole = null,
             bool? settingsRole = null,
@@ -128,7 +128,7 @@ namespace SubSonicMedia.Interfaces
             bool? podcastRole = null,
             bool? shareRole = null,
             bool? videoConversionRole = null,
-            IEnumerable<string> musicFolderIds = null,
+            IEnumerable<string>? musicFolderIds = null,
             int? maxBitRate = null,
             CancellationToken cancellationToken = default
         );

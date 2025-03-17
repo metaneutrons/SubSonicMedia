@@ -25,12 +25,12 @@ namespace SubSonicMedia.Responses.Search
         /// <summary>
         /// Gets or sets the song ID.
         /// </summary>
-        public string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the parent ID.
         /// </summary>
-        public string Parent { get; set; }
+        public string Parent { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets a value indicating whether this is a directory.
@@ -40,17 +40,17 @@ namespace SubSonicMedia.Responses.Search
         /// <summary>
         /// Gets or sets the song title.
         /// </summary>
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the album name.
         /// </summary>
-        public string Album { get; set; }
+        public string Album { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the artist name.
         /// </summary>
-        public string Artist { get; set; }
+        public string Artist { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the track number.
@@ -65,12 +65,12 @@ namespace SubSonicMedia.Responses.Search
         /// <summary>
         /// Gets or sets the genre.
         /// </summary>
-        public string Genre { get; set; }
+        public string? Genre { get; set; }
 
         /// <summary>
         /// Gets or sets the cover art ID.
         /// </summary>
-        public string CoverArt { get; set; }
+        public string? CoverArt { get; set; }
 
         /// <summary>
         /// Gets or sets the file size in bytes.
@@ -80,22 +80,22 @@ namespace SubSonicMedia.Responses.Search
         /// <summary>
         /// Gets or sets the content type.
         /// </summary>
-        public string ContentType { get; set; }
+        public string ContentType { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the file suffix.
         /// </summary>
-        public string Suffix { get; set; }
+        public string Suffix { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the transcoded content type.
         /// </summary>
-        public string TranscodedContentType { get; set; }
+        public string? TranscodedContentType { get; set; }
 
         /// <summary>
         /// Gets or sets the transcoded suffix.
         /// </summary>
-        public string TranscodedSuffix { get; set; }
+        public string? TranscodedSuffix { get; set; }
 
         /// <summary>
         /// Gets or sets the duration in seconds.

@@ -55,9 +55,9 @@ namespace SubSonicMedia
         /// <param name="logger">Optional logger. If null, NullLogger will be used.</param>
         public SubsonicClient(
             SubsonicConnectionInfo connectionInfo,
-            IAuthenticationProvider authProvider = null,
-            HttpClient httpClient = null,
-            ILogger<SubsonicClient> logger = null
+            IAuthenticationProvider? authProvider = null,
+            HttpClient? httpClient = null,
+            ILogger<SubsonicClient>? logger = null
         )
         {
             this._connectionInfo =
@@ -190,7 +190,7 @@ namespace SubSonicMedia
         /// <returns>The response from the server.</returns>
         internal async Task<T> ExecuteRequestAsync<T>(
             string endpoint,
-            Dictionary<string, string> parameters = null,
+            Dictionary<string, string>? parameters = null,
             CancellationToken cancellationToken = default
         )
             where T : SubsonicResponse, new()
@@ -274,7 +274,7 @@ namespace SubSonicMedia
         /// <returns>A stream containing the binary data.</returns>
         internal async Task<Stream> ExecuteBinaryRequestAsync(
             string endpoint,
-            Dictionary<string, string> parameters = null,
+            Dictionary<string, string>? parameters = null,
             CancellationToken cancellationToken = default
         )
         {

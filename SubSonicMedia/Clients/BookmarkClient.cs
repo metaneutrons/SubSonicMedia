@@ -47,7 +47,7 @@ namespace SubSonicMedia.Clients
         {
             return this._client.ExecuteRequestAsync<BookmarksResponse>(
                 "getBookmarks",
-                null,
+                new Dictionary<string, string>(),
                 cancellationToken
             );
         }
@@ -56,7 +56,7 @@ namespace SubSonicMedia.Clients
         public Task<BaseResponse> CreateBookmarkAsync(
             string id,
             long position,
-            string comment = null,
+            string? comment = null,
             CancellationToken cancellationToken = default
         )
         {

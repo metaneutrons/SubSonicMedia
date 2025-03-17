@@ -19,6 +19,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using SubSonicMedia.Responses.Browsing;
+using SubSonicMedia.Responses.Video;
 
 namespace SubSonicMedia.Interfaces
 {
@@ -44,7 +45,7 @@ namespace SubSonicMedia.Interfaces
         /// <param name="cancellationToken">A token for canceling the operation.</param>
         /// <returns>A response containing indexes of artists.</returns>
         Task<IndexesResponse> GetIndexesAsync(
-            string musicFolderId = null,
+            string? musicFolderId = null,
             DateTime? ifModifiedSince = null,
             CancellationToken cancellationToken = default
         );
@@ -79,10 +80,10 @@ namespace SubSonicMedia.Interfaces
         /// <returns>A response containing random songs.</returns>
         Task<RandomSongsResponse> GetRandomSongsAsync(
             int? size = null,
-            string genre = null,
+            string? genre = null,
             int? fromYear = null,
             int? toYear = null,
-            string musicFolderId = null,
+            string? musicFolderId = null,
             CancellationToken cancellationToken = default
         );
 
@@ -93,7 +94,7 @@ namespace SubSonicMedia.Interfaces
         /// <param name="cancellationToken">A token for canceling the operation.</param>
         /// <returns>A response containing all artists.</returns>
         Task<ArtistsResponse> GetArtistsAsync(
-            string musicFolderId = null,
+            string? musicFolderId = null,
             CancellationToken cancellationToken = default
         );
 
@@ -189,7 +190,70 @@ namespace SubSonicMedia.Interfaces
             string genre,
             int? count = null,
             int? offset = null,
-            string musicFolderId = null,
+            string? musicFolderId = null,
+            CancellationToken cancellationToken = default
+        );
+
+        /// <summary>
+        /// Gets all videos.
+        /// </summary>
+        /// <param name="cancellationToken">A token for canceling the operation.</param>
+        /// <returns>A response containing all videos.</returns>
+        Task<VideosResponse> GetVideosAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Gets details for a video.
+        /// </summary>
+        /// <param name="id">The ID of the video.</param>
+        /// <param name="cancellationToken">A token for canceling the operation.</param>
+        /// <returns>A response containing video details.</returns>
+        Task<VideoInfoResponse> GetVideoInfoAsync(
+            string id,
+            CancellationToken cancellationToken = default
+        );
+
+        /// <summary>
+        /// Gets a listing of albums using ID3 tag organization.
+        /// </summary>
+        /// <param name="type">The list type.</param>
+        /// <param name="size">The maximum number of albums to return.</param>
+        /// <param name="offset">The offset. Used for paging.</param>
+        /// <param name="fromYear">Only return albums from this year or later.</param>
+        /// <param name="toYear">Only return albums from this year or earlier.</param>
+        /// <param name="genre">Only return albums of this genre.</param>
+        /// <param name="musicFolderId">Only return albums from the music folder with the given ID.</param>
+        /// <param name="cancellationToken">A token for canceling the operation.</param>
+        /// <returns>A response containing albums.</returns>
+        Task<AlbumList2Response> GetAlbumListAsync(
+            AlbumListType type,
+            int? size = null,
+            int? offset = null,
+            int? fromYear = null,
+            int? toYear = null,
+            string? genre = null,
+            string? musicFolderId = null,
+            CancellationToken cancellationToken = default
+        );
+
+        /// <summary>
+        /// Gets starred items (songs, albums, artists).
+        /// </summary>
+        /// <param name="musicFolderId">Only return items from the music folder with the given ID.</param>
+        /// <param name="cancellationToken">A token for canceling the operation.</param>
+        /// <returns>A response containing starred items.</returns>
+        Task<StarredResponse> GetStarredAsync(
+            string? musicFolderId = null,
+            CancellationToken cancellationToken = default
+        );
+
+        /// <summary>
+        /// Similar to getStarred, but organizes music according to ID3 tags.
+        /// </summary>
+        /// <param name="musicFolderId">Only return items from the music folder with the given ID.</param>
+        /// <param name="cancellationToken">A token for canceling the operation.</param>
+        /// <returns>A response containing starred items (version 2).</returns>
+        Task<Starred2Response> GetStarred2Async(
+            string? musicFolderId = null,
             CancellationToken cancellationToken = default
         );
     }

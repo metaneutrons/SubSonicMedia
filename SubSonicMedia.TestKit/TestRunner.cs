@@ -210,6 +210,9 @@ namespace SubSonicMedia.TestKit
             this._tests.Add(new SystemTest(this._client, this._settings));
             this._tests.Add(new UserTest(this._client, this._settings));
             this._tests.Add(new VideoTest(this._client, this._settings));
+
+            // Specific feature tests
+            this._tests.Add(new NullHandlingTest(this._client, this._settings));
         }
     }
 }

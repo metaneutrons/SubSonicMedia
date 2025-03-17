@@ -46,7 +46,7 @@ namespace SubSonicMedia.Clients
             int? artistCount = null,
             int? albumCount = null,
             int? songCount = null,
-            string musicFolderId = null,
+            string? musicFolderId = null,
             CancellationToken cancellationToken = default
         )
         {
@@ -93,7 +93,7 @@ namespace SubSonicMedia.Clients
             int? albumOffset = null,
             int? songCount = null,
             int? songOffset = null,
-            string musicFolderId = null,
+            string? musicFolderId = null,
             CancellationToken cancellationToken = default
         )
         {
@@ -155,7 +155,7 @@ namespace SubSonicMedia.Clients
             int? albumOffset = null,
             int? songCount = null,
             int? songOffset = null,
-            string musicFolderId = null,
+            string? musicFolderId = null,
             CancellationToken cancellationToken = default
         )
         {

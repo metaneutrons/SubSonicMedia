@@ -138,8 +138,8 @@ namespace SubSonicMedia.Utilities
 
                         var playlist = new Responses.Playlists.PlaylistSummary
                         {
-                            Id = playlistNode["id"]?.GetValue<string>(),
-                            Name = playlistNode["name"]?.GetValue<string>(),
+                            Id = playlistNode["id"]?.GetValue<string>() ?? string.Empty,
+                            Name = playlistNode["name"]?.GetValue<string>() ?? string.Empty,
                             Comment = playlistNode["comment"]?.GetValue<string>(),
                             Owner = playlistNode["owner"]?.GetValue<string>(),
                             Public = playlistNode["public"]?.GetValue<bool>() ?? false,
@@ -180,8 +180,10 @@ namespace SubSonicMedia.Utilities
                 var playlistNode = rootNode["playlist"];
 
                 // Set playlist properties
-                playlistResponse.Playlist.Id = playlistNode["id"]?.GetValue<string>();
-                playlistResponse.Playlist.Name = playlistNode["name"]?.GetValue<string>();
+                playlistResponse.Playlist.Id =
+                    playlistNode["id"]?.GetValue<string>() ?? string.Empty;
+                playlistResponse.Playlist.Name =
+                    playlistNode["name"]?.GetValue<string>() ?? string.Empty;
                 playlistResponse.Playlist.Comment = playlistNode["comment"]?.GetValue<string>();
                 playlistResponse.Playlist.Owner = playlistNode["owner"]?.GetValue<string>();
                 playlistResponse.Playlist.Public =

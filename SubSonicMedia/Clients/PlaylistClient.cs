@@ -43,7 +43,7 @@ namespace SubSonicMedia.Clients
 
         /// <inheritdoc/>
         public Task<PlaylistsResponse> GetPlaylistsAsync(
-            string username = null,
+            string? username = null,
             CancellationToken cancellationToken = default
         )
         {
@@ -84,7 +84,7 @@ namespace SubSonicMedia.Clients
         /// <inheritdoc/>
         public Task<PlaylistResponse> CreatePlaylistAsync(
             string name,
-            IEnumerable<string> songIds = null,
+            IEnumerable<string>? songIds = null,
             CancellationToken cancellationToken = default
         )
         {
@@ -114,11 +114,11 @@ namespace SubSonicMedia.Clients
         /// <inheritdoc/>
         public Task UpdatePlaylistAsync(
             string id,
-            string name = null,
-            string comment = null,
+            string? name = null,
+            string? comment = null,
             bool? isPublic = null,
-            IEnumerable<string> songIdsToAdd = null,
-            IEnumerable<int> songIndicesToRemove = null,
+            IEnumerable<string>? songIdsToAdd = null,
+            IEnumerable<int>? songIndicesToRemove = null,
             CancellationToken cancellationToken = default
         )
         {
@@ -201,7 +201,7 @@ namespace SubSonicMedia.Clients
         /// <inheritdoc/>
         public Task<PlayQueueResponse> SavePlayQueueAsync(
             IEnumerable<string> ids,
-            string current = null,
+            string? current = null,
             long? position = null,
             CancellationToken cancellationToken = default
         )

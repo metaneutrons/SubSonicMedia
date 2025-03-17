@@ -67,7 +67,7 @@ namespace SubSonicMedia.Clients
         {
             return this._client.ExecuteRequestAsync<UsersResponse>(
                 "getUsers",
-                null,
+                new Dictionary<string, string>(),
                 cancellationToken
             );
         }
@@ -90,7 +90,7 @@ namespace SubSonicMedia.Clients
             bool? podcastRole = null,
             bool? shareRole = null,
             bool? videoConversionRole = null,
-            string musicFolderIds = null,
+            string? musicFolderIds = null,
             CancellationToken cancellationToken = default
         )
         {
@@ -145,8 +145,8 @@ namespace SubSonicMedia.Clients
         /// <inheritdoc/>
         public Task<BaseResponse> UpdateUserAsync(
             string username,
-            string password = null,
-            string email = null,
+            string? password = null,
+            string? email = null,
             bool? ldapAuthenticated = null,
             bool? adminRole = null,
             bool? settingsRole = null,
@@ -160,7 +160,7 @@ namespace SubSonicMedia.Clients
             bool? podcastRole = null,
             bool? shareRole = null,
             bool? videoConversionRole = null,
-            string musicFolderIds = null,
+            string? musicFolderIds = null,
             int? maxBitRate = null,
             CancellationToken cancellationToken = default
         )

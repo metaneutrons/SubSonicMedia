@@ -27,6 +27,9 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
+      - name: Format check
+        run: dotnet csharpier . --check
+
       - name: StyleCop check
         run: dotnet build --no-restore
 
@@ -38,9 +41,6 @@ jobs:
           cd SubSonicMedia.TestKit
           dotnet run list
           # Note: Full test runs require credentials, so we only run the build verification
-
-      - name: Format check
-        run: dotnet csharpier . --check
 
       - name: Pack NuGet package
         run: dotnet pack --configuration Release --no-build -o ./artifacts

@@ -36,7 +36,7 @@ namespace SubSonicMedia.Interfaces
         /// <returns>A response containing podcasts.</returns>
         Task<PodcastsResponse> GetPodcastsAsync(
             bool? includeEpisodes = null,
-            string id = null,
+            string? id = null,
             CancellationToken cancellationToken = default
         );
 

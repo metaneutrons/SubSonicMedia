@@ -63,9 +63,9 @@ namespace SubSonicMedia.Interfaces
         Task<string> GetVideoStreamUrlAsync(
             string id,
             int? maxBitRate = null,
-            string format = null,
+            string? format = null,
             int? timeOffset = null,
-            string size = null,
+            string? size = null,
             bool? estimateContentLength = null,
             CancellationToken cancellationToken = default
         );
@@ -90,7 +90,7 @@ namespace SubSonicMedia.Interfaces
         /// <returns>The captions as a stream.</returns>
         Task<Stream> GetCaptionsAsync(
             string id,
-            string format = null,
+            string? format = null,
             CancellationToken cancellationToken = default
         );
     }
