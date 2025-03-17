@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see <https://www.gnu.org/licenses/>.
+// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
 // </copyright>
 
 using System;
@@ -44,7 +44,7 @@ namespace SubSonicMedia.Authentication
         )
         {
             // Generate a random salt
-            string salt = GenerateRandomSalt();
+            string salt = this.GenerateRandomSalt();
 
             // Calculate token: MD5(password + salt)
             string token = CalculateMd5Hash(connectionInfo.Password + salt);

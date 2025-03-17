@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see <https://www.gnu.org/licenses/>.
+// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
 // </copyright>
 
 using System;
@@ -37,7 +37,7 @@ namespace SubSonicMedia.Clients
         /// <param name="client">The Subsonic client.</param>
         public SearchClient(SubsonicClient client)
         {
-            _client = client ?? throw new ArgumentNullException(nameof(client));
+            this._client = client ?? throw new ArgumentNullException(nameof(client));
         }
 
         /// <inheritdoc/>
@@ -77,7 +77,7 @@ namespace SubSonicMedia.Clients
                 parameters.Add("musicFolderId", musicFolderId);
             }
 
-            return _client.ExecuteRequestAsync<SearchResponse>(
+            return this._client.ExecuteRequestAsync<SearchResponse>(
                 "search",
                 parameters,
                 cancellationToken
@@ -139,7 +139,7 @@ namespace SubSonicMedia.Clients
                 parameters.Add("musicFolderId", musicFolderId);
             }
 
-            return _client.ExecuteRequestAsync<SearchResponse>(
+            return this._client.ExecuteRequestAsync<SearchResponse>(
                 "search2",
                 parameters,
                 cancellationToken
@@ -201,7 +201,7 @@ namespace SubSonicMedia.Clients
                 parameters.Add("musicFolderId", musicFolderId);
             }
 
-            return _client.ExecuteRequestAsync<Search3Response>(
+            return this._client.ExecuteRequestAsync<Search3Response>(
                 "search3",
                 parameters,
                 cancellationToken

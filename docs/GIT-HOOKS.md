@@ -1,6 +1,6 @@
 # Git Hooks in SubSonicMedia
 
-This project uses [Husky.Net](https://alirezanet.github.io/Husky.Net/) to manage Git hooks. The hooks are now implemented in PowerShell to align with our PowerShell-only scripting policy.
+This project uses [Husky.Net](https://alirezanet.github.io/Husky.Net/) to manage Git hooks. The hooks are implemented in PowerShell to align with our PowerShell-only scripting policy. Ensure that PowerShell is installed on your Linux or MacOS development machine.
 
 ## Available Hooks
 
@@ -22,7 +22,8 @@ This project uses [Husky.Net](https://alirezanet.github.io/Husky.Net/) to manage
 
 ## Testing the Hooks
 
-### Testing pre-commit hook:
+### Testing pre-commit hook
+
 ```pwsh
 # Test CSharpier formatting
 dotnet csharpier . --check
@@ -34,7 +35,8 @@ git commit -m "test: add shell script"  # Should fail
 rm test.sh
 ```
 
-### Testing pre-push hook:
+### Testing pre-push hook
+
 ```pwsh
 # Introduce a StyleCop warning/error
 # Example: Remove a required XML comment from a public method
@@ -44,7 +46,8 @@ git push  # Should fail
 git reset HEAD~1  # Undo the test commit
 ```
 
-### Testing commit-msg hook:
+### Testing commit-msg hook
+
 ```pwsh
 # Test with invalid message format
 git commit -m "adding something"  # Should fail

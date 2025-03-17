@@ -27,13 +27,13 @@ A comprehensive .NET client library for the Subsonic API, supporting API version
 
 ```powershell
 Install-Package SubSonicMedia
-```
+```bash
 
 #### .NET CLI
 
 ```bash
 dotnet add package SubSonicMedia
-```
+```bash
 
 #### PackageReference (in .csproj file)
 
@@ -43,7 +43,7 @@ dotnet add package SubSonicMedia
 
 You can find the latest version on [NuGet.org](https://www.nuget.org/packages/SubSonicMedia/).
 
-### Usage
+### TestKit Usage
 
 ```csharp
 // Create a connection to your Subsonic server
@@ -83,7 +83,7 @@ The project includes a comprehensive TestKit for validating the SubSonicMedia AP
 
 The TestKit uses a `.env` file for configuration. Copy the `.env.example` file to `.env` in the TestKit directory and update the following settings:
 
-```
+```env
 # Server information
 SUBSONIC_SERVER_URL=https://your-server-url
 SUBSONIC_USERNAME=your-username

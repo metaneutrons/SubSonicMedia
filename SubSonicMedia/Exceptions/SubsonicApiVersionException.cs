@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see <https://www.gnu.org/licenses/>.
+// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
 // </copyright>
 
 using System;
@@ -35,8 +35,8 @@ namespace SubSonicMedia.Exceptions
                 $"Subsonic API version '{requestedVersion}' is not supported. Maximum supported version is '{supportedVersion}'."
             )
         {
-            RequestedVersion = requestedVersion;
-            SupportedVersion = supportedVersion;
+            this.RequestedVersion = requestedVersion;
+            this.SupportedVersion = supportedVersion;
         }
 
         /// <summary>

@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see <https://www.gnu.org/licenses/>.
+// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
 // </copyright>
 
 using System;
@@ -38,7 +38,7 @@ namespace SubSonicMedia.Clients
         /// <param name="client">The Subsonic client.</param>
         public UserManagementClient(SubsonicClient client)
         {
-            _client = client ?? throw new ArgumentNullException(nameof(client));
+            this._client = client ?? throw new ArgumentNullException(nameof(client));
         }
 
         /// <inheritdoc/>
@@ -54,7 +54,7 @@ namespace SubSonicMedia.Clients
 
             var parameters = new Dictionary<string, string> { { "username", username } };
 
-            return _client.ExecuteRequestAsync<UserResponse>(
+            return this._client.ExecuteRequestAsync<UserResponse>(
                 "getUser",
                 parameters,
                 cancellationToken
@@ -64,7 +64,11 @@ namespace SubSonicMedia.Clients
         /// <inheritdoc/>
         public Task<UsersResponse> GetUsersAsync(CancellationToken cancellationToken = default)
         {
-            return _client.ExecuteRequestAsync<UsersResponse>("getUsers", null, cancellationToken);
+            return this._client.ExecuteRequestAsync<UsersResponse>(
+                "getUsers",
+                null,
+                cancellationToken
+            );
         }
 
         /// <inheritdoc/>
@@ -102,7 +106,7 @@ namespace SubSonicMedia.Clients
             var parameters = new Dictionary<string, string>
             {
                 { "username", username },
-                { "password", password }
+                { "password", password },
             };
 
             if (!string.IsNullOrEmpty(email))
@@ -143,7 +147,7 @@ namespace SubSonicMedia.Clients
                 }
             }
 
-            return _client.ExecuteRequestAsync<Responses.SubsonicResponse>(
+            return this._client.ExecuteRequestAsync<Responses.SubsonicResponse>(
                 "createUser",
                 parameters,
                 cancellationToken
@@ -228,7 +232,7 @@ namespace SubSonicMedia.Clients
                 parameters.Add("maxBitRate", maxBitRate.Value.ToString());
             }
 
-            return _client.ExecuteRequestAsync<Responses.SubsonicResponse>(
+            return this._client.ExecuteRequestAsync<Responses.SubsonicResponse>(
                 "updateUser",
                 parameters,
                 cancellationToken
@@ -245,7 +249,7 @@ namespace SubSonicMedia.Clients
 
             var parameters = new Dictionary<string, string> { { "username", username } };
 
-            return _client.ExecuteRequestAsync<Responses.SubsonicResponse>(
+            return this._client.ExecuteRequestAsync<Responses.SubsonicResponse>(
                 "deleteUser",
                 parameters,
                 cancellationToken
@@ -272,10 +276,10 @@ namespace SubSonicMedia.Clients
             var parameters = new Dictionary<string, string>
             {
                 { "username", username },
-                { "password", password }
+                { "password", password },
             };
 
-            return _client.ExecuteRequestAsync<Responses.SubsonicResponse>(
+            return this._client.ExecuteRequestAsync<Responses.SubsonicResponse>(
                 "changePassword",
                 parameters,
                 cancellationToken

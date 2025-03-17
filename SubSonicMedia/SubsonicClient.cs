@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see <https://www.gnu.org/licenses/>.
+// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
 // </copyright>
 
 using System;
@@ -60,7 +60,7 @@ namespace SubSonicMedia
             ILogger<SubsonicClient> logger = null
         )
         {
-            _connectionInfo =
+            this._connectionInfo =
                 connectionInfo ?? throw new ArgumentNullException(nameof(connectionInfo));
 
             if (string.IsNullOrWhiteSpace(connectionInfo.ServerUrl))
@@ -90,29 +90,29 @@ namespace SubSonicMedia
                 );
             }
 
-            _httpClient = httpClient ?? new HttpClient();
+            this._httpClient = httpClient ?? new HttpClient();
 
             // Ensure the base address ends with a slash
             string baseAddress = connectionInfo.ServerUrl.TrimEnd('/') + "/";
-            _httpClient.BaseAddress = new Uri(baseAddress);
+            this._httpClient.BaseAddress = new Uri(baseAddress);
 
-            _authProvider = authProvider ?? new TokenAuthenticationProvider();
-            _logger = logger ?? NullLogger<SubsonicClient>.Instance;
+            this._authProvider = authProvider ?? new TokenAuthenticationProvider();
+            this._logger = logger ?? NullLogger<SubsonicClient>.Instance;
 
             // Initialize the feature clients
-            Browsing = new BrowsingClient(this);
-            Media = new MediaClient(this);
-            Playlists = new PlaylistClient(this);
-            Search = new SearchClient(this);
-            UserManagement = new UserManagementClient(this);
-            User = new UserClient(this);
-            System = new SystemClient(this);
-            Chat = new ChatClient(this);
-            Jukebox = new JukeboxClient(this);
-            Video = new VideoClient(this);
-            Podcasts = new PodcastClient(this);
-            Radio = new RadioClient(this);
-            Bookmarks = new BookmarkClient(this);
+            this.Browsing = new BrowsingClient(this);
+            this.Media = new MediaClient(this);
+            this.Playlists = new PlaylistClient(this);
+            this.Search = new SearchClient(this);
+            this.UserManagement = new UserManagementClient(this);
+            this.User = new UserClient(this);
+            this.System = new SystemClient(this);
+            this.Chat = new ChatClient(this);
+            this.Jukebox = new JukeboxClient(this);
+            this.Video = new VideoClient(this);
+            this.Podcasts = new PodcastClient(this);
+            this.Radio = new RadioClient(this);
+            this.Bookmarks = new BookmarkClient(this);
         }
 
         /// <summary>
@@ -198,7 +198,7 @@ namespace SubSonicMedia
             try
             {
                 var requestParameters = parameters ?? new Dictionary<string, string>();
-                _authProvider.ApplyAuthentication(requestParameters, _connectionInfo);
+                this._authProvider.ApplyAuthentication(requestParameters, this._connectionInfo);
 
                 var requestBuilder = new RequestBuilder(endpoint);
                 foreach (var parameter in requestParameters)
@@ -207,11 +207,11 @@ namespace SubSonicMedia
                 }
 
                 string requestUrl = requestBuilder.BuildRequestUrl();
-                string fullUrl = $"{_httpClient.BaseAddress}{requestUrl}";
-                _logger.LogDebug("Executing request: {RequestUrl}", fullUrl);
+                string fullUrl = $"{this._httpClient.BaseAddress}{requestUrl}";
+                this._logger.LogDebug("Executing request: {RequestUrl}", fullUrl);
 
-                using var response = await _httpClient
-                    .GetAsync(requestUrl, cancellationToken)
+                using var response = await this
+                    ._httpClient.GetAsync(requestUrl, cancellationToken)
                     .ConfigureAwait(false);
 
                 if (!response.IsSuccessStatusCode)
@@ -228,7 +228,7 @@ namespace SubSonicMedia
 
                 T result;
                 // Use the appropriate parser based on the response format
-                if (_connectionInfo.ResponseFormat?.ToLower() == "json")
+                if (this._connectionInfo.ResponseFormat?.ToLower() == "json")
                 {
                     result = JsonParser.Parse<T>(content);
                 }
@@ -260,7 +260,7 @@ namespace SubSonicMedia
             catch (Exception ex)
                 when (ex is not SubsonicApiException && ex is not OperationCanceledException)
             {
-                _logger.LogError(ex, "Error executing request to {Endpoint}", endpoint);
+                this._logger.LogError(ex, "Error executing request to {Endpoint}", endpoint);
                 throw new SubsonicApiException(0, $"Error executing request: {ex.Message}", ex);
             }
         }
@@ -281,7 +281,7 @@ namespace SubSonicMedia
             try
             {
                 var requestParameters = parameters ?? new Dictionary<string, string>();
-                _authProvider.ApplyAuthentication(requestParameters, _connectionInfo);
+                this._authProvider.ApplyAuthentication(requestParameters, this._connectionInfo);
 
                 var requestBuilder = new RequestBuilder(endpoint);
                 foreach (var parameter in requestParameters)
@@ -290,10 +290,10 @@ namespace SubSonicMedia
                 }
 
                 string requestUrl = requestBuilder.BuildRequestUrl();
-                _logger.LogDebug("Executing binary request: {RequestUrl}", requestUrl);
+                this._logger.LogDebug("Executing binary request: {RequestUrl}", requestUrl);
 
-                var response = await _httpClient
-                    .GetAsync(
+                var response = await this
+                    ._httpClient.GetAsync(
                         requestUrl,
                         HttpCompletionOption.ResponseHeadersRead,
                         cancellationToken
@@ -319,7 +319,7 @@ namespace SubSonicMedia
                             .ConfigureAwait(false);
 
                         SubsonicResponse errorResponse;
-                        if (_connectionInfo.ResponseFormat?.ToLower() == "json")
+                        if (this._connectionInfo.ResponseFormat?.ToLower() == "json")
                         {
                             errorResponse = JsonParser.Parse<SubsonicResponse>(content);
                         }
@@ -347,7 +347,7 @@ namespace SubSonicMedia
             catch (Exception ex)
                 when (ex is not SubsonicApiException && ex is not OperationCanceledException)
             {
-                _logger.LogError(ex, "Error executing binary request to {Endpoint}", endpoint);
+                this._logger.LogError(ex, "Error executing binary request to {Endpoint}", endpoint);
                 throw new SubsonicApiException(
                     0,
                     $"Error executing binary request: {ex.Message}",
@@ -361,7 +361,7 @@ namespace SubSonicMedia
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
+            this.Dispose(true);
             GC.SuppressFinalize(this);
         }
 
@@ -371,17 +371,17 @@ namespace SubSonicMedia
         /// <param name="disposing">Whether to dispose managed resources.</param>
         protected virtual void Dispose(bool disposing)
         {
-            if (_disposed)
+            if (this._disposed)
             {
                 return;
             }
 
             if (disposing)
             {
-                _httpClient?.Dispose();
+                this._httpClient?.Dispose();
             }
 
-            _disposed = true;
+            this._disposed = true;
         }
     }
 }

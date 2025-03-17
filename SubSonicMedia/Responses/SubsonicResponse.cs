@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see <https://www.gnu.org/licenses/>.
+// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
 // </copyright>
 
 using System.Text.Json.Serialization;
@@ -52,7 +52,7 @@ namespace SubSonicMedia.Responses
         /// </summary>
         [XmlIgnore]
         [JsonIgnore]
-        public bool IsSuccess => Status == "ok";
+        public bool IsSuccess => this.Status == "ok";
     }
 
     /// <summary>

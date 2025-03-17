@@ -20,7 +20,7 @@
 - **Naming**: PascalCase for types/methods, camelCase for params/variables, prefix private fields with underscore
 - **Imports**: System imports first, then other namespaces with blank line between groups, placed outside namespace
 - **Organization**: Interfaces in Interfaces/, responses in Responses/, implementations in Clients/
-- **Documentation**: XML docs for public members with <summary> and parameter docs
+- **Documentation**: XML docs for public members with `summary` and parameter docs
 - **Error Handling**: Use SubsonicApiException variants, wrap unexpected exceptions
 - **Nullability**: Enable nullable reference types, validate inputs with guard clauses
 - **API Pattern**: Follow Subsonic API spec exactly, maintain backward compatibility

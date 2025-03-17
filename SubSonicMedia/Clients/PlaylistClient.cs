@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see <https://www.gnu.org/licenses/>.
+// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
 // </copyright>
 
 using System;
@@ -38,7 +38,7 @@ namespace SubSonicMedia.Clients
         /// <param name="client">The Subsonic client.</param>
         public PlaylistClient(SubsonicClient client)
         {
-            _client = client ?? throw new ArgumentNullException(nameof(client));
+            this._client = client ?? throw new ArgumentNullException(nameof(client));
         }
 
         /// <inheritdoc/>
@@ -54,7 +54,7 @@ namespace SubSonicMedia.Clients
                 parameters.Add("username", username);
             }
 
-            return _client.ExecuteRequestAsync<PlaylistsResponse>(
+            return this._client.ExecuteRequestAsync<PlaylistsResponse>(
                 "getPlaylists",
                 parameters,
                 cancellationToken
@@ -74,7 +74,7 @@ namespace SubSonicMedia.Clients
 
             var parameters = new Dictionary<string, string> { { "id", id } };
 
-            return _client.ExecuteRequestAsync<PlaylistResponse>(
+            return this._client.ExecuteRequestAsync<PlaylistResponse>(
                 "getPlaylist",
                 parameters,
                 cancellationToken
@@ -104,7 +104,7 @@ namespace SubSonicMedia.Clients
                 }
             }
 
-            return _client.ExecuteRequestAsync<PlaylistResponse>(
+            return this._client.ExecuteRequestAsync<PlaylistResponse>(
                 "createPlaylist",
                 parameters,
                 cancellationToken
@@ -162,7 +162,7 @@ namespace SubSonicMedia.Clients
                 }
             }
 
-            return _client.ExecuteRequestAsync<Responses.SubsonicResponse>(
+            return this._client.ExecuteRequestAsync<Responses.SubsonicResponse>(
                 "updatePlaylist",
                 parameters,
                 cancellationToken
@@ -179,7 +179,7 @@ namespace SubSonicMedia.Clients
 
             var parameters = new Dictionary<string, string> { { "id", id } };
 
-            return _client.ExecuteRequestAsync<Responses.SubsonicResponse>(
+            return this._client.ExecuteRequestAsync<Responses.SubsonicResponse>(
                 "deletePlaylist",
                 parameters,
                 cancellationToken
@@ -191,7 +191,7 @@ namespace SubSonicMedia.Clients
             CancellationToken cancellationToken = default
         )
         {
-            return _client.ExecuteRequestAsync<PlayQueueResponse>(
+            return this._client.ExecuteRequestAsync<PlayQueueResponse>(
                 "getPlayQueue",
                 null,
                 cancellationToken
@@ -223,7 +223,7 @@ namespace SubSonicMedia.Clients
                 parameters.Add("position", position.Value.ToString());
             }
 
-            return _client.ExecuteRequestAsync<PlayQueueResponse>(
+            return this._client.ExecuteRequestAsync<PlayQueueResponse>(
                 "savePlayQueue",
                 parameters,
                 cancellationToken

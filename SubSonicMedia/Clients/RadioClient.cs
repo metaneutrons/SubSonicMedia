@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see <https://www.gnu.org/licenses/>.
+// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
 // </copyright>
 
 using System.Collections.Generic;
@@ -37,7 +37,7 @@ namespace SubSonicMedia.Clients
         /// <param name="client">The Subsonic client.</param>
         public RadioClient(SubsonicClient client)
         {
-            _client = client;
+            this._client = client;
         }
 
         /// <inheritdoc/>
@@ -45,7 +45,7 @@ namespace SubSonicMedia.Clients
             CancellationToken cancellationToken = default
         )
         {
-            return _client.ExecuteRequestAsync<InternetRadioStationsResponse>(
+            return this._client.ExecuteRequestAsync<InternetRadioStationsResponse>(
                 "getInternetRadioStations",
                 null,
                 cancellationToken
@@ -63,7 +63,7 @@ namespace SubSonicMedia.Clients
             var parameters = new Dictionary<string, string>
             {
                 { "streamUrl", streamUrl },
-                { "name", name }
+                { "name", name },
             };
 
             if (!string.IsNullOrEmpty(homepageUrl))
@@ -71,7 +71,7 @@ namespace SubSonicMedia.Clients
                 parameters.Add("homepageUrl", homepageUrl);
             }
 
-            return _client.ExecuteRequestAsync<BaseResponse>(
+            return this._client.ExecuteRequestAsync<BaseResponse>(
                 "createInternetRadioStation",
                 parameters,
                 cancellationToken
@@ -91,7 +91,7 @@ namespace SubSonicMedia.Clients
             {
                 { "id", id },
                 { "streamUrl", streamUrl },
-                { "name", name }
+                { "name", name },
             };
 
             if (!string.IsNullOrEmpty(homepageUrl))
@@ -99,7 +99,7 @@ namespace SubSonicMedia.Clients
                 parameters.Add("homepageUrl", homepageUrl);
             }
 
-            return _client.ExecuteRequestAsync<BaseResponse>(
+            return this._client.ExecuteRequestAsync<BaseResponse>(
                 "updateInternetRadioStation",
                 parameters,
                 cancellationToken
@@ -114,7 +114,7 @@ namespace SubSonicMedia.Clients
         {
             var parameters = new Dictionary<string, string> { { "id", id } };
 
-            return _client.ExecuteRequestAsync<BaseResponse>(
+            return this._client.ExecuteRequestAsync<BaseResponse>(
                 "deleteInternetRadioStation",
                 parameters,
                 cancellationToken

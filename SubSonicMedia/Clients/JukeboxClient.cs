@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see <https://www.gnu.org/licenses/>.
+// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
 // </copyright>
 
 using System.Collections.Generic;
@@ -37,7 +37,7 @@ namespace SubSonicMedia.Clients
         /// <param name="client">The Subsonic client.</param>
         public JukeboxClient(SubsonicClient client)
         {
-            _client = client;
+            this._client = client;
         }
 
         /// <inheritdoc/>
@@ -45,7 +45,7 @@ namespace SubSonicMedia.Clients
             CancellationToken cancellationToken = default
         )
         {
-            return _client.ExecuteRequestAsync<JukeboxStatusResponse>(
+            return this._client.ExecuteRequestAsync<JukeboxStatusResponse>(
                 "jukeboxControl",
                 new Dictionary<string, string> { { "action", "status" } },
                 cancellationToken
@@ -58,12 +58,12 @@ namespace SubSonicMedia.Clients
             CancellationToken cancellationToken = default
         )
         {
-            return _client.ExecuteRequestAsync<JukeboxControlResponse>(
+            return this._client.ExecuteRequestAsync<JukeboxControlResponse>(
                 "jukeboxControl",
                 new Dictionary<string, string>
                 {
                     { "action", "setGain" },
-                    { "gain", gain.ToString() }
+                    { "gain", gain.ToString() },
                 },
                 cancellationToken
             );
@@ -89,7 +89,7 @@ namespace SubSonicMedia.Clients
                 parameters.Add("offset", offset.Value.ToString());
             }
 
-            return _client.ExecuteRequestAsync<JukeboxControlResponse>(
+            return this._client.ExecuteRequestAsync<JukeboxControlResponse>(
                 "jukeboxControl",
                 parameters,
                 cancellationToken
@@ -110,7 +110,7 @@ namespace SubSonicMedia.Clients
                 parameters.Add($"id", idArray[i]);
             }
 
-            return _client.ExecuteRequestAsync<JukeboxPlaylistResponse>(
+            return this._client.ExecuteRequestAsync<JukeboxPlaylistResponse>(
                 "jukeboxControl",
                 parameters,
                 cancellationToken
@@ -131,7 +131,7 @@ namespace SubSonicMedia.Clients
                 parameters.Add($"index", indexArray[i].ToString());
             }
 
-            return _client.ExecuteRequestAsync<JukeboxPlaylistResponse>(
+            return this._client.ExecuteRequestAsync<JukeboxPlaylistResponse>(
                 "jukeboxControl",
                 parameters,
                 cancellationToken
@@ -152,7 +152,7 @@ namespace SubSonicMedia.Clients
                 parameters.Add($"id", idArray[i]);
             }
 
-            return _client.ExecuteRequestAsync<JukeboxPlaylistResponse>(
+            return this._client.ExecuteRequestAsync<JukeboxPlaylistResponse>(
                 "jukeboxControl",
                 parameters,
                 cancellationToken

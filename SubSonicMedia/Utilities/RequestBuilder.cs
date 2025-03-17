@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see <https://www.gnu.org/licenses/>.
+// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
 // </copyright>
 
 using System;
@@ -41,7 +41,7 @@ namespace SubSonicMedia.Utilities
                 throw new ArgumentException("Endpoint cannot be null or empty", nameof(endpoint));
             }
 
-            _endpoint = endpoint;
+            this._endpoint = endpoint;
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace SubSonicMedia.Utilities
         {
             if (!string.IsNullOrEmpty(value))
             {
-                _parameters[name] = value;
+                this._parameters[name] = value;
             }
 
             return this;
@@ -72,7 +72,7 @@ namespace SubSonicMedia.Utilities
         {
             if (value.HasValue)
             {
-                _parameters[name] = value.Value.ToString();
+                this._parameters[name] = value.Value.ToString();
             }
 
             return this;
@@ -88,7 +88,7 @@ namespace SubSonicMedia.Utilities
         {
             if (value.HasValue)
             {
-                _parameters[name] = value.Value ? "true" : "false";
+                this._parameters[name] = value.Value ? "true" : "false";
             }
 
             return this;
@@ -105,7 +105,7 @@ namespace SubSonicMedia.Utilities
             if (value.HasValue)
             {
                 long unixTimestamp = new DateTimeOffset(value.Value).ToUnixTimeMilliseconds();
-                _parameters[name] = unixTimestamp.ToString();
+                this._parameters[name] = unixTimestamp.ToString();
             }
 
             return this;
@@ -126,7 +126,7 @@ namespace SubSonicMedia.Utilities
                 {
                     for (int i = 0; i < nonEmptyValues.Count; i++)
                     {
-                        _parameters[$"{name}"] = string.Join(",", nonEmptyValues);
+                        this._parameters[$"{name}"] = string.Join(",", nonEmptyValues);
                     }
                 }
             }
@@ -149,7 +149,7 @@ namespace SubSonicMedia.Utilities
                 {
                     for (int i = 0; i < valuesList.Count; i++)
                     {
-                        _parameters[$"{name}"] = string.Join(",", valuesList);
+                        this._parameters[$"{name}"] = string.Join(",", valuesList);
                     }
                 }
             }
@@ -164,7 +164,7 @@ namespace SubSonicMedia.Utilities
         public string BuildRequestUrl()
         {
             var queryString = new StringBuilder();
-            foreach (var parameter in _parameters)
+            foreach (var parameter in this._parameters)
             {
                 if (queryString.Length > 0)
                 {
@@ -176,7 +176,7 @@ namespace SubSonicMedia.Utilities
                 queryString.Append(Uri.EscapeDataString(parameter.Value));
             }
 
-            return $"rest/{_endpoint}.view?{queryString}";
+            return $"rest/{this._endpoint}.view?{queryString}";
         }
     }
 }

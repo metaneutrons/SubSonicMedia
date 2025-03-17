@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see <https://www.gnu.org/licenses/>.
+// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
 // </copyright>
 
 using System;
@@ -37,19 +37,19 @@ namespace SubSonicMedia.Clients
         /// <param name="client">The Subsonic client.</param>
         public SystemClient(SubsonicClient client)
         {
-            _client = client ?? throw new ArgumentNullException(nameof(client));
+            this._client = client ?? throw new ArgumentNullException(nameof(client));
         }
 
         /// <inheritdoc/>
         public Task<BaseResponse> PingAsync(CancellationToken cancellationToken = default)
         {
-            return _client.ExecuteRequestAsync<BaseResponse>("ping", null, cancellationToken);
+            return this._client.ExecuteRequestAsync<BaseResponse>("ping", null, cancellationToken);
         }
 
         /// <inheritdoc/>
         public Task<LicenseResponse> GetLicenseAsync(CancellationToken cancellationToken = default)
         {
-            return _client.ExecuteRequestAsync<LicenseResponse>(
+            return this._client.ExecuteRequestAsync<LicenseResponse>(
                 "getLicense",
                 null,
                 cancellationToken
@@ -61,7 +61,7 @@ namespace SubSonicMedia.Clients
             CancellationToken cancellationToken = default
         )
         {
-            return _client.ExecuteRequestAsync<ScanStatusResponse>(
+            return this._client.ExecuteRequestAsync<ScanStatusResponse>(
                 "getScanStatus",
                 null,
                 cancellationToken
@@ -73,7 +73,7 @@ namespace SubSonicMedia.Clients
             CancellationToken cancellationToken = default
         )
         {
-            return _client.ExecuteRequestAsync<ScanStatusResponse>(
+            return this._client.ExecuteRequestAsync<ScanStatusResponse>(
                 "startScan",
                 null,
                 cancellationToken

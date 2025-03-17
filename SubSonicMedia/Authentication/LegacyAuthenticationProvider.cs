@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see <https://www.gnu.org/licenses/>.
+// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
 // </copyright>
 
 using System;
@@ -40,7 +40,7 @@ namespace SubSonicMedia.Authentication
         /// <param name="useHexEncoding">Indicates whether to use hex encoding for the password.</param>
         public LegacyAuthenticationProvider(bool useHexEncoding = false)
         {
-            _useHexEncoding = useHexEncoding;
+            this._useHexEncoding = useHexEncoding;
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace SubSonicMedia.Authentication
         {
             parameters["u"] = connectionInfo.Username;
 
-            if (_useHexEncoding)
+            if (this._useHexEncoding)
             {
                 // Hex-encode the password
                 byte[] passwordBytes = Encoding.UTF8.GetBytes(connectionInfo.Password);

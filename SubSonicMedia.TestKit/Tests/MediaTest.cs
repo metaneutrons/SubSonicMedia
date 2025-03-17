@@ -1,19 +1,18 @@
 // <copyright file="MediaTest.cs" company="Fabian Schmieder">
-// SubSonicMedia - A .NET client library for the Subsonic API
-// Copyright (C) 2025 Fabian Schmieder
+// This file is part of SubSonicMedia.
 //
-// This program is free software: you can redistribute it and/or modify
+// SubSonicMedia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// This program is distributed in the hope that it will be useful,
+// SubSonicMedia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
 // </copyright>
 
 using SubSonicMedia.TestKit.Helpers;
@@ -51,7 +50,7 @@ namespace SubSonicMedia.TestKit.Tests
             {
                 // Simple search to find a song
                 // Use null for artist and album counts (no limit) and set songCount to 1
-                var searchResponse = await Client.Search.Search3Async(
+                var searchResponse = await this.Client.Search.Search3Async(
                     "Keith",
                     artistCount: null,
                     albumCount: null,
@@ -69,8 +68,8 @@ namespace SubSonicMedia.TestKit.Tests
                     );
 
                     // Try to get random songs
-                    var randomResponse = await Client.Browsing.GetRandomSongsAsync(size: 1);
-                    RecordTestResult(randomResponse, "media_random_songs");
+                    var randomResponse = await this.Client.Browsing.GetRandomSongsAsync(size: 1);
+                    this.RecordTestResult(randomResponse, "media_random_songs");
 
                     if (
                         !randomResponse.IsSuccess
@@ -90,7 +89,7 @@ namespace SubSonicMedia.TestKit.Tests
 
                     // Test with a random song
                     var randomSong = randomResponse.RandomSongs.Song[0];
-                    return await TestMediaStreaming(randomSong.Id!);
+                    return await this.TestMediaStreaming(randomSong.Id!);
                 }
                 else
                 {
@@ -98,7 +97,7 @@ namespace SubSonicMedia.TestKit.Tests
                     var song = searchResponse.SearchResult.Songs[0];
                     ConsoleHelper.LogInfo($"Found song: {song.Title} by {song.Artist}");
 
-                    return await TestMediaStreaming(song.Id!);
+                    return await this.TestMediaStreaming(song.Id!);
                 }
             }
             catch (Exception ex)
@@ -116,7 +115,7 @@ namespace SubSonicMedia.TestKit.Tests
             ConsoleHelper.LogInfo($"Testing song streaming with ID: {songId}...");
             try
             {
-                using var stream = await Client.Media.StreamAsync(songId);
+                using var stream = await this.Client.Media.StreamAsync(songId);
 
                 // Check if we got a valid stream
                 if (stream != null)
@@ -137,7 +136,7 @@ namespace SubSonicMedia.TestKit.Tests
 
                         // Create a small file to record the first part of the stream for verification
                         string streamSamplePath = Path.Combine(
-                            Settings.OutputDirectory,
+                            this.Settings.OutputDirectory,
                             "stream_sample.bin"
                         );
                         await File.WriteAllBytesAsync(
@@ -168,7 +167,7 @@ namespace SubSonicMedia.TestKit.Tests
             ConsoleHelper.LogInfo($"Testing cover art retrieval with ID: {songId}...");
             try
             {
-                using var coverStream = await Client.Media.GetCoverArtAsync(songId);
+                using var coverStream = await this.Client.Media.GetCoverArtAsync(songId);
 
                 // Check if we got a valid stream
                 if (coverStream != null)
@@ -180,7 +179,7 @@ namespace SubSonicMedia.TestKit.Tests
                     if (bytesRead > 0)
                     {
                         // Check if it has a valid image signature (JPEG, PNG, etc.)
-                        bool isValidImage = IsValidImageFormat(buffer);
+                        bool isValidImage = this.IsValidImageFormat(buffer);
 
                         if (isValidImage)
                         {
@@ -190,7 +189,7 @@ namespace SubSonicMedia.TestKit.Tests
                             try
                             {
                                 string coverArtPath = Path.Combine(
-                                    Settings.OutputDirectory,
+                                    this.Settings.OutputDirectory,
                                     "cover_art_sample.jpg"
                                 );
                                 using (var fileStream = File.Create(coverArtPath))
@@ -223,7 +222,7 @@ namespace SubSonicMedia.TestKit.Tests
                             try
                             {
                                 string coverArtPath = Path.Combine(
-                                    Settings.OutputDirectory,
+                                    this.Settings.OutputDirectory,
                                     "cover_art_sample.bin"
                                 );
                                 using (var fileStream = File.Create(coverArtPath))

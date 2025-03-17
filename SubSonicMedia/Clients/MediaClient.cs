@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see <https://www.gnu.org/licenses/>.
+// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
 // </copyright>
 
 using System;
@@ -37,7 +37,7 @@ namespace SubSonicMedia.Clients
         /// <param name="client">The Subsonic client.</param>
         public MediaClient(SubsonicClient client)
         {
-            _client = client ?? throw new ArgumentNullException(nameof(client));
+            this._client = client ?? throw new ArgumentNullException(nameof(client));
         }
 
         /// <inheritdoc/>
@@ -92,7 +92,7 @@ namespace SubSonicMedia.Clients
                 parameters.Add("converted", converted.Value.ToString().ToLowerInvariant());
             }
 
-            return _client.ExecuteBinaryRequestAsync("stream", parameters, cancellationToken);
+            return this._client.ExecuteBinaryRequestAsync("stream", parameters, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -105,7 +105,11 @@ namespace SubSonicMedia.Clients
 
             var parameters = new Dictionary<string, string> { { "id", id } };
 
-            return _client.ExecuteBinaryRequestAsync("download", parameters, cancellationToken);
+            return this._client.ExecuteBinaryRequestAsync(
+                "download",
+                parameters,
+                cancellationToken
+            );
         }
 
         /// <inheritdoc/>
@@ -133,7 +137,7 @@ namespace SubSonicMedia.Clients
                 parameters.Add("audioTrack", audioTrack.Value.ToString());
             }
 
-            return _client.ExecuteBinaryRequestAsync("hls", parameters, cancellationToken);
+            return this._client.ExecuteBinaryRequestAsync("hls", parameters, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -155,7 +159,11 @@ namespace SubSonicMedia.Clients
                 parameters.Add("size", size.Value.ToString());
             }
 
-            return _client.ExecuteBinaryRequestAsync("getCoverArt", parameters, cancellationToken);
+            return this._client.ExecuteBinaryRequestAsync(
+                "getCoverArt",
+                parameters,
+                cancellationToken
+            );
         }
 
         /// <inheritdoc/>
@@ -180,8 +188,8 @@ namespace SubSonicMedia.Clients
             // The lyrics endpoint returns XML with a <lyrics> element containing the lyrics text
             // We use a Stream here and will need to extract the lyrics text from the XML
             using (
-                var stream = await _client
-                    .ExecuteBinaryRequestAsync("getLyrics", parameters, cancellationToken)
+                var stream = await this
+                    ._client.ExecuteBinaryRequestAsync("getLyrics", parameters, cancellationToken)
                     .ConfigureAwait(false)
             )
             using (var reader = new StreamReader(stream))

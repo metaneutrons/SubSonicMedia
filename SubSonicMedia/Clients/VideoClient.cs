@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see <https://www.gnu.org/licenses/>.
+// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
 // </copyright>
 
 using System;
@@ -38,13 +38,13 @@ namespace SubSonicMedia.Clients
         /// <param name="client">The Subsonic client.</param>
         public VideoClient(SubsonicClient client)
         {
-            _client = client;
+            this._client = client;
         }
 
         /// <inheritdoc/>
         public Task<VideosResponse> GetVideosAsync(CancellationToken cancellationToken = default)
         {
-            return _client.ExecuteRequestAsync<VideosResponse>(
+            return this._client.ExecuteRequestAsync<VideosResponse>(
                 "getVideos",
                 null,
                 cancellationToken
@@ -71,8 +71,8 @@ namespace SubSonicMedia.Clients
                 parameters.Add("height", maxHeight.Value.ToString());
             }
 
-            using var stream = await _client
-                .ExecuteBinaryRequestAsync("getCoverArt", parameters, cancellationToken)
+            using var stream = await this
+                ._client.ExecuteBinaryRequestAsync("getCoverArt", parameters, cancellationToken)
                 .ConfigureAwait(false);
             using var memoryStream = new MemoryStream();
 
@@ -144,7 +144,7 @@ namespace SubSonicMedia.Clients
 
             var parameters = new Dictionary<string, string> { { "id", id } };
 
-            return _client.ExecuteRequestAsync<VideoInfoResponse>(
+            return this._client.ExecuteRequestAsync<VideoInfoResponse>(
                 "getVideoInfo",
                 parameters,
                 cancellationToken
@@ -170,8 +170,8 @@ namespace SubSonicMedia.Clients
                 parameters.Add("format", format);
             }
 
-            return await _client
-                .ExecuteBinaryRequestAsync("getCaptions", parameters, cancellationToken)
+            return await this
+                ._client.ExecuteBinaryRequestAsync("getCaptions", parameters, cancellationToken)
                 .ConfigureAwait(false);
         }
     }

@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see <https://www.gnu.org/licenses/>.
+// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
 // </copyright>
 
 using System.Collections.Generic;
@@ -37,7 +37,7 @@ namespace SubSonicMedia.Clients
         /// <param name="client">The Subsonic client.</param>
         public PodcastClient(SubsonicClient client)
         {
-            _client = client;
+            this._client = client;
         }
 
         /// <inheritdoc/>
@@ -59,7 +59,7 @@ namespace SubSonicMedia.Clients
                 parameters.Add("id", id);
             }
 
-            return _client.ExecuteRequestAsync<PodcastsResponse>(
+            return this._client.ExecuteRequestAsync<PodcastsResponse>(
                 "getPodcasts",
                 parameters,
                 cancellationToken
@@ -79,7 +79,7 @@ namespace SubSonicMedia.Clients
                 parameters.Add("count", count.Value.ToString());
             }
 
-            return _client.ExecuteRequestAsync<NewestPodcastsResponse>(
+            return this._client.ExecuteRequestAsync<NewestPodcastsResponse>(
                 "getNewestPodcasts",
                 parameters,
                 cancellationToken
@@ -94,7 +94,7 @@ namespace SubSonicMedia.Clients
         {
             var parameters = new Dictionary<string, string> { { "url", url } };
 
-            return _client.ExecuteRequestAsync<BaseResponse>(
+            return this._client.ExecuteRequestAsync<BaseResponse>(
                 "createPodcastChannel",
                 parameters,
                 cancellationToken
@@ -109,7 +109,7 @@ namespace SubSonicMedia.Clients
         {
             var parameters = new Dictionary<string, string> { { "id", id } };
 
-            return _client.ExecuteRequestAsync<BaseResponse>(
+            return this._client.ExecuteRequestAsync<BaseResponse>(
                 "deletePodcastChannel",
                 parameters,
                 cancellationToken
@@ -124,7 +124,7 @@ namespace SubSonicMedia.Clients
         {
             var parameters = new Dictionary<string, string> { { "id", id } };
 
-            return _client.ExecuteRequestAsync<BaseResponse>(
+            return this._client.ExecuteRequestAsync<BaseResponse>(
                 "deletePodcastEpisode",
                 parameters,
                 cancellationToken
@@ -139,7 +139,7 @@ namespace SubSonicMedia.Clients
         {
             var parameters = new Dictionary<string, string> { { "id", id } };
 
-            return _client.ExecuteRequestAsync<BaseResponse>(
+            return this._client.ExecuteRequestAsync<BaseResponse>(
                 "downloadPodcastEpisode",
                 parameters,
                 cancellationToken
@@ -151,7 +151,7 @@ namespace SubSonicMedia.Clients
             CancellationToken cancellationToken = default
         )
         {
-            return _client.ExecuteRequestAsync<RefreshPodcastsResponse>(
+            return this._client.ExecuteRequestAsync<RefreshPodcastsResponse>(
                 "refreshPodcasts",
                 null,
                 cancellationToken

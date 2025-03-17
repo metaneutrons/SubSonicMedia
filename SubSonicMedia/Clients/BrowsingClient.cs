@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see <https://www.gnu.org/licenses/>.
+// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
 // </copyright>
 
 using System;
@@ -38,7 +38,7 @@ namespace SubSonicMedia.Clients
         /// <param name="client">The Subsonic client.</param>
         public BrowsingClient(SubsonicClient client)
         {
-            _client = client ?? throw new ArgumentNullException(nameof(client));
+            this._client = client ?? throw new ArgumentNullException(nameof(client));
         }
 
         /// <inheritdoc/>
@@ -46,7 +46,7 @@ namespace SubSonicMedia.Clients
             CancellationToken cancellationToken = default
         )
         {
-            return _client.ExecuteRequestAsync<MusicFoldersResponse>(
+            return this._client.ExecuteRequestAsync<MusicFoldersResponse>(
                 "getMusicFolders",
                 null,
                 cancellationToken
@@ -73,7 +73,7 @@ namespace SubSonicMedia.Clients
                 parameters.Add("ifModifiedSince", timestamp.ToString());
             }
 
-            return _client.ExecuteRequestAsync<IndexesResponse>(
+            return this._client.ExecuteRequestAsync<IndexesResponse>(
                 "getIndexes",
                 parameters,
                 cancellationToken
@@ -93,7 +93,7 @@ namespace SubSonicMedia.Clients
 
             var parameters = new Dictionary<string, string> { { "id", id } };
 
-            return _client.ExecuteRequestAsync<MusicDirectoryResponse>(
+            return this._client.ExecuteRequestAsync<MusicDirectoryResponse>(
                 "getMusicDirectory",
                 parameters,
                 cancellationToken
@@ -103,7 +103,7 @@ namespace SubSonicMedia.Clients
         /// <inheritdoc/>
         public Task<GenresResponse> GetGenresAsync(CancellationToken cancellationToken = default)
         {
-            return _client.ExecuteRequestAsync<GenresResponse>(
+            return this._client.ExecuteRequestAsync<GenresResponse>(
                 "getGenres",
                 null,
                 cancellationToken
@@ -123,7 +123,7 @@ namespace SubSonicMedia.Clients
                 parameters.Add("musicFolderId", musicFolderId);
             }
 
-            return _client.ExecuteRequestAsync<ArtistsResponse>(
+            return this._client.ExecuteRequestAsync<ArtistsResponse>(
                 "getArtists",
                 parameters,
                 cancellationToken
@@ -143,7 +143,7 @@ namespace SubSonicMedia.Clients
 
             var parameters = new Dictionary<string, string> { { "id", id } };
 
-            return _client.ExecuteRequestAsync<ArtistResponse>(
+            return this._client.ExecuteRequestAsync<ArtistResponse>(
                 "getArtist",
                 parameters,
                 cancellationToken
@@ -163,7 +163,7 @@ namespace SubSonicMedia.Clients
 
             var parameters = new Dictionary<string, string> { { "id", id } };
 
-            return _client.ExecuteRequestAsync<AlbumResponse>(
+            return this._client.ExecuteRequestAsync<AlbumResponse>(
                 "getAlbum",
                 parameters,
                 cancellationToken
@@ -183,7 +183,7 @@ namespace SubSonicMedia.Clients
 
             var parameters = new Dictionary<string, string> { { "id", id } };
 
-            return _client.ExecuteRequestAsync<SongResponse>(
+            return this._client.ExecuteRequestAsync<SongResponse>(
                 "getSong",
                 parameters,
                 cancellationToken
@@ -193,7 +193,7 @@ namespace SubSonicMedia.Clients
         /// <inheritdoc/>
         public Task<VideosResponse> GetVideosAsync(CancellationToken cancellationToken = default)
         {
-            return _client.ExecuteRequestAsync<VideosResponse>(
+            return this._client.ExecuteRequestAsync<VideosResponse>(
                 "getVideos",
                 null,
                 cancellationToken
@@ -213,7 +213,7 @@ namespace SubSonicMedia.Clients
 
             var parameters = new Dictionary<string, string> { { "id", id } };
 
-            return _client.ExecuteRequestAsync<VideoInfoResponse>(
+            return this._client.ExecuteRequestAsync<VideoInfoResponse>(
                 "getVideoInfo",
                 parameters,
                 cancellationToken
@@ -234,7 +234,7 @@ namespace SubSonicMedia.Clients
         {
             var parameters = new Dictionary<string, string>
             {
-                { "type", type.ToString().ToLowerInvariant() }
+                { "type", type.ToString().ToLowerInvariant() },
             };
 
             if (size.HasValue)
@@ -267,7 +267,7 @@ namespace SubSonicMedia.Clients
                 parameters.Add("musicFolderId", musicFolderId);
             }
 
-            return _client.ExecuteRequestAsync<AlbumList2Response>(
+            return this._client.ExecuteRequestAsync<AlbumList2Response>(
                 "getAlbumList2",
                 parameters,
                 cancellationToken
@@ -311,7 +311,7 @@ namespace SubSonicMedia.Clients
                 parameters.Add("musicFolderId", musicFolderId);
             }
 
-            return _client.ExecuteRequestAsync<RandomSongsResponse>(
+            return this._client.ExecuteRequestAsync<RandomSongsResponse>(
                 "getRandomSongs",
                 parameters,
                 cancellationToken
@@ -349,7 +349,7 @@ namespace SubSonicMedia.Clients
                 parameters.Add("musicFolderId", musicFolderId);
             }
 
-            return _client.ExecuteRequestAsync<SongsByGenreResponse>(
+            return this._client.ExecuteRequestAsync<SongsByGenreResponse>(
                 "getSongsByGenre",
                 parameters,
                 cancellationToken
@@ -369,7 +369,7 @@ namespace SubSonicMedia.Clients
                 parameters.Add("musicFolderId", musicFolderId);
             }
 
-            return _client.ExecuteRequestAsync<StarredResponse>(
+            return this._client.ExecuteRequestAsync<StarredResponse>(
                 "getStarred",
                 parameters,
                 cancellationToken
@@ -389,7 +389,7 @@ namespace SubSonicMedia.Clients
                 parameters.Add("musicFolderId", musicFolderId);
             }
 
-            return _client.ExecuteRequestAsync<Starred2Response>(
+            return this._client.ExecuteRequestAsync<Starred2Response>(
                 "getStarred2",
                 parameters,
                 cancellationToken
@@ -424,7 +424,7 @@ namespace SubSonicMedia.Clients
                 );
             }
 
-            return _client.ExecuteRequestAsync<ArtistInfoResponse>(
+            return this._client.ExecuteRequestAsync<ArtistInfoResponse>(
                 "getArtistInfo",
                 parameters,
                 cancellationToken
@@ -459,7 +459,7 @@ namespace SubSonicMedia.Clients
                 );
             }
 
-            return _client.ExecuteRequestAsync<ArtistInfo2Response>(
+            return this._client.ExecuteRequestAsync<ArtistInfo2Response>(
                 "getArtistInfo2",
                 parameters,
                 cancellationToken
@@ -479,7 +479,7 @@ namespace SubSonicMedia.Clients
 
             var parameters = new Dictionary<string, string> { { "id", id } };
 
-            return _client.ExecuteRequestAsync<AlbumInfoResponse>(
+            return this._client.ExecuteRequestAsync<AlbumInfoResponse>(
                 "getAlbumInfo",
                 parameters,
                 cancellationToken
@@ -499,7 +499,7 @@ namespace SubSonicMedia.Clients
 
             var parameters = new Dictionary<string, string> { { "id", id } };
 
-            return _client.ExecuteRequestAsync<AlbumInfo2Response>(
+            return this._client.ExecuteRequestAsync<AlbumInfo2Response>(
                 "getAlbumInfo2",
                 parameters,
                 cancellationToken

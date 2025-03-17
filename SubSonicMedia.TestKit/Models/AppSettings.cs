@@ -1,19 +1,18 @@
 // <copyright file="AppSettings.cs" company="Fabian Schmieder">
-// SubSonicMedia - A .NET client library for the Subsonic API
-// Copyright (C) 2025 Fabian Schmieder
+// This file is part of SubSonicMedia.
 //
-// This program is free software: you can redistribute it and/or modify
+// SubSonicMedia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// This program is distributed in the hope that it will be useful,
+// SubSonicMedia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
 // </copyright>
 
 using SubSonicMedia.Models;
@@ -29,18 +28,18 @@ namespace SubSonicMedia.TestKit.Models
         /// The test was executed successfully.
         /// </summary>
         Pass,
-        
+
         /// <summary>
         /// The test failed during execution.
         /// </summary>
         Fail,
-        
+
         /// <summary>
         /// The test was skipped due to feature being unavailable or not implemented.
         /// </summary>
-        Skipped
+        Skipped,
     }
-    
+
     /// <summary>
     /// Application configuration settings.
     /// </summary>
@@ -80,12 +79,12 @@ namespace SubSonicMedia.TestKit.Models
         /// Gets or sets the directory where test results should be saved.
         /// </summary>
         public string OutputDirectory { get; set; } = "./Outputs";
-        
+
         /// <summary>
         /// Gets or sets a value indicating whether to exit immediately on first test failure.
         /// </summary>
         public bool FailFast { get; set; } = false;
-        
+
         /// <summary>
         /// Gets or sets a value indicating whether to generate JUnit XML output for CI/CD integration.
         /// </summary>
@@ -99,11 +98,11 @@ namespace SubSonicMedia.TestKit.Models
         {
             return new SubsonicConnectionInfo
             {
-                ServerUrl = ServerUrl,
-                Username = Username,
-                Password = Password,
-                ApiVersion = ApiVersion,
-                ResponseFormat = ResponseFormat
+                ServerUrl = this.ServerUrl,
+                Username = this.Username,
+                Password = this.Password,
+                ApiVersion = this.ApiVersion,
+                ResponseFormat = this.ResponseFormat,
             };
         }
     }

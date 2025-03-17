@@ -1,19 +1,18 @@
 // <copyright file="ConnectionTest.cs" company="Fabian Schmieder">
-// SubSonicMedia - A .NET client library for the Subsonic API
-// Copyright (C) 2025 Fabian Schmieder
+// This file is part of SubSonicMedia.
 //
-// This program is free software: you can redistribute it and/or modify
+// SubSonicMedia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// This program is distributed in the hope that it will be useful,
+// SubSonicMedia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
 // </copyright>
 
 using SubSonicMedia.TestKit.Helpers;
@@ -32,30 +31,31 @@ namespace SubSonicMedia.TestKit.Tests
         /// <param name="client">The Subsonic client.</param>
         /// <param name="settings">The application settings.</param>
         public ConnectionTest(SubsonicClient client, AppSettings settings)
-            : base(client, settings)
-        {
-        }
+            : base(client, settings) { }
 
         /// <inheritdoc/>
         public override string Name => "Connection Test";
 
         /// <inheritdoc/>
-        public override string Description => "Tests connection to the Subsonic server and API version compatibility";
+        public override string Description =>
+            "Tests connection to the Subsonic server and API version compatibility";
 
         /// <inheritdoc/>
         protected override async Task<TestResult> ExecuteTestAsync()
         {
             ConsoleHelper.LogInfo("Testing server connection...");
-            ConsoleHelper.LogServerConnection(Settings.ServerUrl);
+            ConsoleHelper.LogServerConnection(this.Settings.ServerUrl);
 
             // Ping the server to check connection
-            var response = await Client.System.PingAsync();
-            
-            RecordTestResult(response, "connection_ping");
-            
+            var response = await this.Client.System.PingAsync();
+
+            this.RecordTestResult(response, "connection_ping");
+
             if (response.IsSuccess)
             {
-                ConsoleHelper.LogSuccess($"Successfully connected to server version: {response.Version}");
+                ConsoleHelper.LogSuccess(
+                    $"Successfully connected to server version: {response.Version}"
+                );
                 return TestResult.Pass;
             }
             else

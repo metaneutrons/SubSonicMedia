@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see <https://www.gnu.org/licenses/>.
+// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
 // </copyright>
 
 using System;
@@ -33,7 +33,7 @@ namespace SubSonicMedia.Exceptions
         public SubsonicApiException(int errorCode, string message)
             : base(message)
         {
-            ErrorCode = errorCode;
+            this.ErrorCode = errorCode;
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace SubSonicMedia.Exceptions
         public SubsonicApiException(int errorCode, string message, Exception innerException)
             : base(message, innerException)
         {
-            ErrorCode = errorCode;
+            this.ErrorCode = errorCode;
         }
 
         /// <summary>

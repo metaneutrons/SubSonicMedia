@@ -1,19 +1,18 @@
 // <copyright file="SearchTest.cs" company="Fabian Schmieder">
-// SubSonicMedia - A .NET client library for the Subsonic API
-// Copyright (C) 2025 Fabian Schmieder
+// This file is part of SubSonicMedia.
 //
-// This program is free software: you can redistribute it and/or modify
+// SubSonicMedia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// This program is distributed in the hope that it will be useful,
+// SubSonicMedia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
 // </copyright>
 
 using Spectre.Console;
@@ -40,7 +39,7 @@ namespace SubSonicMedia.TestKit.Tests
             : base(client, settings)
         {
             // Use a default query if none was provided
-            _searchQuery = string.IsNullOrEmpty(searchQuery) ? "Keith" : searchQuery;
+            this._searchQuery = string.IsNullOrEmpty(searchQuery) ? "Keith" : searchQuery;
         }
 
         /// <inheritdoc/>
@@ -48,7 +47,7 @@ namespace SubSonicMedia.TestKit.Tests
 
         /// <inheritdoc/>
         public override string Description =>
-            $"Tests search functionality using query: '{_searchQuery}'";
+            $"Tests search functionality using query: '{this._searchQuery}'";
 
         /// <inheritdoc/>
         protected override async Task<TestResult> ExecuteTestAsync()
@@ -56,11 +55,11 @@ namespace SubSonicMedia.TestKit.Tests
             bool allTestsPassed = true;
 
             // Test 1: Basic Search3
-            ConsoleHelper.LogInfo($"Testing Search3 with query: '{_searchQuery}'...");
+            ConsoleHelper.LogInfo($"Testing Search3 with query: '{this._searchQuery}'...");
             try
             {
-                var searchResponse = await Client.Search.Search3Async(_searchQuery);
-                RecordTestResult(searchResponse, "search_results");
+                var searchResponse = await this.Client.Search.Search3Async(this._searchQuery);
+                this.RecordTestResult(searchResponse, "search_results");
 
                 if (searchResponse.IsSuccess && searchResponse.SearchResult != null)
                 {
@@ -144,7 +143,9 @@ namespace SubSonicMedia.TestKit.Tests
                     // If no results were found, consider it a warning but not a failure
                     if (artistCount == 0 && albumCount == 0 && songCount == 0)
                     {
-                        ConsoleHelper.LogWarning($"No results found for query: '{_searchQuery}'");
+                        ConsoleHelper.LogWarning(
+                            $"No results found for query: '{this._searchQuery}'"
+                        );
                     }
                 }
                 else

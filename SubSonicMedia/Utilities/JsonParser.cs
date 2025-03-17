@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see <https://www.gnu.org/licenses/>.
+// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
 // </copyright>
 
 using System.IO;
@@ -145,7 +145,7 @@ namespace SubSonicMedia.Utilities
                             Public = playlistNode["public"]?.GetValue<bool>() ?? false,
                             SongCount = playlistNode["songCount"]?.GetValue<int>() ?? 0,
                             Duration = playlistNode["duration"]?.GetValue<int>() ?? 0,
-                            CoverArt = playlistNode["coverArt"]?.GetValue<string>()
+                            CoverArt = playlistNode["coverArt"]?.GetValue<string>(),
                         };
 
                         // Handle dates if present
@@ -231,7 +231,7 @@ namespace SubSonicMedia.Utilities
                             Duration = songNode["duration"]?.GetValue<int>() ?? 0,
                             Size = songNode["size"]?.GetValue<long>() ?? 0,
                             ContentType = songNode["contentType"]?.GetValue<string>(),
-                            Path = songNode["path"]?.GetValue<string>()
+                            Path = songNode["path"]?.GetValue<string>(),
                         };
 
                         playlistResponse.Playlist.Entry.Add(song);
@@ -257,7 +257,7 @@ namespace SubSonicMedia.Utilities
                         var folder = new Responses.Browsing.MusicFolder
                         {
                             Id = folderNode["id"]?.GetValue<int>() ?? 0,
-                            Name = folderNode["name"]?.GetValue<string>() ?? string.Empty
+                            Name = folderNode["name"]?.GetValue<string>() ?? string.Empty,
                         };
 
                         musicFoldersResponse.MusicFolders.Add(folder);
@@ -286,7 +286,7 @@ namespace SubSonicMedia.Utilities
 
                         var index = new Responses.Browsing.Index
                         {
-                            Name = indexNode["name"]?.GetValue<string>() ?? string.Empty
+                            Name = indexNode["name"]?.GetValue<string>() ?? string.Empty,
                         };
 
                         // Parse artists in this index
@@ -303,9 +303,8 @@ namespace SubSonicMedia.Utilities
                                     Name = artistNode["name"]?.GetValue<string>() ?? string.Empty,
                                     CoverArt = artistNode["coverArt"]?.GetValue<string>(),
                                     AlbumCount = artistNode["albumCount"]?.GetValue<int>() ?? 0,
-                                    ArtistImageUrl = artistNode[
-                                        "artistImageUrl"
-                                    ]?.GetValue<string>()
+                                    ArtistImageUrl = artistNode["artistImageUrl"]
+                                        ?.GetValue<string>(),
                                 };
 
                                 index.Artist.Add(artist);
@@ -337,7 +336,7 @@ namespace SubSonicMedia.Utilities
                             Id = artistNode["id"]?.GetValue<string>() ?? string.Empty,
                             Name = artistNode["name"]?.GetValue<string>() ?? string.Empty,
                             AlbumCount = artistNode["albumCount"]?.GetValue<int>() ?? 0,
-                            CoverArt = artistNode["coverArt"]?.GetValue<string>()
+                            CoverArt = artistNode["coverArt"]?.GetValue<string>(),
                         };
 
                         searchResponse.SearchResult.Artists.Add(artist);
@@ -362,7 +361,7 @@ namespace SubSonicMedia.Utilities
                             SongCount = albumNode["songCount"]?.GetValue<int>() ?? 0,
                             Duration = albumNode["duration"]?.GetValue<int>() ?? 0,
                             Year = albumNode["year"]?.GetValue<int>() ?? 0,
-                            Genre = albumNode["genre"]?.GetValue<string>()
+                            Genre = albumNode["genre"]?.GetValue<string>(),
                         };
 
                         searchResponse.SearchResult.Albums.Add(album);
@@ -392,7 +391,7 @@ namespace SubSonicMedia.Utilities
                             Size = songNode["size"]?.GetValue<long>() ?? 0,
                             ContentType = songNode["contentType"]?.GetValue<string>(),
                             Duration = songNode["duration"]?.GetValue<int>() ?? 0,
-                            Path = songNode["path"]?.GetValue<string>()
+                            Path = songNode["path"]?.GetValue<string>(),
                         };
 
                         searchResponse.SearchResult.Songs.Add(song);
@@ -448,7 +447,7 @@ namespace SubSonicMedia.Utilities
                             Duration = albumNode["duration"]?.GetValue<int>() ?? 0,
                             Created = createdValue,
                             Year = albumNode["year"]?.GetValue<int>(),
-                            Genre = albumNode["genre"]?.GetValue<string>()
+                            Genre = albumNode["genre"]?.GetValue<string>(),
                         };
 
                         artist.Album.Add(album);
@@ -486,7 +485,7 @@ namespace SubSonicMedia.Utilities
                             Size = songNode["size"]?.GetValue<long>() ?? 0,
                             ContentType = songNode["contentType"]?.GetValue<string>(),
                             Duration = songNode["duration"]?.GetValue<int>() ?? 0,
-                            Path = songNode["path"]?.GetValue<string>()
+                            Path = songNode["path"]?.GetValue<string>(),
                         };
 
                         randomSongsResponse.RandomSongs.Song.Add(song);
@@ -515,7 +514,7 @@ namespace SubSonicMedia.Utilities
                             Name = stationNode["name"]?.GetValue<string>() ?? string.Empty,
                             StreamUrl =
                                 stationNode["streamUrl"]?.GetValue<string>() ?? string.Empty,
-                            HomepageUrl = stationNode["homepageUrl"]?.GetValue<string>()
+                            HomepageUrl = stationNode["homepageUrl"]?.GetValue<string>(),
                         };
 
                         radioStationsResponse.InternetRadioStations.InternetRadioStation.Add(

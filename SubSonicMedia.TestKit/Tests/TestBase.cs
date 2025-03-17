@@ -1,19 +1,18 @@
 // <copyright file="TestBase.cs" company="Fabian Schmieder">
-// SubSonicMedia - A .NET client library for the Subsonic API
-// Copyright (C) 2025 Fabian Schmieder
+// This file is part of SubSonicMedia.
 //
-// This program is free software: you can redistribute it and/or modify
+// SubSonicMedia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// This program is distributed in the hope that it will be useful,
+// SubSonicMedia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
 // </copyright>
 
 using System.Diagnostics;
@@ -31,7 +30,7 @@ namespace SubSonicMedia.TestKit.Tests
     public abstract class TestBase
     {
         private readonly Stopwatch _stopwatch = new();
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="TestBase"/> class.
         /// </summary>
@@ -39,85 +38,91 @@ namespace SubSonicMedia.TestKit.Tests
         /// <param name="settings">The application settings.</param>
         protected TestBase(SubsonicClient client, AppSettings settings)
         {
-            Client = client ?? throw new ArgumentNullException(nameof(client));
-            Settings = settings ?? throw new ArgumentNullException(nameof(settings));
-            
+            this.Client = client ?? throw new ArgumentNullException(nameof(client));
+            this.Settings = settings ?? throw new ArgumentNullException(nameof(settings));
+
             // Create output directory if it doesn't exist
             if (settings.RecordTestResults && !string.IsNullOrEmpty(settings.OutputDirectory))
             {
                 Directory.CreateDirectory(settings.OutputDirectory);
             }
         }
-        
-        /// <summary>
-        /// Gets the Subsonic client.
-        /// </summary>
-        protected SubsonicClient Client { get; }
-        
-        /// <summary>
-        /// Gets the application settings.
-        /// </summary>
-        protected AppSettings Settings { get; }
-        
+
         /// <summary>
         /// Gets the name of the test.
         /// </summary>
         public abstract string Name { get; }
-        
+
         /// <summary>
         /// Gets the test description.
         /// </summary>
         public abstract string Description { get; }
-        
+
         /// <summary>
         /// Gets the elapsed time of the last test run in milliseconds.
         /// </summary>
         public long ElapsedMilliseconds { get; private set; }
-        
+
+        /// <summary>
+        /// Gets the Subsonic client.
+        /// </summary>
+        protected SubsonicClient Client { get; }
+
+        /// <summary>
+        /// Gets the application settings.
+        /// </summary>
+        protected AppSettings Settings { get; }
+
         /// <summary>
         /// Gets the exception that occurred during the test, if any.
         /// </summary>
         public Exception? LastException { get; private set; }
-        
+
         /// <summary>
         /// Runs the test.
         /// </summary>
         /// <returns>The test result (Pass, Fail, or Skipped).</returns>
         public virtual async Task<TestResult> RunAsync()
         {
-            ConsoleHelper.LogTestStart(Name);
-            _stopwatch.Restart();
-            
+            ConsoleHelper.LogTestStart(this.Name);
+            this._stopwatch.Restart();
+
             TestResult result = TestResult.Fail;
-            LastException = null;
-            
+            this.LastException = null;
+
             try
             {
-                result = await ExecuteTestAsync();
+                result = await this.ExecuteTestAsync();
             }
-            catch (SubsonicApiException ex) when (IsSkippableError(ex))
+            catch (SubsonicApiException ex) when (this.IsSkippableError(ex))
             {
                 // Handle "NotImplemented" or "Gone" responses
                 ConsoleHelper.LogWarning($"Test skipped: {ex.Message}");
                 result = TestResult.Skipped;
-                LastException = ex;
+                this.LastException = ex;
             }
             catch (Exception ex)
             {
                 ConsoleHelper.LogError($"Test failed: {ex.Message}");
                 result = TestResult.Fail;
-                LastException = ex;
+                this.LastException = ex;
             }
             finally
             {
-                _stopwatch.Stop();
-                ElapsedMilliseconds = _stopwatch.ElapsedMilliseconds;
-                ConsoleHelper.LogTestCompletion(Name, ElapsedMilliseconds, result);
+                this._stopwatch.Stop();
+                this.ElapsedMilliseconds = this._stopwatch.ElapsedMilliseconds;
+                ConsoleHelper.LogTestCompletion(this.Name, this.ElapsedMilliseconds, result);
             }
-            
+
             return result;
         }
-        
+
+        /// <summary>
+        /// Executes the test logic.
+        /// </summary>
+        /// <returns>The test result (Pass, Fail, or Skipped).</returns>
+        protected abstract Task<TestResult> ExecuteTestAsync();
+
         /// <summary>
         /// Determines if an API exception indicates the test should be skipped.
         /// </summary>
@@ -126,27 +131,23 @@ namespace SubSonicMedia.TestKit.Tests
         private bool IsSkippableError(SubsonicApiException ex)
         {
             // Check if the error is a "NotImplemented" or "Gone" response
-            if (ex.Message.Contains("not implemented", StringComparison.OrdinalIgnoreCase) ||
-                ex.Message.Contains("gone", StringComparison.OrdinalIgnoreCase))
+            if (
+                ex.Message.Contains("not implemented", StringComparison.OrdinalIgnoreCase)
+                || ex.Message.Contains("gone", StringComparison.OrdinalIgnoreCase)
+            )
             {
                 return true;
             }
-            
+
             // Check error codes that might indicate features not available
             if (ex.ErrorCode == 70) // Subsonic error code for "not implemented"
             {
                 return true;
             }
-            
+
             return false;
         }
-        
-        /// <summary>
-        /// Executes the test logic.
-        /// </summary>
-        /// <returns>The test result (Pass, Fail, or Skipped).</returns>
-        protected abstract Task<TestResult> ExecuteTestAsync();
-        
+
         /// <summary>
         /// Records a test result to a JSON file for later use in mocking.
         /// </summary>
@@ -154,19 +155,19 @@ namespace SubSonicMedia.TestKit.Tests
         /// <param name="fileName">The name of the file (without extension).</param>
         protected void RecordTestResult(object result, string fileName)
         {
-            if (!Settings.RecordTestResults)
+            if (!this.Settings.RecordTestResults)
             {
                 return;
             }
-            
+
             try
             {
-                string path = Path.Combine(Settings.OutputDirectory, $"{fileName}.json");
-                string json = JsonSerializer.Serialize(result, new JsonSerializerOptions
-                {
-                    WriteIndented = true
-                });
-                
+                string path = Path.Combine(this.Settings.OutputDirectory, $"{fileName}.json");
+                string json = JsonSerializer.Serialize(
+                    result,
+                    new JsonSerializerOptions { WriteIndented = true }
+                );
+
                 File.WriteAllText(path, json);
                 ConsoleHelper.LogInfo($"Test result recorded to {path}");
             }
