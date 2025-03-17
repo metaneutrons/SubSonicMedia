@@ -4,6 +4,10 @@
 [![Publish](https://github.com/metaneutrons/SubSonicMedia/actions/workflows/publish.yml/badge.svg)](https://github.com/metaneutrons/SubSonicMedia/actions/workflows/publish.yml)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![.NET](https://img.shields.io/badge/.NET-8.0-512BD4)](https://dotnet.microsoft.com/download)
+[![NuGet](https://img.shields.io/nuget/v/SubSonicMedia.svg)](https://www.nuget.org/packages/SubSonicMedia/)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/SubSonicMedia.svg)](https://www.nuget.org/packages/SubSonicMedia/)
+[![GitHub Copilot](https://img.shields.io/badge/GitHub-Copilot-blue?logo=github)](https://github.com/features/copilot)
+[![Built with Claude](https://img.shields.io/badge/Built_with-Claude-8A2BE2)](https://claude.ai)
 
 A comprehensive .NET client library for the Subsonic API, supporting API version 1.16.1.
 
@@ -19,9 +23,25 @@ A comprehensive .NET client library for the Subsonic API, supporting API version
 
 ### Installation
 
+#### Package Manager Console
+
+```powershell
+Install-Package SubSonicMedia
+```
+
+#### .NET CLI
+
 ```bash
 dotnet add package SubSonicMedia
 ```
+
+#### PackageReference (in .csproj file)
+
+```xml
+<PackageReference Include="SubSonicMedia" Version="x.y.z" />
+```
+
+You can find the latest version on [NuGet.org](https://www.nuget.org/packages/SubSonicMedia/).
 
 ### Usage
 
@@ -53,6 +73,7 @@ The project includes a comprehensive TestKit for validating the SubSonicMedia AP
 
 - Structured API tests with clear pass/fail results
 - JSON output for test results
+- JUnit XML output for integration with CI/CD systems
 - Record server responses for future mocking
 - Command-line interface for automation
 - npm-style output with UTF-8 icons
@@ -74,6 +95,7 @@ SUBSONIC_RESPONSE_FORMAT=json
 # Test configuration
 RECORD_TEST_RESULTS=true
 OUTPUT_DIRECTORY=./TestResults
+JUNIT_XML_OUTPUT=true
 ```
 
 ### Usage
@@ -88,6 +110,9 @@ dotnet run
 # Run a specific test
 dotnet run run "Connection Test"
 
+# Run with JUnit XML output
+dotnet run -- --junit-xml
+
 # List available tests
 dotnet run list
 
@@ -101,6 +126,11 @@ dotnet run help
 
 - .NET 8.0 SDK or later
 - Visual Studio 2022, VS Code, or JetBrains Rider
+- PowerShell 7.0 or later
+
+### AI Development Tools
+
+We use [Claude Code](https://claude.ai/code) (Anthropic's AI assistant, see [CLAUDE.md](CLAUDE.md) and [GitHub Copilot](https://github.com/features/copilot) to accelerate development tasks, code reviews and documentation. This helps us maintain consistent code quality and speed up development workflows.
 
 ### Building
 
@@ -113,6 +143,14 @@ cd SubSonicMedia
 dotnet build
 ```
 
+### Detailed Documentation
+
+For detailed development information, please refer to the following documents:
+
+- [Git Hooks Setup](GIT-HOOKS.md) - Information about Git hooks and PowerShell requirements
+- [Versioning Process](docs/VERSIONING.md) - Details about our semantic versioning process
+- [VS Code Setup](docs/VSCODE.md) - VS Code configuration and recommended extensions
+
 ### Versioning
 
 This project follows semantic versioning with automated version bumping based on conventional commit messages.
@@ -120,6 +158,7 @@ This project follows semantic versioning with automated version bumping based on
 We provide tools to automatically analyze commit messages and determine the appropriate version bump (major, minor, patch).
 
 See [docs/VERSIONING.md](docs/VERSIONING.md) for details on:
+
 - Commit message conventions
 - Local version bump PowerShell script
 - GitHub workflow for automated versioning
@@ -128,6 +167,7 @@ See [docs/VERSIONING.md](docs/VERSIONING.md) for details on:
 ### VS Code Setup
 
 The repository includes a VS Code setup with:
+
 - Build tasks for the library and TestKit
 - Debug configurations for running and debugging
 - Recommended extensions and settings
