@@ -55,7 +55,7 @@ namespace SubSonicMedia.Clients
 
         /// <inheritdoc/>
         public Task<IndexesResponse> GetIndexesAsync(
-            string musicFolderId = null,
+            string? musicFolderId = null,
             DateTime? ifModifiedSince = null,
             CancellationToken cancellationToken = default
         )
@@ -112,7 +112,7 @@ namespace SubSonicMedia.Clients
 
         /// <inheritdoc/>
         public Task<ArtistsResponse> GetArtistsAsync(
-            string musicFolderId = null,
+            string? musicFolderId = null,
             CancellationToken cancellationToken = default
         )
         {
@@ -227,8 +227,8 @@ namespace SubSonicMedia.Clients
             int? offset = null,
             int? fromYear = null,
             int? toYear = null,
-            string genre = null,
-            string musicFolderId = null,
+            string? genre = null,
+            string? musicFolderId = null,
             CancellationToken cancellationToken = default
         )
         {
@@ -277,10 +277,10 @@ namespace SubSonicMedia.Clients
         /// <inheritdoc/>
         public Task<RandomSongsResponse> GetRandomSongsAsync(
             int? size = null,
-            string genre = null,
+            string? genre = null,
             int? fromYear = null,
             int? toYear = null,
-            string musicFolderId = null,
+            string? musicFolderId = null,
             CancellationToken cancellationToken = default
         )
         {
@@ -323,7 +323,7 @@ namespace SubSonicMedia.Clients
             string genre,
             int? count = null,
             int? offset = null,
-            string musicFolderId = null,
+            string? musicFolderId = null,
             CancellationToken cancellationToken = default
         )
         {
@@ -358,7 +358,7 @@ namespace SubSonicMedia.Clients
 
         /// <inheritdoc/>
         public Task<StarredResponse> GetStarredAsync(
-            string musicFolderId = null,
+            string? musicFolderId = null,
             CancellationToken cancellationToken = default
         )
         {
@@ -378,7 +378,7 @@ namespace SubSonicMedia.Clients
 
         /// <inheritdoc/>
         public Task<Starred2Response> GetStarred2Async(
-            string musicFolderId = null,
+            string? musicFolderId = null,
             CancellationToken cancellationToken = default
         )
         {
