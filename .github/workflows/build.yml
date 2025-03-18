@@ -27,6 +27,9 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
+      - name: Install CSharpier
+        run: dotnet tool install --global CSharpier
+
       - name: Format check
         run: dotnet csharpier . --check
 
