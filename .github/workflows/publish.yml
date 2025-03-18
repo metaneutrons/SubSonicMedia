@@ -52,8 +52,8 @@ jobs:
     - name: Build Release
       run: dotnet build --configuration Release --no-restore
       
-    - name: Install CSharpier
-      run: dotnet tool install --global CSharpier
+    - name: Setup .NET local tools
+      run: dotnet new tool-manifest --force && dotnet tool install CSharpier
       
     - name: Format check
       run: dotnet csharpier . --check
