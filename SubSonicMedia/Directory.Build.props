@@ -16,9 +16,10 @@
     <PackageTags>subsonic;music;api;streaming</PackageTags>
     <RepositoryType>git</RepositoryType>
 
-    <!-- Assembly info -->
-    <AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
-    <FileVersion>$(VersionPrefix)</FileVersion>
+    <!-- Assembly info - must use standard version format without suffix -->
+    <AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
+    <FileVersion>$(VersionPrefix).0</FileVersion>
+    <!-- InformationalVersion can include prerelease suffix -->
     <InformationalVersion>$(VersionPrefix)-$(VersionSuffix)</InformationalVersion>
   </PropertyGroup>
 </Project>
