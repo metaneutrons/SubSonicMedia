@@ -90,6 +90,11 @@ namespace SubSonicMedia.TestKit.Tests
             }
             catch (Exception ex)
             {
+                // Rethrow feature unavailability exceptions to be handled by TestBase
+                if (this.IsFeatureUnavailable(ex))
+                {
+                    throw;
+                }
                 ConsoleHelper.LogError($"Error getting user details: {ex.Message}");
                 allTestsPassed = false;
             }
@@ -136,6 +141,11 @@ namespace SubSonicMedia.TestKit.Tests
             }
             catch (Exception ex)
             {
+                // Rethrow feature unavailability exceptions to be handled by TestBase
+                if (this.IsFeatureUnavailable(ex))
+                {
+                    throw;
+                }
                 ConsoleHelper.LogError($"Error getting all users: {ex.Message}");
 
                 // Not considering this a test failure as it might require admin privileges
@@ -178,6 +188,11 @@ namespace SubSonicMedia.TestKit.Tests
             }
             catch (Exception ex)
             {
+                // Rethrow feature unavailability exceptions to be handled by TestBase
+                if (this.IsFeatureUnavailable(ex))
+                {
+                    throw;
+                }
                 ConsoleHelper.LogWarning(
                     $"Error getting avatar (this is normal if the user doesn't have an avatar): {ex.Message}"
                 );

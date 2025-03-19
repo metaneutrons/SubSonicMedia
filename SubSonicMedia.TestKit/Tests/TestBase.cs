@@ -92,10 +92,13 @@ namespace SubSonicMedia.TestKit.Tests
             {
                 result = await this.ExecuteTestAsync();
             }
-            catch (SubsonicApiException ex) when (this.IsSkippableError(ex))
+            catch (Exception ex) when (this.IsFeatureUnavailable(ex))
             {
                 // Handle "NotImplemented" or "Gone" responses
-                ConsoleHelper.LogWarning($"Test skipped: {ex.Message}");
+                string apiName = this.GetType().Name.Replace("Test", "");
+                ConsoleHelper.LogWarning(
+                    $"{apiName} API not implemented by this server (possibly Navidrome)"
+                );
                 result = TestResult.Skipped;
                 this.LastException = ex;
             }
@@ -122,26 +125,30 @@ namespace SubSonicMedia.TestKit.Tests
         protected abstract Task<TestResult> ExecuteTestAsync();
 
         /// <summary>
-        /// Determines if an API exception indicates the test should be skipped.
+        /// Determines if an exception indicates the test should be skipped due to feature unavailability.
         /// </summary>
         /// <param name="ex">The exception to check.</param>
         /// <returns>True if the test should be skipped, false otherwise.</returns>
-        private bool IsSkippableError(SubsonicApiException ex)
+        protected bool IsFeatureUnavailable(Exception ex)
         {
-            // Check if the error is a "NotImplemented" or "Gone" response
+            // Check common error messages that indicate feature unavailability
             if (
                 ex.Message.Contains("not implemented", StringComparison.OrdinalIgnoreCase)
                 || ex.Message.Contains("gone", StringComparison.OrdinalIgnoreCase)
+                || ex.Message.Contains("NotImplemented", StringComparison.OrdinalIgnoreCase)
             )
             {
                 return true;
             }
 
-            // Check error codes that might indicate features not available
-            // Subsonic error code for "not implemented"
-            if (ex.ErrorCode == 70)
+            // Check if it's a SubsonicApiException with specific error codes
+            if (ex is SubsonicApiException apiEx)
             {
-                return true;
+                // Subsonic error code 70 = "not implemented"
+                if (apiEx.ErrorCode == 70)
+                {
+                    return true;
+                }
             }
 
             return false;

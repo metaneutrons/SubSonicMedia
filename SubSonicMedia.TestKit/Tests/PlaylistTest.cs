@@ -66,6 +66,12 @@ namespace SubSonicMedia.TestKit.Tests
             }
             catch (Exception ex)
             {
+                // Rethrow feature unavailability exceptions to be handled by TestBase
+                if (this.IsFeatureUnavailable(ex))
+                {
+                    throw;
+                }
+
                 ConsoleHelper.LogError($"Error serializing response: {ex.Message}");
             }
 

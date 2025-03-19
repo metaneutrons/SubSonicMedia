@@ -98,6 +98,11 @@ namespace SubSonicMedia.TestKit.Tests
             }
             catch (Exception ex)
             {
+                // Rethrow feature unavailability exceptions to be handled by TestBase
+                if (this.IsFeatureUnavailable(ex))
+                {
+                    throw;
+                }
                 ConsoleHelper.LogError($"Error getting radio stations: {ex.Message}");
                 allTestsPassed = false;
             }
@@ -250,6 +255,11 @@ namespace SubSonicMedia.TestKit.Tests
                 }
                 catch (Exception ex)
                 {
+                    // Rethrow feature unavailability exceptions to be handled by TestBase
+                    if (this.IsFeatureUnavailable(ex))
+                    {
+                        throw;
+                    }
                     ConsoleHelper.LogError($"Error testing radio station management: {ex.Message}");
                     allTestsPassed = false;
                 }

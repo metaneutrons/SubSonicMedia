@@ -97,6 +97,11 @@ namespace SubSonicMedia.TestKit.Tests
             }
             catch (Exception ex)
             {
+                // Rethrow feature unavailability exceptions to be handled by TestBase
+                if (this.IsFeatureUnavailable(ex))
+                {
+                    throw;
+                }
                 ConsoleHelper.LogError($"Error getting videos: {ex.Message}");
                 allTestsPassed = false;
             }
@@ -232,6 +237,11 @@ namespace SubSonicMedia.TestKit.Tests
                             }
                             catch (Exception ex)
                             {
+                                // Rethrow feature unavailability exceptions to be handled by TestBase
+                                if (this.IsFeatureUnavailable(ex))
+                                {
+                                    throw;
+                                }
                                 ConsoleHelper.LogWarning($"Error getting captions: {ex.Message}");
 
                                 // Not considering this a failure as captions may not be available
@@ -248,6 +258,11 @@ namespace SubSonicMedia.TestKit.Tests
                 }
                 catch (Exception ex)
                 {
+                    // Rethrow feature unavailability exceptions to be handled by TestBase
+                    if (this.IsFeatureUnavailable(ex))
+                    {
+                        throw;
+                    }
                     ConsoleHelper.LogError($"Error getting video info: {ex.Message}");
                     allTestsPassed = false;
                 }

@@ -15,6 +15,7 @@
 // along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
 using Spectre.Console;
+using SubSonicMedia.Exceptions;
 using SubSonicMedia.TestKit.Helpers;
 using SubSonicMedia.TestKit.Models;
 
@@ -86,8 +87,15 @@ namespace SubSonicMedia.TestKit.Tests
                     allTestsPassed = false;
                 }
             }
+            // Feature unavailability exceptions are now handled by TestBase
             catch (Exception ex)
             {
+                // Rethrow feature unavailability exceptions to be handled by TestBase
+                if (this.IsFeatureUnavailable(ex))
+                {
+                    throw;
+                }
+
                 ConsoleHelper.LogError($"Error getting chat messages: {ex.Message}");
                 allTestsPassed = false;
             }
@@ -139,8 +147,15 @@ namespace SubSonicMedia.TestKit.Tests
                     allTestsPassed = false;
                 }
             }
+            // Feature unavailability exceptions are now handled by TestBase
             catch (Exception ex)
             {
+                // Rethrow feature unavailability exceptions to be handled by TestBase
+                if (this.IsFeatureUnavailable(ex))
+                {
+                    throw;
+                }
+
                 ConsoleHelper.LogError($"Error adding chat message: {ex.Message}");
                 allTestsPassed = false;
             }

@@ -102,6 +102,12 @@ namespace SubSonicMedia.TestKit.Tests
             }
             catch (Exception ex)
             {
+                // Rethrow feature unavailability exceptions to be handled by TestBase
+                if (this.IsFeatureUnavailable(ex))
+                {
+                    throw;
+                }
+
                 ConsoleHelper.LogError($"Error finding a song to test: {ex.Message}");
                 return TestResult.Fail;
             }
@@ -159,6 +165,12 @@ namespace SubSonicMedia.TestKit.Tests
             }
             catch (Exception ex)
             {
+                // Rethrow feature unavailability exceptions to be handled by TestBase
+                if (this.IsFeatureUnavailable(ex))
+                {
+                    throw;
+                }
+
                 ConsoleHelper.LogError($"Error streaming song: {ex.Message}");
                 allTestsPassed = false;
             }

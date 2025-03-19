@@ -43,19 +43,8 @@ namespace SubSonicMedia.TestKit.Tests
         /// <inheritdoc/>
         protected override async Task<TestResult> ExecuteTestAsync()
         {
-            // Test throwing NotImplemented to verify Skipped behavior
-            ConsoleHelper.LogInfo("Testing bookmark functionality (will be skipped as a test)...");
-
-            // Simulate a "NotImplemented" response
-            throw new SubsonicApiException(
-                70,
-                "The bookmark function is not implemented on this server"
-            );
-
-            // FIXME: This code will never be reached due to the exception above
-#pragma warning disable CS0162
+            ConsoleHelper.LogInfo("Testing bookmark functionality...");
             bool allTestsPassed = true;
-#pragma warning restore CS0162
 
             // Test 1: Get Bookmarks
             ConsoleHelper.LogInfo("Testing GetBookmarks...");
@@ -101,8 +90,15 @@ namespace SubSonicMedia.TestKit.Tests
                     allTestsPassed = false;
                 }
             }
+            // Feature unavailability exceptions are now handled by TestBase
             catch (Exception ex)
             {
+                // Rethrow feature unavailability exceptions to be handled by TestBase
+                if (this.IsFeatureUnavailable(ex))
+                {
+                    throw;
+                }
+
                 ConsoleHelper.LogError($"Error getting bookmarks: {ex.Message}");
                 allTestsPassed = false;
             }
@@ -174,8 +170,15 @@ namespace SubSonicMedia.TestKit.Tests
                         );
                     }
                 }
+                // Feature unavailability exceptions are now handled by TestBase
                 catch (Exception ex)
                 {
+                    // Rethrow feature unavailability exceptions to be handled by TestBase
+                    if (this.IsFeatureUnavailable(ex))
+                    {
+                        throw;
+                    }
+
                     ConsoleHelper.LogError(
                         $"Error testing bookmark creation/deletion: {ex.Message}"
                     );
