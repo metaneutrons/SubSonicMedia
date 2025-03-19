@@ -8,7 +8,7 @@
 - Run StyleCop check: `dotnet build /p:TreatWarningsAsErrors=true`
 - Fix StyleCop issues: `./scripts/Fix-StyleCopIssues.ps1`
 - Run all tests: `cd SubSonicMedia.TestKit && dotnet run`
-- Run specific test: `cd SubSonicMedia.TestKit && dotnet run run "Connection Test"`
+- Run specific test: `cd SubSonicMedia.TestKit && dotnet run test "Connection Test"`
 - List available tests: `cd SubSonicMedia.TestKit && dotnet run list`
 - Display test help: `cd SubSonicMedia.TestKit && dotnet run help`
 - Bump version: `./scripts/Bump-Version.ps1 -Apply`
@@ -53,7 +53,7 @@
 - **Semantic Version Bump** (.github/workflows/version-bump.yml)
   - Manually triggered from GitHub Actions tab
   - Options to apply version bump and create tags
-  - Force specific bump type (auto, patch, minor, major) 
+  - Force specific bump type (auto, patch, minor, major)
   - Uses ./scripts/Bump-Version.ps1 to analyze commits
   - Creates GitHub release when version is bumped
 
@@ -73,11 +73,11 @@
 - **Issue Templates**
   - Bug report template (.github/ISSUE_TEMPLATE/bug_report.md)
   - Feature request template (.github/ISSUE_TEMPLATE/feature_request.md)
-  
+
 - **Pull Request Template** (.github/pull_request_template.md)
   - Structured checklist for contributors
   - Ensures code quality standards are met
-  
+
 - **CODEOWNERS** (.github/CODEOWNERS)
   - Automatically assigns reviewers based on file paths
 
