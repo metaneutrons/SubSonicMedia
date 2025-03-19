@@ -51,7 +51,7 @@ namespace SubSonicMedia.TestKit.Tests
             ConsoleHelper.LogInfo($"  Server URL: {this.Settings.ServerUrl}");
             ConsoleHelper.LogInfo($"  Username: {this.Settings.Username}");
             ConsoleHelper.LogInfo($"  API Version: {this.Settings.ApiVersion}");
-            ConsoleHelper.LogInfo($"  Response Format: {this.Settings.ResponseFormat}");
+            ConsoleHelper.LogInfo("  Response Format: JSON");
 
             var playlistsResponse = await this.Client.Playlists.GetPlaylistsAsync();
 

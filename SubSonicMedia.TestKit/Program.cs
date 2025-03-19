@@ -66,14 +66,13 @@ var connectionInfo = new SubSonicMedia.Models.SubsonicConnectionInfo
     Username = appSettings.Username,
     Password = appSettings.Password,
     ApiVersion = appSettings.ApiVersion ?? VersionInfo.SubsonicApiVersion,
-    ResponseFormat = appSettings.ResponseFormat,
 };
 var client = new SubsonicClient(connectionInfo);
 
 // Display connection information
 ConsoleHelper.LogServerConnection(appSettings.ServerUrl);
 ConsoleHelper.LogInfo($"Authenticated as: {appSettings.Username}");
-ConsoleHelper.LogInfo($"Response format: {appSettings.ResponseFormat}");
+ConsoleHelper.LogInfo("Response format: JSON");
 
 // Create test runner
 var testRunner = new TestRunner(client, appSettings);
@@ -168,7 +167,6 @@ AppSettings? LoadConfiguration()
             Username = config["SUBSONIC_USERNAME"] ?? string.Empty,
             Password = config["SUBSONIC_PASSWORD"] ?? string.Empty,
             ApiVersion = config["SUBSONIC_API_VERSION"] ?? VersionInfo.SubsonicApiVersion, // Set a default API version
-            ResponseFormat = config["SUBSONIC_RESPONSE_FORMAT"] ?? "json",
             RecordTestResults = bool.TryParse(config["RECORD_TEST_RESULTS"], out bool record)
                 ? record
                 : true,

@@ -69,7 +69,7 @@ namespace SubSonicMedia.Authentication
             parameters["s"] = salt;
             parameters["v"] = connectionInfo.ApiVersion;
             parameters["c"] = connectionInfo.ClientName;
-            parameters["f"] = connectionInfo.ResponseFormat ?? "json";
+            parameters["f"] = "json"; // Always use JSON format
 
             // Authentication parameters have been added to the request
         }

@@ -219,15 +219,8 @@ namespace SubSonicMedia
 
                 T result;
 
-                // Use the appropriate parser based on the response format
-                if (this._connectionInfo.ResponseFormat?.ToLower() == "json")
-                {
-                    result = JsonParser.Parse<T>(content);
-                }
-                else
-                {
-                    result = XmlParser.Parse<T>(content);
-                }
+                // Always use JSON parser
+                result = JsonParser.Parse<T>(content);
 
                 if (!result.IsSuccess)
                 {
@@ -310,15 +303,10 @@ namespace SubSonicMedia
                             .Content.ReadAsStringAsync(cancellationToken)
                             .ConfigureAwait(false);
 
-                        SubsonicResponse errorResponse;
-                        if (this._connectionInfo.ResponseFormat?.ToLower() == "json")
-                        {
-                            errorResponse = JsonParser.Parse<SubsonicResponse>(content);
-                        }
-                        else
-                        {
-                            errorResponse = XmlParser.Parse<SubsonicResponse>(content);
-                        }
+                        // Always use JSON parser for error responses
+                        SubsonicResponse errorResponse = JsonParser.Parse<SubsonicResponse>(
+                            content
+                        );
 
                         if (!errorResponse.IsSuccess && errorResponse.Error != null)
                         {

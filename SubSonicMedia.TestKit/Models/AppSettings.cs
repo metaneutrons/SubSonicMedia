@@ -44,10 +44,7 @@ namespace SubSonicMedia.TestKit.Models
         /// </summary>
         public string? ApiVersion { get; set; }
 
-        /// <summary>
-        /// Gets or sets the response format (json or xml).
-        /// </summary>
-        public string ResponseFormat { get; set; } = "json";
+        // Response format is always JSON in this version
 
         /// <summary>
         /// Gets or sets a value indicating whether to record test results to JSON files.
@@ -81,7 +78,6 @@ namespace SubSonicMedia.TestKit.Models
                 Username = this.Username,
                 Password = this.Password,
                 ApiVersion = this.ApiVersion ?? VersionInfo.SubsonicApiVersion,
-                ResponseFormat = this.ResponseFormat,
             };
         }
     }

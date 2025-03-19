@@ -53,9 +53,6 @@ namespace SubSonicMedia.Models
         /// </summary>
         public string ClientName { get; set; } = "SubSonicMedia";
 
-        /// <summary>
-        /// Gets or sets the response format (json or xml).
-        /// </summary>
-        public string? ResponseFormat { get; set; } = "json";
+        // Response format is always JSON in this version
     }
 }
