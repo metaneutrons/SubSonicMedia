@@ -12,11 +12,8 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
-
-using System;
-using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 using SubSonicMedia.Interfaces;
@@ -33,6 +30,23 @@ namespace SubSonicMedia.Authentication
     /// </remarks>
     public class TokenAuthenticationProvider : IAuthenticationProvider
     {
+        /// <summary>
+        /// Calculates the MD5 hash of a string.
+        /// </summary>
+        /// <param name="input">The input string to hash.</param>
+        /// <returns>The MD5 hash as a lowercase hexadecimal string.</returns>
+        private static string CalculateMd5Hash(string input)
+        {
+#pragma warning disable CA5351 // Do not use broken cryptographic algorithms
+            // MD5 is required by the Subsonic API specification
+            byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+            byte[] hashBytes = MD5.HashData(inputBytes);
+
+            // Convert the byte array to a lowercase hexadecimal string
+            return Convert.ToHexString(hashBytes).ToLowerInvariant();
+#pragma warning restore CA5351
+        }
+
         /// <summary>
         /// Applies token-based authentication parameters to the request.
         /// </summary>
@@ -80,23 +94,6 @@ namespace SubSonicMedia.Authentication
             }
 
             return stringBuilder.ToString();
-        }
-
-        /// <summary>
-        /// Calculates the MD5 hash of a string.
-        /// </summary>
-        /// <param name="input">The input string to hash.</param>
-        /// <returns>The MD5 hash as a lowercase hexadecimal string.</returns>
-        private static string CalculateMd5Hash(string input)
-        {
-#pragma warning disable CA5351 // Do not use broken cryptographic algorithms
-            // MD5 is required by the Subsonic API specification
-            byte[] inputBytes = Encoding.UTF8.GetBytes(input);
-            byte[] hashBytes = MD5.HashData(inputBytes);
-
-            // Convert the byte array to a lowercase hexadecimal string
-            return Convert.ToHexString(hashBytes).ToLowerInvariant();
-#pragma warning restore CA5351
         }
     }
 }

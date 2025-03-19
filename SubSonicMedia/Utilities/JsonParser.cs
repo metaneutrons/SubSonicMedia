@@ -12,10 +12,8 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
-
-using System.IO;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using SubSonicMedia.Exceptions;
@@ -129,14 +127,16 @@ namespace SubSonicMedia.Utilities
                 var playlistsNode = rootNode["playlists"];
 
                 // Handle playlists array
-                if (playlistsNode["playlist"] is JsonArray playlistsArray)
+                if (playlistsNode?["playlist"] is JsonArray playlistsArray)
                 {
                     foreach (var playlistNode in playlistsArray)
                     {
                         if (playlistNode == null)
+                        {
                             continue;
+                        }
 
-                        var playlist = new Responses.Playlists.PlaylistSummary
+                        var playlist = new Responses.Playlists.Models.PlaylistSummary
                         {
                             Id = playlistNode["id"]?.GetValue<string>() ?? string.Empty,
                             Name = playlistNode["name"]?.GetValue<string>() ?? string.Empty,
@@ -177,63 +177,67 @@ namespace SubSonicMedia.Utilities
                 && rootNode["playlist"] != null
             )
             {
-                var playlistNode = rootNode["playlist"];
+                var playlistNode = rootNode?["playlist"];
 
                 // Set playlist properties
                 playlistResponse.Playlist.Id =
-                    playlistNode["id"]?.GetValue<string>() ?? string.Empty;
+                    playlistNode?["id"]?.GetValue<string>() ?? string.Empty;
                 playlistResponse.Playlist.Name =
-                    playlistNode["name"]?.GetValue<string>() ?? string.Empty;
-                playlistResponse.Playlist.Comment = playlistNode["comment"]?.GetValue<string>();
-                playlistResponse.Playlist.Owner = playlistNode["owner"]?.GetValue<string>();
+                    playlistNode?["name"]?.GetValue<string>() ?? string.Empty;
+                playlistResponse.Playlist.Comment = playlistNode?["comment"]?.GetValue<string>();
+                playlistResponse.Playlist.Owner = playlistNode?["owner"]?.GetValue<string>();
                 playlistResponse.Playlist.Public =
-                    playlistNode["public"]?.GetValue<bool>() ?? false;
+                    playlistNode?["public"]?.GetValue<bool>() ?? false;
                 playlistResponse.Playlist.SongCount =
-                    playlistNode["songCount"]?.GetValue<int>() ?? 0;
-                playlistResponse.Playlist.Duration = playlistNode["duration"]?.GetValue<int>() ?? 0;
-                playlistResponse.Playlist.CoverArt = playlistNode["coverArt"]?.GetValue<string>();
+                    playlistNode?["songCount"]?.GetValue<int>() ?? 0;
+                playlistResponse.Playlist.Duration =
+                    playlistNode?["duration"]?.GetValue<int>() ?? 0;
+                playlistResponse.Playlist.CoverArt = playlistNode?["coverArt"]?.GetValue<string>();
 
                 // Handle dates if present
-                if (playlistNode["created"] != null)
+                if (playlistNode?["created"] != null)
                 {
                     DateTime.TryParse(
-                        playlistNode["created"]?.GetValue<string>(),
+                        playlistNode?["created"]?.GetValue<string>(),
                         out DateTime created
                     );
                     playlistResponse.Playlist.Created = created;
                 }
 
-                if (playlistNode["changed"] != null)
+                if (playlistNode?["changed"] != null)
                 {
                     DateTime.TryParse(
-                        playlistNode["changed"]?.GetValue<string>(),
+                        playlistNode?["changed"]?.GetValue<string>(),
                         out DateTime changed
                     );
                     playlistResponse.Playlist.Changed = changed;
                 }
 
                 // Handle songs in the playlist
-                if (playlistNode["entry"] is JsonArray songsArray)
+                if (playlistNode?["entry"] is JsonArray songsArray)
                 {
                     foreach (var songNode in songsArray)
                     {
                         if (songNode == null)
-                            continue;
-
-                        var song = new Responses.Search.Song
                         {
-                            Id = songNode["id"]?.GetValue<string>(),
-                            Title = songNode["title"]?.GetValue<string>(),
-                            Album = songNode["album"]?.GetValue<string>(),
-                            Artist = songNode["artist"]?.GetValue<string>(),
-                            Track = songNode["track"]?.GetValue<int>(),
-                            Year = songNode["year"]?.GetValue<int>(),
-                            Genre = songNode["genre"]?.GetValue<string>(),
-                            CoverArt = songNode["coverArt"]?.GetValue<string>(),
+                            continue;
+                        }
+
+                        var song = new Responses.Search.Models.Song
+                        {
+                            Id = songNode["id"]?.GetValue<string>() ?? string.Empty,
+                            Title = songNode["title"]?.GetValue<string>() ?? string.Empty,
+                            Album = songNode["album"]?.GetValue<string>() ?? string.Empty,
+                            Artist = songNode["artist"]?.GetValue<string>() ?? string.Empty,
+                            Track = songNode["track"]?.GetValue<int>() ?? 0,
+                            Year = songNode["year"]?.GetValue<int>() ?? 0,
+                            Genre = songNode["genre"]?.GetValue<string>() ?? string.Empty,
+                            CoverArt = songNode["coverArt"]?.GetValue<string>() ?? string.Empty,
                             Duration = songNode["duration"]?.GetValue<int>() ?? 0,
                             Size = songNode["size"]?.GetValue<long>() ?? 0,
-                            ContentType = songNode["contentType"]?.GetValue<string>(),
-                            Path = songNode["path"]?.GetValue<string>(),
+                            ContentType =
+                                songNode["contentType"]?.GetValue<string>() ?? string.Empty,
+                            Path = songNode["path"]?.GetValue<string>() ?? string.Empty,
                         };
 
                         playlistResponse.Playlist.Entry.Add(song);
@@ -249,12 +253,14 @@ namespace SubSonicMedia.Utilities
                 var musicFoldersNode = rootNode["musicFolders"];
 
                 // Handle music folders array
-                if (musicFoldersNode["musicFolder"] is JsonArray foldersArray)
+                if (musicFoldersNode?["musicFolder"] is JsonArray foldersArray)
                 {
                     foreach (var folderNode in foldersArray)
                     {
                         if (folderNode == null)
+                        {
                             continue;
+                        }
 
                         var folder = new Responses.Browsing.MusicFolder
                         {
@@ -276,15 +282,17 @@ namespace SubSonicMedia.Utilities
 
                 // Parse ignored articles if present
                 artistsResponse.Artists.IgnoredArticles =
-                    artistsNode["ignoredArticles"]?.GetValue<string>() ?? string.Empty;
+                    artistsNode?["ignoredArticles"]?.GetValue<string>() ?? string.Empty;
 
                 // Handle index array (artists are grouped by letter/index)
-                if (artistsNode["index"] is JsonArray indexArray)
+                if (artistsNode?["index"] is JsonArray indexArray)
                 {
                     foreach (var indexNode in indexArray)
                     {
                         if (indexNode == null)
+                        {
                             continue;
+                        }
 
                         var index = new Responses.Browsing.Index
                         {
@@ -297,7 +305,9 @@ namespace SubSonicMedia.Utilities
                             foreach (var artistNode in artistsArray)
                             {
                                 if (artistNode == null)
+                                {
                                     continue;
+                                }
 
                                 var artist = new Responses.Browsing.Artist
                                 {
@@ -323,17 +333,19 @@ namespace SubSonicMedia.Utilities
                 && rootNode["searchResult3"] != null
             )
             {
-                var searchResultNode = rootNode["searchResult3"];
+                var searchResultNode = rootNode?["searchResult3"];
 
                 // Parse artist results
-                if (searchResultNode["artist"] is JsonArray artistsArray)
+                if (searchResultNode?["artist"] is JsonArray artistsArray)
                 {
                     foreach (var artistNode in artistsArray)
                     {
                         if (artistNode == null)
+                        {
                             continue;
+                        }
 
-                        var artist = new Responses.Search.Artist
+                        var artist = new Responses.Search.Models.Artist
                         {
                             Id = artistNode["id"]?.GetValue<string>() ?? string.Empty,
                             Name = artistNode["name"]?.GetValue<string>() ?? string.Empty,
@@ -346,14 +358,16 @@ namespace SubSonicMedia.Utilities
                 }
 
                 // Parse album results
-                if (searchResultNode["album"] is JsonArray albumsArray)
+                if (searchResultNode?["album"] is JsonArray albumsArray)
                 {
                     foreach (var albumNode in albumsArray)
                     {
                         if (albumNode == null)
+                        {
                             continue;
+                        }
 
-                        var album = new Responses.Search.Album
+                        var album = new Responses.Search.Models.Album
                         {
                             Id = albumNode["id"]?.GetValue<string>() ?? string.Empty,
                             Name = albumNode["name"]?.GetValue<string>() ?? string.Empty,
@@ -371,29 +385,32 @@ namespace SubSonicMedia.Utilities
                 }
 
                 // Parse song results
-                if (searchResultNode["song"] is JsonArray songsArray)
+                if (searchResultNode?["song"] is JsonArray songsArray)
                 {
                     foreach (var songNode in songsArray)
                     {
                         if (songNode == null)
+                        {
                             continue;
+                        }
 
-                        var song = new Responses.Search.Song
+                        var song = new Responses.Search.Models.Song
                         {
                             Id = songNode["id"]?.GetValue<string>() ?? string.Empty,
                             Title = songNode["title"]?.GetValue<string>() ?? string.Empty,
                             Album = songNode["album"]?.GetValue<string>() ?? string.Empty,
                             Artist = songNode["artist"]?.GetValue<string>() ?? string.Empty,
-                            AlbumId = songNode["albumId"]?.GetValue<string>(),
-                            ArtistId = songNode["artistId"]?.GetValue<string>(),
+                            AlbumId = songNode["albumId"]?.GetValue<string>() ?? string.Empty,
+                            ArtistId = songNode["artistId"]?.GetValue<string>() ?? string.Empty,
                             Track = songNode["track"]?.GetValue<int>() ?? 0,
                             Year = songNode["year"]?.GetValue<int>() ?? 0,
-                            Genre = songNode["genre"]?.GetValue<string>(),
-                            CoverArt = songNode["coverArt"]?.GetValue<string>(),
+                            Genre = songNode["genre"]?.GetValue<string>() ?? string.Empty,
+                            CoverArt = songNode["coverArt"]?.GetValue<string>() ?? string.Empty,
                             Size = songNode["size"]?.GetValue<long>() ?? 0,
-                            ContentType = songNode["contentType"]?.GetValue<string>(),
+                            ContentType =
+                                songNode["contentType"]?.GetValue<string>() ?? string.Empty,
                             Duration = songNode["duration"]?.GetValue<int>() ?? 0,
-                            Path = songNode["path"]?.GetValue<string>(),
+                            Path = songNode["path"]?.GetValue<string>() ?? string.Empty,
                         };
 
                         searchResponse.SearchResult.Songs.Add(song);
@@ -410,19 +427,21 @@ namespace SubSonicMedia.Utilities
                 var artist = artistResponse.Artist;
 
                 // Parse artist fields
-                artist.Id = artistNode["id"]?.GetValue<string>() ?? string.Empty;
-                artist.Name = artistNode["name"]?.GetValue<string>() ?? string.Empty;
-                artist.CoverArt = artistNode["coverArt"]?.GetValue<string>();
-                artist.AlbumCount = artistNode["albumCount"]?.GetValue<int>() ?? 0;
-                artist.ArtistImageUrl = artistNode["artistImageUrl"]?.GetValue<string>();
+                artist.Id = artistNode?["id"]?.GetValue<string>() ?? string.Empty;
+                artist.Name = artistNode?["name"]?.GetValue<string>() ?? string.Empty;
+                artist.CoverArt = artistNode?["coverArt"]?.GetValue<string>();
+                artist.AlbumCount = artistNode?["albumCount"]?.GetValue<int>() ?? 0;
+                artist.ArtistImageUrl = artistNode?["artistImageUrl"]?.GetValue<string>();
 
                 // Parse albums
-                if (artistNode["album"] is JsonArray albumsArray)
+                if (artistNode?["album"] is JsonArray albumsArray)
                 {
                     foreach (var albumNode in albumsArray)
                     {
                         if (albumNode == null)
+                        {
                             continue;
+                        }
 
                         // Handle different types for Created field (it might be a string date or a long timestamp)
                         long? createdValue = null;
@@ -438,7 +457,7 @@ namespace SubSonicMedia.Utilities
                             }
                         }
 
-                        var album = new Responses.Browsing.AlbumSummary
+                        var album = new Responses.Browsing.Models.AlbumSummary
                         {
                             Id = albumNode["id"]?.GetValue<string>() ?? string.Empty,
                             Name = albumNode["name"]?.GetValue<string>() ?? string.Empty,
@@ -465,29 +484,32 @@ namespace SubSonicMedia.Utilities
                 var randomSongsNode = rootNode["randomSongs"];
 
                 // Parse songs
-                if (randomSongsNode["song"] is JsonArray songsArray)
+                if (randomSongsNode?["song"] is JsonArray songsArray)
                 {
                     foreach (var songNode in songsArray)
                     {
                         if (songNode == null)
+                        {
                             continue;
+                        }
 
-                        var song = new Responses.Search.Song
+                        var song = new Responses.Search.Models.Song
                         {
                             Id = songNode["id"]?.GetValue<string>() ?? string.Empty,
                             Title = songNode["title"]?.GetValue<string>() ?? string.Empty,
                             Album = songNode["album"]?.GetValue<string>() ?? string.Empty,
                             Artist = songNode["artist"]?.GetValue<string>() ?? string.Empty,
-                            AlbumId = songNode["albumId"]?.GetValue<string>(),
-                            ArtistId = songNode["artistId"]?.GetValue<string>(),
+                            AlbumId = songNode["albumId"]?.GetValue<string>() ?? string.Empty,
+                            ArtistId = songNode["artistId"]?.GetValue<string>() ?? string.Empty,
                             Track = songNode["track"]?.GetValue<int>() ?? 0,
                             Year = songNode["year"]?.GetValue<int>() ?? 0,
-                            Genre = songNode["genre"]?.GetValue<string>(),
-                            CoverArt = songNode["coverArt"]?.GetValue<string>(),
+                            Genre = songNode["genre"]?.GetValue<string>() ?? string.Empty,
+                            CoverArt = songNode["coverArt"]?.GetValue<string>() ?? string.Empty,
                             Size = songNode["size"]?.GetValue<long>() ?? 0,
-                            ContentType = songNode["contentType"]?.GetValue<string>(),
+                            ContentType =
+                                songNode["contentType"]?.GetValue<string>() ?? string.Empty,
                             Duration = songNode["duration"]?.GetValue<int>() ?? 0,
-                            Path = songNode["path"]?.GetValue<string>(),
+                            Path = songNode["path"]?.GetValue<string>() ?? string.Empty,
                         };
 
                         randomSongsResponse.RandomSongs.Song.Add(song);
@@ -500,17 +522,19 @@ namespace SubSonicMedia.Utilities
                 && rootNode["internetRadioStations"] != null
             )
             {
-                var stationsNode = rootNode["internetRadioStations"];
+                var stationsNode = rootNode?["internetRadioStations"];
 
                 // Parse radio stations
-                if (stationsNode["internetRadioStation"] is JsonArray stationsArray)
+                if (stationsNode?["internetRadioStation"] is JsonArray stationsArray)
                 {
                     foreach (var stationNode in stationsArray)
                     {
                         if (stationNode == null)
+                        {
                             continue;
+                        }
 
-                        var station = new Responses.Radio.InternetRadioStation
+                        var station = new Responses.Radio.Models.InternetRadioStation
                         {
                             Id = stationNode["id"]?.GetValue<string>() ?? string.Empty,
                             Name = stationNode["name"]?.GetValue<string>() ?? string.Empty,
@@ -540,7 +564,9 @@ namespace SubSonicMedia.Utilities
         private static DateTime ParseDateTimeValue(JsonNode jsonNode)
         {
             if (jsonNode == null)
+            {
                 return DateTime.MinValue;
+            }
 
             try
             {
@@ -575,7 +601,9 @@ namespace SubSonicMedia.Utilities
         private static TimeSpan ParseTimeSpanSeconds(JsonNode jsonNode)
         {
             if (jsonNode == null)
+            {
                 return TimeSpan.Zero;
+            }
 
             try
             {
@@ -602,7 +630,9 @@ namespace SubSonicMedia.Utilities
                 foreach (var item in jsonArray)
                 {
                     if (item == null)
+                    {
                         continue;
+                    }
 
                     try
                     {

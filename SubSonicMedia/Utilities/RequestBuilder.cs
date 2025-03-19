@@ -12,12 +12,8 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace SubSonicMedia.Utilities
@@ -72,7 +68,7 @@ namespace SubSonicMedia.Utilities
         {
             if (value.HasValue)
             {
-                this._parameters[name] = value.Value.ToString();
+                this._parameters[name] = value.Value.ToString() ?? string.Empty;
             }
 
             return this;

@@ -12,11 +12,8 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
-
-using System;
-using System.IO;
 using System.Xml.Linq;
 using SubSonicMedia.Exceptions;
 using SubSonicMedia.Responses;
@@ -118,7 +115,6 @@ namespace SubSonicMedia.Utilities
             // This will need to be expanded based on specific response types
             // For now, this is a placeholder for custom parsing logic
             // Each response type will have its own specialized parsing
-
             // The actual implementation would populate the properties of the response object
             // based on the XML content in the root element
         }

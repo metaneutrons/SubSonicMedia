@@ -12,17 +12,8 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
-
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using SubSonicMedia.Authentication;
@@ -227,6 +218,7 @@ namespace SubSonicMedia
                     .ConfigureAwait(false);
 
                 T result;
+
                 // Use the appropriate parser based on the response format
                 if (this._connectionInfo.ResponseFormat?.ToLower() == "json")
                 {

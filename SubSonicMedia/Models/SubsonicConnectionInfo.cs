@@ -12,9 +12,8 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
-
 namespace SubSonicMedia.Models
 {
     /// <summary>
@@ -27,7 +26,7 @@ namespace SubSonicMedia.Models
         /// </summary>
         /// <remarks>
         /// The URL should include the protocol (http:// or https://) and may include a port number.
-        /// Example: https://subsonic.example.com:4040
+        /// Example: https://subsonic.example.com:4040.
         /// </remarks>
         public string ServerUrl { get; set; } = string.Empty;
 
@@ -45,9 +44,9 @@ namespace SubSonicMedia.Models
         /// Gets or sets the Subsonic API version to use.
         /// </summary>
         /// <remarks>
-        /// The default is 1.16.1, which is the latest version at the time of implementation.
+        /// The default is <see cref="VersionInfo.SubsonicApiVersion"/>, which is the latest version at the time of implementation.
         /// </remarks>
-        public string ApiVersion { get; set; } = "1.16.1";
+        public string ApiVersion { get; set; } = VersionInfo.SubsonicApiVersion;
 
         /// <summary>
         /// Gets or sets the client name for identification to the Subsonic server.
