@@ -12,12 +12,9 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
-
-using System;
-using System.Collections.Generic;
-using SubSonicMedia.Responses.Search;
+using SubSonicMedia.Responses.System.Models;
 
 namespace SubSonicMedia.Responses.System
 {
@@ -30,42 +27,5 @@ namespace SubSonicMedia.Responses.System
         /// Gets or sets the now playing container.
         /// </summary>
         public NowPlayingContainer NowPlaying { get; set; } = new NowPlayingContainer();
-    }
-
-    /// <summary>
-    /// Container for currently playing entries.
-    /// </summary>
-    public class NowPlayingContainer
-    {
-        /// <summary>
-        /// Gets or sets the list of entries.
-        /// </summary>
-        public List<NowPlayingEntry> Entry { get; set; } = new List<NowPlayingEntry>();
-    }
-
-    /// <summary>
-    /// An entry in the now playing list.
-    /// </summary>
-    public class NowPlayingEntry : Song
-    {
-        /// <summary>
-        /// Gets or sets the username.
-        /// </summary>
-        public string Username { get; set; }
-
-        /// <summary>
-        /// Gets or sets the number of minutes ago this song was added to the now playing list.
-        /// </summary>
-        public int MinutesAgo { get; set; }
-
-        /// <summary>
-        /// Gets or sets the player ID.
-        /// </summary>
-        public string PlayerId { get; set; }
-
-        /// <summary>
-        /// Gets or sets the player name.
-        /// </summary>
-        public string PlayerName { get; set; }
     }
 }

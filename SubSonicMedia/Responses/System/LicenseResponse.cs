@@ -12,10 +12,9 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
-
-using System;
+using SubSonicMedia.Responses.System.Models;
 
 namespace SubSonicMedia.Responses.System
 {
@@ -28,51 +27,5 @@ namespace SubSonicMedia.Responses.System
         /// Gets or sets the license information.
         /// </summary>
         public License License { get; set; } = new License();
-    }
-
-    /// <summary>
-    /// License details for the Subsonic server.
-    /// </summary>
-    public class License
-    {
-        /// <summary>
-        /// Gets or sets a value indicating whether the server is licensed.
-        /// </summary>
-        public bool Valid { get; set; }
-
-        /// <summary>
-        /// Gets or sets the email address the license is registered to.
-        /// </summary>
-        public string Email { get; set; }
-
-        /// <summary>
-        /// Gets or sets the license key.
-        /// </summary>
-        public string Key { get; set; }
-
-        /// <summary>
-        /// Gets or sets the license expiration date.
-        /// </summary>
-        public DateTime? Expires { get; set; }
-
-        /// <summary>
-        /// Gets or sets the license expiration date from the server.
-        /// </summary>
-        public DateTime? LicenseExpires { get; set; }
-
-        /// <summary>
-        /// Gets or sets the name of the licensed server product.
-        /// </summary>
-        public string LicenseVersion { get; set; }
-
-        /// <summary>
-        /// Gets or sets the trial period information.
-        /// </summary>
-        public string Trial { get; set; }
-
-        /// <summary>
-        /// Gets or sets the trial expiration date.
-        /// </summary>
-        public DateTime? TrialExpires { get; set; }
     }
 }

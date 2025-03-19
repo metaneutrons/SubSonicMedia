@@ -12,9 +12,8 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
-
 using System.Text.Json.Serialization;
 using System.Xml.Serialization;
 
@@ -53,25 +52,5 @@ namespace SubSonicMedia.Responses
         [XmlIgnore]
         [JsonIgnore]
         public bool IsSuccess => this.Status == "ok";
-    }
-
-    /// <summary>
-    /// Represents an error returned from the Subsonic API.
-    /// </summary>
-    public class SubsonicError
-    {
-        /// <summary>
-        /// Gets or sets the error code.
-        /// </summary>
-        [XmlAttribute("code")]
-        [JsonPropertyName("code")]
-        public int Code { get; set; }
-
-        /// <summary>
-        /// Gets or sets the error message.
-        /// </summary>
-        [XmlAttribute("message")]
-        [JsonPropertyName("message")]
-        public string Message { get; set; } = string.Empty;
     }
 }

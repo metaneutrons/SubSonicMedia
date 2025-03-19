@@ -12,10 +12,9 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
-
-using SubSonicMedia.Responses.Search;
+using SubSonicMedia.Responses.Search.Models;
 
 namespace SubSonicMedia.Responses.Browsing
 {

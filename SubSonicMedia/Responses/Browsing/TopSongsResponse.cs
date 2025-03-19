@@ -12,11 +12,9 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
-
-using System.Collections.Generic;
-using SubSonicMedia.Responses.Search;
+using SubSonicMedia.Responses.Browsing.Models;
 
 namespace SubSonicMedia.Responses.Browsing
 {
@@ -29,16 +27,5 @@ namespace SubSonicMedia.Responses.Browsing
         /// Gets or sets the top songs container.
         /// </summary>
         public TopSongs TopSongs { get; set; } = new TopSongs();
-    }
-
-    /// <summary>
-    /// Container for top songs.
-    /// </summary>
-    public class TopSongs
-    {
-        /// <summary>
-        /// Gets or sets the list of top songs.
-        /// </summary>
-        public List<Song> Song { get; set; } = new List<Song>();
     }
 }

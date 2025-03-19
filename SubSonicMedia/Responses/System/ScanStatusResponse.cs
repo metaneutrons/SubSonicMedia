@@ -12,8 +12,9 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
+using SubSonicMedia.Responses.System.Models;
 
 namespace SubSonicMedia.Responses.System
 {
@@ -26,31 +27,5 @@ namespace SubSonicMedia.Responses.System
         /// Gets or sets the scan status.
         /// </summary>
         public ScanStatus ScanStatus { get; set; } = new ScanStatus();
-    }
-
-    /// <summary>
-    /// Details about the media library scan status.
-    /// </summary>
-    public class ScanStatus
-    {
-        /// <summary>
-        /// Gets or sets a value indicating whether a scan is currently running.
-        /// </summary>
-        public bool Scanning { get; set; }
-
-        /// <summary>
-        /// Gets or sets the number of files scanned so far.
-        /// </summary>
-        public int Count { get; set; }
-
-        /// <summary>
-        /// Gets or sets the number of folders scanned.
-        /// </summary>
-        public int FolderCount { get; set; }
-
-        /// <summary>
-        /// Gets or sets the folder that is currently being scanned.
-        /// </summary>
-        public string Folder { get; set; }
     }
 }

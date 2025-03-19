@@ -12,10 +12,9 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
-
-using System.Collections.Generic;
+using SubSonicMedia.Responses.Browsing.Models;
 
 namespace SubSonicMedia.Responses.Browsing
 {
@@ -28,16 +27,5 @@ namespace SubSonicMedia.Responses.Browsing
         /// Gets or sets the songs by genre container.
         /// </summary>
         public SongsByGenre SongsByGenre { get; set; } = new SongsByGenre();
-    }
-
-    /// <summary>
-    /// Container for songs by genre.
-    /// </summary>
-    public class SongsByGenre
-    {
-        /// <summary>
-        /// Gets or sets the songs.
-        /// </summary>
-        public List<Child> Song { get; set; } = new List<Child>();
     }
 }

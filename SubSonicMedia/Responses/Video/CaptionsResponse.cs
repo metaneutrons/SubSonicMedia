@@ -12,11 +12,8 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
-
-using System.IO;
-
 namespace SubSonicMedia.Responses.Video
 {
     /// <summary>
@@ -28,6 +25,6 @@ namespace SubSonicMedia.Responses.Video
         /// <summary>
         /// Gets or sets the captions stream.
         /// </summary>
-        public Stream CaptionsStream { get; set; }
+        public Stream? CaptionsStream { get; set; }
     }
 }

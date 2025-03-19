@@ -12,12 +12,9 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
-
-using System;
-using System.Collections.Generic;
-using SubSonicMedia.Responses.Search;
+using SubSonicMedia.Responses.Bookmarks.Models;
 
 namespace SubSonicMedia.Responses.Bookmarks
 {
@@ -30,57 +27,5 @@ namespace SubSonicMedia.Responses.Bookmarks
         /// Gets or sets the bookmarks container.
         /// </summary>
         public BookmarksContainer Bookmarks { get; set; } = new BookmarksContainer();
-    }
-
-    /// <summary>
-    /// Container for bookmarks.
-    /// </summary>
-    public class BookmarksContainer
-    {
-        /// <summary>
-        /// Gets or sets the list of bookmarks.
-        /// </summary>
-        public List<Bookmark> Bookmark { get; set; } = new List<Bookmark>();
-    }
-
-    /// <summary>
-    /// A bookmark for a media file.
-    /// </summary>
-    public class Bookmark
-    {
-        /// <summary>
-        /// Gets or sets the entry ID.
-        /// </summary>
-        public string EntryId { get; set; }
-
-        /// <summary>
-        /// Gets or sets the position in seconds.
-        /// </summary>
-        public long Position { get; set; }
-
-        /// <summary>
-        /// Gets or sets the username.
-        /// </summary>
-        public string Username { get; set; }
-
-        /// <summary>
-        /// Gets or sets the comment.
-        /// </summary>
-        public string Comment { get; set; }
-
-        /// <summary>
-        /// Gets or sets when the bookmark was created.
-        /// </summary>
-        public DateTime Created { get; set; }
-
-        /// <summary>
-        /// Gets or sets when the bookmark was last changed.
-        /// </summary>
-        public DateTime Changed { get; set; }
-
-        /// <summary>
-        /// Gets or sets the bookmarked entry.
-        /// </summary>
-        public Song Entry { get; set; } = new Song();
     }
 }

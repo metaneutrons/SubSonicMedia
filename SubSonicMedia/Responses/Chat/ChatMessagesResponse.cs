@@ -12,11 +12,9 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
-
-using System;
-using System.Collections.Generic;
+using SubSonicMedia.Responses.Chat.Models;
 
 namespace SubSonicMedia.Responses.Chat
 {
@@ -29,37 +27,5 @@ namespace SubSonicMedia.Responses.Chat
         /// Gets or sets the chat messages container.
         /// </summary>
         public ChatMessages ChatMessages { get; set; } = new ChatMessages();
-    }
-
-    /// <summary>
-    /// Container for chat messages.
-    /// </summary>
-    public class ChatMessages
-    {
-        /// <summary>
-        /// Gets or sets the list of chat messages.
-        /// </summary>
-        public List<ChatMessage> Message { get; set; } = new List<ChatMessage>();
-    }
-
-    /// <summary>
-    /// A chat message.
-    /// </summary>
-    public class ChatMessage
-    {
-        /// <summary>
-        /// Gets or sets the message username.
-        /// </summary>
-        public string Username { get; set; }
-
-        /// <summary>
-        /// Gets or sets the message time.
-        /// </summary>
-        public DateTime Time { get; set; }
-
-        /// <summary>
-        /// Gets or sets the message content.
-        /// </summary>
-        public string Message { get; set; }
     }
 }

@@ -12,11 +12,8 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
-
-using System.Collections.Generic;
-
 namespace SubSonicMedia.Responses.Browsing
 {
     /// <summary>
@@ -28,21 +25,5 @@ namespace SubSonicMedia.Responses.Browsing
         /// Gets or sets the music folders.
         /// </summary>
         public List<MusicFolder> MusicFolders { get; set; } = new List<MusicFolder>();
-    }
-
-    /// <summary>
-    /// Represents a music folder.
-    /// </summary>
-    public class MusicFolder
-    {
-        /// <summary>
-        /// Gets or sets the ID of the music folder.
-        /// </summary>
-        public int Id { get; set; }
-
-        /// <summary>
-        /// Gets or sets the name of the music folder.
-        /// </summary>
-        public string Name { get; set; }
     }
 }

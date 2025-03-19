@@ -12,10 +12,9 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
-
-using System.Collections.Generic;
+using SubSonicMedia.Responses.User.Models;
 
 namespace SubSonicMedia.Responses.User
 {
@@ -28,16 +27,5 @@ namespace SubSonicMedia.Responses.User
         /// Gets or sets the users container.
         /// </summary>
         public Users Users { get; set; } = new Users();
-    }
-
-    /// <summary>
-    /// Container for users.
-    /// </summary>
-    public class Users
-    {
-        /// <summary>
-        /// Gets or sets the list of users.
-        /// </summary>
-        public List<User> User { get; set; } = new List<User>();
     }
 }

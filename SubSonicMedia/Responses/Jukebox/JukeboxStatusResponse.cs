@@ -12,11 +12,9 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
-
-using System.Collections.Generic;
-using SubSonicMedia.Responses.Search;
+using SubSonicMedia.Responses.Jukebox.Models;
 
 namespace SubSonicMedia.Responses.Jukebox
 {
@@ -29,36 +27,5 @@ namespace SubSonicMedia.Responses.Jukebox
         /// Gets or sets the jukebox status.
         /// </summary>
         public JukeboxStatus JukeboxStatus { get; set; } = new JukeboxStatus();
-    }
-
-    /// <summary>
-    /// Status of the jukebox.
-    /// </summary>
-    public class JukeboxStatus
-    {
-        /// <summary>
-        /// Gets or sets the current index in the playlist.
-        /// </summary>
-        public int CurrentIndex { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether the jukebox is playing.
-        /// </summary>
-        public bool Playing { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether the jukebox is in gain mode.
-        /// </summary>
-        public bool Gain { get; set; }
-
-        /// <summary>
-        /// Gets or sets the position in seconds.
-        /// </summary>
-        public int Position { get; set; }
-
-        /// <summary>
-        /// Gets or sets the playlist entries.
-        /// </summary>
-        public List<Song> Entry { get; set; } = new List<Song>();
     }
 }

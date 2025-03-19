@@ -12,11 +12,8 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
-
-using System.Collections.Generic;
-
 namespace SubSonicMedia.Responses.Podcasts
 {
     /// <summary>
@@ -27,17 +24,6 @@ namespace SubSonicMedia.Responses.Podcasts
         /// <summary>
         /// Gets or sets the newest podcasts container.
         /// </summary>
-        public NewestPodcasts NewestPodcasts { get; set; } = new NewestPodcasts();
-    }
-
-    /// <summary>
-    /// Container for newest podcast episodes.
-    /// </summary>
-    public class NewestPodcasts
-    {
-        /// <summary>
-        /// Gets or sets the list of podcast episodes.
-        /// </summary>
-        public List<PodcastEpisode> Episode { get; set; } = new List<PodcastEpisode>();
+        public Models.NewestPodcasts NewestPodcasts { get; set; } = new Models.NewestPodcasts();
     }
 }

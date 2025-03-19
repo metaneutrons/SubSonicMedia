@@ -12,12 +12,9 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
-
-using System;
-using System.Collections.Generic;
-using SubSonicMedia.Responses.Browsing;
+using SubSonicMedia.Responses.Playlists.Models;
 
 namespace SubSonicMedia.Responses.Playlists
 {
@@ -30,36 +27,5 @@ namespace SubSonicMedia.Responses.Playlists
         /// Gets or sets the play queue.
         /// </summary>
         public PlayQueue PlayQueue { get; set; } = new PlayQueue();
-    }
-
-    /// <summary>
-    /// Play queue information.
-    /// </summary>
-    public class PlayQueue
-    {
-        /// <summary>
-        /// Gets or sets the current play queue version.
-        /// </summary>
-        public string Current { get; set; }
-
-        /// <summary>
-        /// Gets or sets the position in the play queue, in milliseconds.
-        /// </summary>
-        public long Position { get; set; }
-
-        /// <summary>
-        /// Gets or sets the username that saved the play queue.
-        /// </summary>
-        public string Username { get; set; }
-
-        /// <summary>
-        /// Gets or sets the time when the play queue was saved, in milliseconds since 1970.
-        /// </summary>
-        public long Changed { get; set; }
-
-        /// <summary>
-        /// Gets or sets the songs in the play queue.
-        /// </summary>
-        public List<Child> Entry { get; set; } = new List<Child>();
     }
 }

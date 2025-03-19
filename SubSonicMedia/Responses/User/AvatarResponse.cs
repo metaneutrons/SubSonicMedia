@@ -12,11 +12,8 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
-
-using System.IO;
-
 namespace SubSonicMedia.Responses.User
 {
     /// <summary>
@@ -28,6 +25,6 @@ namespace SubSonicMedia.Responses.User
         /// <summary>
         /// Gets or sets the avatar image stream.
         /// </summary>
-        public Stream AvatarStream { get; set; }
+        public Stream? AvatarStream { get; set; }
     }
 }

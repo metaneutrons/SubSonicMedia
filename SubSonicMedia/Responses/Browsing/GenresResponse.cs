@@ -12,10 +12,9 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
-
-using System.Collections.Generic;
+using SubSonicMedia.Responses.Browsing.Models;
 
 namespace SubSonicMedia.Responses.Browsing
 {
@@ -28,37 +27,5 @@ namespace SubSonicMedia.Responses.Browsing
         /// Gets or sets the genres container.
         /// </summary>
         public GenresContainer Genres { get; set; } = new GenresContainer();
-    }
-
-    /// <summary>
-    /// Container for genres.
-    /// </summary>
-    public class GenresContainer
-    {
-        /// <summary>
-        /// Gets or sets the list of genres.
-        /// </summary>
-        public List<Genre> Genre { get; set; } = new List<Genre>();
-    }
-
-    /// <summary>
-    /// Genre information.
-    /// </summary>
-    public class Genre
-    {
-        /// <summary>
-        /// Gets or sets the genre name.
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Gets or sets the song count.
-        /// </summary>
-        public int SongCount { get; set; }
-
-        /// <summary>
-        /// Gets or sets the album count.
-        /// </summary>
-        public int AlbumCount { get; set; }
     }
 }
