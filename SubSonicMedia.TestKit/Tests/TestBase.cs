@@ -95,7 +95,7 @@ namespace SubSonicMedia.TestKit.Tests
             catch (Exception ex) when (this.IsFeatureUnavailable(ex))
             {
                 // Handle "NotImplemented" or "Gone" responses
-                string apiName = this.GetType().Name.Replace("Test", "");
+                string apiName = this.GetType().Name.Replace("Test", string.Empty);
                 ConsoleHelper.LogWarning(
                     $"{apiName} API not implemented by this server (possibly Navidrome)"
                 );
