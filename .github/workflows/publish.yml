@@ -38,9 +38,13 @@ jobs:
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
         run: |
           sed -i "s|<VersionPrefix>.*</VersionPrefix>|<VersionPrefix>${{ steps.get_version.outputs.VERSION }}</VersionPrefix>|g" SubSonicMedia/Directory.Build.props
-          # If this is the first release, also remove alpha suffix
-          if grep -q '<VersionSuffix>alpha</VersionSuffix>' SubSonicMedia/Directory.Build.props; then
-            sed -i "s|<VersionSuffix>alpha</VersionSuffix>|<VersionSuffix></VersionSuffix>|g" SubSonicMedia/Directory.Build.props
+          # If this is a stable release (no suffix in tag), remove any prerelease suffix
+          if [[ ! "${{ steps.get_version.outputs.VERSION }}" =~ .*-.* ]]; then
+            # Remove any version suffix (alpha, beta, etc.)
+            sed -i -E "s|<VersionSuffix>.*</VersionSuffix>|<VersionSuffix></VersionSuffix>|g" SubSonicMedia/Directory.Build.props
+          elif [[ "${{ steps.get_version.outputs.VERSION }}" =~ .*-beta.* ]]; then
+            # Update to beta suffix if tag contains -beta
+            sed -i "s|<VersionSuffix>.*</VersionSuffix>|<VersionSuffix>beta</VersionSuffix>|g" SubSonicMedia/Directory.Build.props
           fi
 
       - name: Setup .NET local tools
@@ -61,7 +65,7 @@ jobs:
             ./artifacts/*.snupkg
           name: Release ${{ steps.get_version.outputs.VERSION }}
           draft: false
-          prerelease: false
+          prerelease: ${{ contains(steps.get_version.outputs.VERSION, '-') }}
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
