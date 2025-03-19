@@ -14,6 +14,10 @@
     <Title>SubSonicMedia.TestKit</Title>
     <Description>A comprehensive testing toolkit for validating the SubSonicMedia API against your Subsonic server.</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/metaneutrons/SubSonicMedia</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/metaneutrons/SubSonicMedia</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <PackageTags>subsonic;music;api;testing;toolkit</PackageTags>
   </PropertyGroup>
 
