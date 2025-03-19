@@ -108,7 +108,7 @@ cd SubSonicMedia.TestKit
 dotnet run
 
 # Run a specific test
-dotnet run run "Connection Test"
+dotnet run test "Connection Test"
 
 # Run with JUnit XML output
 dotnet run -- --junit-xml
