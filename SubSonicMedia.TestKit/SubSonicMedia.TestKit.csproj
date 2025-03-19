@@ -8,6 +8,7 @@
     <Nullable>enable</Nullable>
     <RootNamespace>SubSonicMedia.TestKit</RootNamespace>
     <IsPackable>true</IsPackable>
+    <VersionSuffix>beta</VersionSuffix>
   </PropertyGroup>
 
   <!-- Switch from NuGet package to project reference since both now target net8.0 -->
