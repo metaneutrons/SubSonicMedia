@@ -56,6 +56,9 @@ jobs:
       - name: Build Release
         run: dotnet build --configuration Release --no-restore
 
+      - name: Pack NuGet package
+        run: dotnet pack --configuration Release --no-build -o ./artifacts
+
       - name: Create GitHub Release
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v1
@@ -69,9 +72,6 @@ jobs:
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Pack NuGet package
-        run: dotnet pack --configuration Release --no-build -o ./artifacts
 
       # NuGet publishing steps
       - name: Push to NuGet.org
