@@ -122,10 +122,32 @@ dotnet_diagnostic.SA1009.severity = none # Closing parenthesis should be spaced 
 dotnet_diagnostic.SA1111.severity = none # Closing parenthesis should be on line of last parameter
 dotnet_diagnostic.SA1118.severity = none # Parameter should not span multiple lines
 dotnet_diagnostic.SA1137.severity = none # Elements should have the same indentation
+dotnet_diagnostic.SA1202.severity = none # Elements should be ordered by access
 dotnet_diagnostic.SA1309.severity = none # Field names should not begin with underscore
 dotnet_diagnostic.SA1501.severity = none # Statement should not be on a single line
 dotnet_diagnostic.SA1502.severity = none # Element should not be on a single line
 dotnet_diagnostic.SA1504.severity = none # All accessors should be single-line or multi-line
+dotnet_diagnostic.SA1513.severity = none # Closing brace should be followed by blank line
+dotnet_diagnostic.SA1515.severity = none # Single-line comment should be preceded by blank line
+dotnet_diagnostic.SA1516.severity = none # Using directives should be grouped
 dotnet_diagnostic.SA1519.severity = none # Braces should not be omitted from multi-line child statement
 dotnet_diagnostic.SA1520.severity = none # Use braces consistently
 dotnet_diagnostic.SA1028.severity = none # Code should not contain trailing whitespace
+
+# Ensure using directives are properly formatted (SA1516 compliance)
+dotnet_separate_import_directive_groups = true
+
+# CSharpier settings
+csharpier_printWidth = 100
+csharpier_tabWidth = 4
+csharpier_useTabs = false
+csharpier_endOfLine = lf
+csharpier_indentSize = 4
+csharpier_newLineForCatch = false
+csharpier_newLineForFinally = false
+csharpier_newLineForElse = false
+csharpier_newLineForMembersInObjectLiterals = false
+csharpier_newLineForMembersInAnonymousTypes = false
+csharpier_newLineForClausesInQuery = false
+csharpier_blankLinesBetweenUsingGroups = 1
+csharpier_newLineForUsingGroups = true
