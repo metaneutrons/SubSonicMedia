@@ -12,6 +12,9 @@ on:
         default: false
         type: boolean
 
+permissions:
+  contents: write # Needed for creating GitHub releases
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -48,7 +51,7 @@ jobs:
           fi
 
       - name: Setup .NET local tools
-        run: dotnet new tool-manifest --force && dotnet tool install CSharpier
+        run: dotnet new tool-manifest --force
 
       - name: Restore dependencies
         run: dotnet restore

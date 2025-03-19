@@ -1,4 +1,4 @@
-name: Build and Test
+name: Build
 
 on:
   push:
@@ -6,6 +6,8 @@ on:
     paths-ignore:
       - "**/*.md"
       - "docs/**"
+    tags-ignore:
+      - "v*" # Tags are handled by the publish workflow
   pull_request:
     branches: [main]
     paths-ignore:
@@ -28,7 +30,7 @@ jobs:
         run: dotnet restore
 
       - name: Setup .NET local tools
-        run: dotnet new tool-manifest --force && dotnet tool install CSharpier
+        run: dotnet new tool-manifest --force
 
       - name: Build Release
         run: dotnet build --configuration Release --no-restore
