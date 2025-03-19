@@ -56,7 +56,9 @@ jobs:
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v1
         with:
-          files: ./artifacts/*.nupkg
+          files: |
+            ./artifacts/*.nupkg
+            ./artifacts/*.snupkg
           name: Release ${{ steps.get_version.outputs.VERSION }}
           draft: false
           prerelease: false
@@ -76,8 +78,9 @@ jobs:
             echo "NuGet API key not found. Package was built but not published."
             exit 1
           else
-            dotnet nuget push ./artifacts/*.nupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json
-            echo "Package published to NuGet.org successfully"
+            dotnet nuget push "./artifacts/*.nupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json
+            dotnet nuget push "./artifacts/*.snupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json
+            echo "Package and symbols published to NuGet.org successfully"
           fi
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
@@ -86,4 +89,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: nuget-package
-          path: ./artifacts/*.nupkg
+          path: |
+            ./artifacts/*.nupkg
+            ./artifacts/*.snupkg
