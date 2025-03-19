@@ -12,9 +12,9 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
-
+using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Spectre.Console;
@@ -65,7 +65,7 @@ var connectionInfo = new SubSonicMedia.Models.SubsonicConnectionInfo
     ServerUrl = appSettings.ServerUrl,
     Username = appSettings.Username,
     Password = appSettings.Password,
-    ApiVersion = appSettings.ApiVersion ?? "1.16.1",
+    ApiVersion = appSettings.ApiVersion ?? VersionInfo.SubsonicApiVersion,
     ResponseFormat = appSettings.ResponseFormat,
 };
 var client = new SubsonicClient(connectionInfo);
@@ -83,7 +83,7 @@ string[] commandArgs = Environment.GetCommandLineArgs().Skip(1).ToArray();
 if (commandArgs.Length > 0)
 {
     // Run specific test if specified
-    if (commandArgs[0].Equals("run", StringComparison.OrdinalIgnoreCase) && commandArgs.Length > 1)
+    if (commandArgs[0].Equals("test", StringComparison.OrdinalIgnoreCase) && commandArgs.Length > 1)
     {
         var testName = commandArgs[1];
         ConsoleHelper.LogInfo($"Running specific test: {testName}");
@@ -164,10 +164,10 @@ AppSettings? LoadConfiguration()
         // Map configuration to AppSettings
         var settings = new AppSettings
         {
-            ServerUrl = config["SUBSONIC_SERVER_URL"],
-            Username = config["SUBSONIC_USERNAME"],
-            Password = config["SUBSONIC_PASSWORD"],
-            ApiVersion = config["SUBSONIC_API_VERSION"] ?? "1.16.1", // Set a default API version
+            ServerUrl = config["SUBSONIC_SERVER_URL"] ?? string.Empty,
+            Username = config["SUBSONIC_USERNAME"] ?? string.Empty,
+            Password = config["SUBSONIC_PASSWORD"] ?? string.Empty,
+            ApiVersion = config["SUBSONIC_API_VERSION"] ?? VersionInfo.SubsonicApiVersion, // Set a default API version
             ResponseFormat = config["SUBSONIC_RESPONSE_FORMAT"] ?? "json",
             RecordTestResults = bool.TryParse(config["RECORD_TEST_RESULTS"], out bool record)
                 ? record
@@ -196,7 +196,7 @@ void DisplayHelp()
     AnsiConsole.WriteLine();
     AnsiConsole.WriteLine("Usage:");
     AnsiConsole.WriteLine("  dotnet run                    Run all tests");
-    AnsiConsole.WriteLine("  dotnet run run <test-name>    Run a specific test");
+    AnsiConsole.WriteLine("  dotnet run test <test-name>   Run a specific test");
     AnsiConsole.WriteLine("  dotnet run list               List all available tests");
     AnsiConsole.WriteLine("  dotnet run help               Display this help message");
     AnsiConsole.WriteLine();
@@ -209,7 +209,7 @@ void DisplayHelp()
     AnsiConsole.WriteLine("  SUBSONIC_USERNAME        Username for authentication (required)");
     AnsiConsole.WriteLine("  SUBSONIC_PASSWORD        Password for authentication (required)");
     AnsiConsole.WriteLine(
-        "  SUBSONIC_API_VERSION     API version to use (optional, defaults to 1.16.1)"
+        $"  SUBSONIC_API_VERSION     API version to use (optional, defaults to {VersionInfo.SubsonicApiVersion})"
     );
     AnsiConsole.WriteLine(
         "  SUBSONIC_RESPONSE_FORMAT Response format (optional, defaults to json)"
@@ -224,91 +224,4 @@ void DisplayHelp()
     AnsiConsole.WriteLine(
         "  JUNIT_XML_OUTPUT         Generate JUnit XML report (optional, defaults to false)"
     );
-}
-
-/// <summary>
-/// Extension methods for configuration.
-/// </summary>
-public static class ConfigurationExtensions
-{
-    /// <summary>
-    /// Adds a .env file as a configuration source.
-    /// </summary>
-    /// <param name="builder">The configuration builder.</param>
-    /// <param name="path">The path to the .env file.</param>
-    /// <param name="optional">Whether the file is optional.</param>
-    /// <returns>The configuration builder.</returns>
-    public static IConfigurationBuilder AddDotEnvFile(
-        this IConfigurationBuilder builder,
-        string path,
-        bool optional
-    )
-    {
-        ArgumentNullException.ThrowIfNull(builder);
-
-        try
-        {
-            if (!File.Exists(path) && !optional)
-            {
-                ConsoleHelper.LogError($".env file not found at: {path}");
-                throw new FileNotFoundException($".env file not found at: {path}");
-            }
-
-            if (!File.Exists(path))
-            {
-                return builder;
-            }
-
-            // Read all lines from the file
-            var lines = File.ReadAllLines(path);
-            var envVars = new Dictionary<string, string>();
-
-            foreach (var line in lines)
-            {
-                // Skip comments and empty lines
-                if (string.IsNullOrWhiteSpace(line) || line.TrimStart().StartsWith("#"))
-                {
-                    continue;
-                }
-
-                // Parse key-value pairs
-                var parts = line.Split('=', 2);
-                if (parts.Length != 2)
-                {
-                    continue;
-                }
-
-                var key = parts[0].Trim();
-                var value = parts[1].Trim();
-
-                // Remove quotes if present
-                if (value.StartsWith('"') && value.EndsWith('"'))
-                {
-                    value = value.Substring(1, value.Length - 2);
-                }
-
-                if (value.StartsWith('\'') && value.EndsWith('\''))
-                {
-                    value = value.Substring(1, value.Length - 2);
-                }
-
-                envVars[key] = value;
-            }
-
-            // Add the environment variables
-            builder.AddInMemoryCollection(envVars);
-
-            return builder;
-        }
-        catch (Exception ex) when (ex is not FileNotFoundException)
-        {
-            ConsoleHelper.LogError($"Error reading .env file: {ex.Message}");
-            if (!optional)
-            {
-                throw;
-            }
-
-            return builder;
-        }
-    }
 }

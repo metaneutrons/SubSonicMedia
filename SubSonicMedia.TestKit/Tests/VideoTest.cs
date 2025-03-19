@@ -12,10 +12,8 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
-
-using System.Linq;
 using Spectre.Console;
 using SubSonicMedia.TestKit.Helpers;
 using SubSonicMedia.TestKit.Models;
@@ -46,7 +44,7 @@ namespace SubSonicMedia.TestKit.Tests
         protected override async Task<TestResult> ExecuteTestAsync()
         {
             bool allTestsPassed = true;
-            string videoId = null;
+            string videoId = string.Empty;
 
             // Test 1: Get Videos
             ConsoleHelper.LogInfo("Testing GetVideos...");
@@ -80,9 +78,9 @@ namespace SubSonicMedia.TestKit.Tests
                             );
 
                             // Store first video ID for further tests
-                            if (videoId == null)
+                            if (string.IsNullOrEmpty(videoId))
                             {
-                                videoId = video.Id;
+                                videoId = video.Id ?? string.Empty;
                             }
                         }
 
@@ -235,6 +233,7 @@ namespace SubSonicMedia.TestKit.Tests
                             catch (Exception ex)
                             {
                                 ConsoleHelper.LogWarning($"Error getting captions: {ex.Message}");
+
                                 // Not considering this a failure as captions may not be available
                             }
                         }

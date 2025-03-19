@@ -12,9 +12,8 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
-
 using SubSonicMedia.TestKit.Helpers;
 using SubSonicMedia.TestKit.Models;
 
@@ -83,6 +82,7 @@ namespace SubSonicMedia.TestKit.Tests
                         ConsoleHelper.LogInfo(
                             "Skipping media tests as this appears to be a test environment without music content."
                         );
+
                         // Mark as successful since we're in a test environment without content
                         return TestResult.Pass;
                     }
@@ -208,6 +208,7 @@ namespace SubSonicMedia.TestKit.Tests
                                 ConsoleHelper.LogWarning(
                                     $"Could not save cover art sample: {ex.Message}"
                                 );
+
                                 // Don't fail the test just because we couldn't save the file
                             }
                         }

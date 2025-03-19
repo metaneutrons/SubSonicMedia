@@ -12,9 +12,8 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
-
 using Spectre.Console;
 using SubSonicMedia.TestKit.Helpers;
 using SubSonicMedia.TestKit.Models;
@@ -206,8 +205,8 @@ namespace SubSonicMedia.TestKit.Tests
                                         table.AddRow(
                                             album.Id ?? "N/A",
                                             album.Name ?? "Unknown Album",
-                                            album.Year.ToString(),
-                                            album.SongCount.ToString()
+                                            album.Year.ToString() ?? "0",
+                                            album.SongCount.ToString() ?? "0"
                                         );
                                     }
 

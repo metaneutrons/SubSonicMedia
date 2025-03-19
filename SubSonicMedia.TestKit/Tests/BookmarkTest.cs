@@ -12,12 +12,10 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
-
 using Spectre.Console;
 using SubSonicMedia.Exceptions;
-using SubSonicMedia.Responses.Bookmarks;
 using SubSonicMedia.TestKit.Helpers;
 using SubSonicMedia.TestKit.Models;
 
@@ -54,8 +52,10 @@ namespace SubSonicMedia.TestKit.Tests
                 "The bookmark function is not implemented on this server"
             );
 
-            // This code will never be reached due to the exception above
+            // FIXME: This code will never be reached due to the exception above
+#pragma warning disable CS0162
             bool allTestsPassed = true;
+#pragma warning restore CS0162
 
             // Test 1: Get Bookmarks
             ConsoleHelper.LogInfo("Testing GetBookmarks...");

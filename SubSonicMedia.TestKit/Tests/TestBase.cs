@@ -12,13 +12,11 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
-
 using System.Diagnostics;
 using System.Text.Json;
 using SubSonicMedia.Exceptions;
-using SubSonicMedia.Responses;
 using SubSonicMedia.TestKit.Helpers;
 using SubSonicMedia.TestKit.Models;
 
@@ -140,7 +138,8 @@ namespace SubSonicMedia.TestKit.Tests
             }
 
             // Check error codes that might indicate features not available
-            if (ex.ErrorCode == 70) // Subsonic error code for "not implemented"
+            // Subsonic error code for "not implemented"
+            if (ex.ErrorCode == 70)
             {
                 return true;
             }

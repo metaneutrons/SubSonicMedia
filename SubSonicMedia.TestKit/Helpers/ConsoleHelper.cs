@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see <https://www.gnu.org/licenses/>.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
 
 #pragma warning disable SA1028 // Code should not contain trailing whitespace

@@ -12,34 +12,13 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
-
+using SubSonicMedia;
 using SubSonicMedia.Models;
 
 namespace SubSonicMedia.TestKit.Models
 {
-    /// <summary>
-    /// Represents the result of a test execution.
-    /// </summary>
-    public enum TestResult
-    {
-        /// <summary>
-        /// The test was executed successfully.
-        /// </summary>
-        Pass,
-
-        /// <summary>
-        /// The test failed during execution.
-        /// </summary>
-        Fail,
-
-        /// <summary>
-        /// The test was skipped due to feature being unavailable or not implemented.
-        /// </summary>
-        Skipped,
-    }
-
     /// <summary>
     /// Application configuration settings.
     /// </summary>
@@ -101,7 +80,7 @@ namespace SubSonicMedia.TestKit.Models
                 ServerUrl = this.ServerUrl,
                 Username = this.Username,
                 Password = this.Password,
-                ApiVersion = this.ApiVersion,
+                ApiVersion = this.ApiVersion ?? VersionInfo.SubsonicApiVersion,
                 ResponseFormat = this.ResponseFormat,
             };
         }

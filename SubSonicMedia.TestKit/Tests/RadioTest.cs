@@ -12,10 +12,8 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
-
-using System.Linq;
 using Spectre.Console;
 using SubSonicMedia.TestKit.Helpers;
 using SubSonicMedia.TestKit.Models;
@@ -145,7 +143,7 @@ namespace SubSonicMedia.TestKit.Tests
                             ConsoleHelper.LogInfo($"Found {stationCount} stations:");
 
                             // Create a dummy station with our test data in case we can't find it in the response
-                            var newStation = new Responses.Radio.InternetRadioStation
+                            var newStation = new Responses.Radio.Models.InternetRadioStation
                             {
                                 // Use a dummy ID since we don't know the real one yet
                                 Id = "1",
@@ -188,7 +186,7 @@ namespace SubSonicMedia.TestKit.Tests
 
                             // We'll continue with tests even if we don't find the actual station in the list
                             // using the dummy station with ID="1"
-                            string newStationId = newStation.Id;
+                            string newStationId = newStation.Id ?? "1";
                             ConsoleHelper.LogSuccess($"Using station with ID: {newStationId}");
 
                             // Update the station

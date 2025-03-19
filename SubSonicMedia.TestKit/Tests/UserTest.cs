@@ -12,10 +12,8 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with SubSonicMedia. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+// along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
-
-using System.Linq;
 using Spectre.Console;
 using SubSonicMedia.TestKit.Helpers;
 using SubSonicMedia.TestKit.Models;
@@ -139,6 +137,7 @@ namespace SubSonicMedia.TestKit.Tests
             catch (Exception ex)
             {
                 ConsoleHelper.LogError($"Error getting all users: {ex.Message}");
+
                 // Not considering this a test failure as it might require admin privileges
             }
 
@@ -182,6 +181,7 @@ namespace SubSonicMedia.TestKit.Tests
                 ConsoleHelper.LogWarning(
                     $"Error getting avatar (this is normal if the user doesn't have an avatar): {ex.Message}"
                 );
+
                 // Not considering this a test failure as the user might not have an avatar
             }
 

@@ -42,7 +42,7 @@ dotnet run
 ### Running a specific test
 
 ```bash
-dotnet run run "Connection Test"
+dotnet run test "Connection Test"
 ```
 
 ### Listing available tests
