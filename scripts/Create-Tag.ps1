@@ -131,10 +131,17 @@ Write-Success "Working in repository root: $repoRoot"
 
 # Check for uncommitted changes
 $status = git status --porcelain
+$hasUncommittedChanges = $false
 if ($status) {
-    Write-Error "You have uncommitted changes. Please commit or stash them before creating a tag."
+    $hasUncommittedChanges = $true
+    Write-Warning "You have uncommitted changes. It's recommended to commit or stash them before creating a tag."
+    Write-Host "      Uncommitted changes:" -ForegroundColor $colors.Muted
+    $status | ForEach-Object { Write-Host "      $_" -ForegroundColor $colors.Muted }
+    Write-Host ""
 }
-Write-Success "No uncommitted changes detected"
+else {
+    Write-Success "No uncommitted changes detected"
+}
 
 # Check if we're on main branch
 $currentBranch = git branch --show-current
@@ -192,7 +199,7 @@ else {
     
     # Check for version pattern consistency
     $versionPattern = '^v\d+\.\d+\.\d+(-[a-zA-Z0-9\.]+)?$'
-    $inconsistentTags = $releaseTags | Where-Object { $_ -notmatch $versionPattern }
+    $inconsistentTags = @($releaseTags | Where-Object { $_ -notmatch $versionPattern })
     
     if ($inconsistentTags.Count -gt 0) {
         Write-Warning "Found $($inconsistentTags.Count) tags with inconsistent version format:"
@@ -202,7 +209,7 @@ else {
     }
     
     # Check for version sequence
-    $versionNumbers = $releaseTags | Where-Object { $_ -match $versionPattern } | ForEach-Object {
+    $versionNumbers = @($releaseTags | Where-Object { $_ -match $versionPattern } | ForEach-Object {
         if ($_ -match 'v(\d+)\.(\d+)\.(\d+)') {
             [PSCustomObject]@{
                 Tag = $_
@@ -212,7 +219,7 @@ else {
                 Original = $_
             }
         }
-    } | Sort-Object Major, Minor, Patch
+    }) | Sort-Object Major, Minor, Patch
     
     # Find gaps in version sequence
     $previousVersion = $null
@@ -268,6 +275,20 @@ Write-Host "    $tagCommand" -ForegroundColor $colors.Primary
 Write-Host "    $pushCommand" -ForegroundColor $colors.Primary
 Write-Host ""
 
+# Check if we should execute the commands or just show them
+if ($hasUncommittedChanges) {
+    # Show warning and exit if there are uncommitted changes
+    Write-Host "  $($icons.Warning)  " -ForegroundColor $colors.Warning -NoNewline
+    Write-Host "Cannot execute commands due to uncommitted changes." -ForegroundColor $colors.Warning
+    Write-Host "  Please commit or stash your changes first, then run the script again." -ForegroundColor $colors.Warning
+    Write-Host ""
+    Write-Host "  Commands that would be executed:" -ForegroundColor $colors.Info
+    Write-Host "  $tagCommand" -ForegroundColor $colors.Muted
+    Write-Host "  $pushCommand" -ForegroundColor $colors.Muted
+    Write-Host ""
+    exit 0
+}
+
 # Ask for confirmation
 if (-not (Get-Confirmation "Execute these commands?")) {
     Write-Info "Operation cancelled by user"
@@ -292,6 +313,7 @@ try {
     Write-Host ""
     Write-Host "  $($icons.Success)  " -ForegroundColor $colors.Success -NoNewline
     Write-Host "Tag v$fullVersion successfully created and pushed to origin!" -ForegroundColor $colors.Success
+    
     Write-Host ""
     Write-Host "  $($icons.Rocket)  " -ForegroundColor $colors.Secondary -NoNewline
     Write-Host "GitHub CI workflow should now be triggered." -ForegroundColor $colors.Secondary
