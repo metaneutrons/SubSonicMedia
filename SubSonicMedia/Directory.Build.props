@@ -13,21 +13,23 @@
     <Description>A .NET client library for the Subsonic API</Description>
     <PackageTags>subsonic;music;api;streaming</PackageTags>
     <RepositoryType>git</RepositoryType>
-    <!-- Assembly info - must use standard version format without suffix -->
-    <AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
-    <FileVersion>$(VersionPrefix).0</FileVersion>
-    <!-- Package version can include prerelease suffix -->
+    
+    <!-- CRITICAL: Use hardcoded version values for assembly version attributes -->
+    <!-- Assembly version must be a valid 4-part version -->
+    <AssemblyVersion>1.0.2.0</AssemblyVersion>
+    <FileVersion>1.0.2.0</FileVersion>
+    <!-- InformationalVersion can't have a beta suffix -->
+    <InformationalVersion>1.0.2</InformationalVersion>
+    <!-- Version property used by MSBuild -->
+    <Version>1.0.2</Version>
+    
+    <!-- NuGet package version can include prerelease suffix -->
     <PackageVersion Condition="'$(VersionSuffix)' != ''">$(VersionPrefix)-$(VersionSuffix)</PackageVersion>
     <PackageVersion Condition="'$(VersionSuffix)' == ''">$(VersionPrefix)</PackageVersion>
-    <!-- Force assembly version attributes to use valid version formats -->
-    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
-    <Version>$(VersionPrefix)</Version>
+    
+    <!-- Force assembly attribute generation with our specified values -->
+    <GenerateAssemblyFileVersionAttribute>true</GenerateAssemblyFileVersionAttribute>
+    <GenerateAssemblyVersionAttribute>true</GenerateAssemblyVersionAttribute>
+    <GenerateAssemblyInformationalVersionAttribute>true</GenerateAssemblyInformationalVersionAttribute>
   </PropertyGroup>
-
-  <!-- We need to explicitly create attributes with valid version formats -->
-  <ItemGroup>
-    <AssemblyAttribute Include="System.Reflection.AssemblyInformationalVersionAttribute">
-      <_Parameter1>$(VersionPrefix)</_Parameter1>
-    </AssemblyAttribute>
-  </ItemGroup>
 </Project>

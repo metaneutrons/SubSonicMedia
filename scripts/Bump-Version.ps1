@@ -318,6 +318,12 @@ if ($Apply) {
 
     # Update suffix based on stage or automatic removal
     $PropsXml.Project.PropertyGroup.VersionSuffix = $NewSuffix
+    
+    # Update all hardcoded version values to match
+    $PropsXml.Project.PropertyGroup.AssemblyVersion = "$NewVersion.0"
+    $PropsXml.Project.PropertyGroup.FileVersion = "$NewVersion.0"
+    $PropsXml.Project.PropertyGroup.InformationalVersion = $NewVersion
+    $PropsXml.Project.PropertyGroup.Version = $NewVersion
 
     # Save the changes
     $PropsXml.Save((Resolve-Path $PropsFile))
