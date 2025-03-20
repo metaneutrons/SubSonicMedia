@@ -100,13 +100,13 @@ function Get-Confirmation {
 function Show-Banner {
     $banner = @"
 
-  _____       _     _____             _      __  __          _ _       
- / ____|     | |   / ____|           (_)    |  \/  |        | (_)      
-| (___  _   _| |__| (___   ___  _ __  _  ___| \  / | ___  __| |_  __ _ 
+  _____       _     _____             _      __  __          _ _
+ / ____|     | |   / ____|           (_)    |  \/  |        | (_)
+| (___  _   _| |__| (___   ___  _ __  _  ___| \  / | ___  __| |_  __ _
  \___ \| | | | '_ \\___ \ / _ \| '_ \| |/ __| |\/| |/ _ \/ _` | |/ _` |
  ____) | |_| | |_) |___) | (_) | | | | | (__| |  | |  __/ (_| | | (_| |
 |_____/ \__,_|_.__/_____/ \___/|_| |_|_|\___|_|  |_|\___|\__,_|_|\__,_|
-                                                                        
+
   $($icons.Tag)  TAG GENERATOR  $($icons.Rocket)
   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -196,37 +196,37 @@ else {
     foreach ($tag in $latestTags) {
         Write-Host "      $tag" -ForegroundColor $colors.Muted
     }
-    
+
     # Check for version pattern consistency
     $versionPattern = '^v\d+\.\d+\.\d+(-[a-zA-Z0-9\.]+)?$'
     $inconsistentTags = @($releaseTags | Where-Object { $_ -notmatch $versionPattern })
-    
+
     if ($inconsistentTags.Count -gt 0) {
         Write-Warning "Found $($inconsistentTags.Count) tags with inconsistent version format:"
         foreach ($tag in $inconsistentTags) {
             Write-Host "      $tag" -ForegroundColor $colors.Warning
         }
     }
-    
+
     # Check for version sequence
     $versionNumbers = @($releaseTags | Where-Object { $_ -match $versionPattern } | ForEach-Object {
-        if ($_ -match 'v(\d+)\.(\d+)\.(\d+)') {
-            [PSCustomObject]@{
-                Tag = $_
-                Major = [int]$Matches[1]
-                Minor = [int]$Matches[2]
-                Patch = [int]$Matches[3]
-                Original = $_
+            if ($_ -match 'v(\d+)\.(\d+)\.(\d+)') {
+                [PSCustomObject]@{
+                    Tag      = $_
+                    Major    = [int]$Matches[1]
+                    Minor    = [int]$Matches[2]
+                    Patch    = [int]$Matches[3]
+                    Original = $_
+                }
             }
-        }
-    }) | Sort-Object Major, Minor, Patch
-    
+        }) | Sort-Object Major, Minor, Patch
+
     # Find gaps in version sequence
     $previousVersion = $null
     $gapsFound = $false
-    
+
     foreach ($version in $versionNumbers) {
-        if ($previousVersion -ne $null) {
+        if ($null -ne $previousVersion) {
             # Check for unexpected jumps
             if ($version.Major - $previousVersion.Major -gt 1) {
                 if (-not $gapsFound) {
@@ -245,19 +245,16 @@ else {
         }
         $previousVersion = $version
     }
-    
+
     if (-not $gapsFound) {
         Write-Success "Version sequence appears consistent"
     }
 }
 
 # Check if current tag already exists
-$existingTag = git tag -l "v$fullVersion"
-if ($existingTag) {
+$tagExists = git tag -l "v$fullVersion"
+if ($tagExists) {
     Write-Warning "Tag v$fullVersion already exists!"
-    if (-not (Get-Confirmation "Create tag anyway?")) {
-        exit 0
-    }
 }
 
 # Get the current date for the tag message
@@ -275,24 +272,39 @@ Write-Host "    $tagCommand" -ForegroundColor $colors.Primary
 Write-Host "    $pushCommand" -ForegroundColor $colors.Primary
 Write-Host ""
 
-# Check if we should execute the commands or just show them
+# Handle uncommitted changes as a blocker
 if ($hasUncommittedChanges) {
-    # Show warning and exit if there are uncommitted changes
     Write-Host "  $($icons.Warning)  " -ForegroundColor $colors.Warning -NoNewline
-    Write-Host "Cannot execute commands due to uncommitted changes." -ForegroundColor $colors.Warning
-    Write-Host "  Please commit or stash your changes first, then run the script again." -ForegroundColor $colors.Warning
+    Write-Host "You have uncommitted changes." -ForegroundColor $colors.Warning
     Write-Host ""
-    Write-Host "  Commands that would be executed:" -ForegroundColor $colors.Info
+    Write-Host "  Commands that would have been executed:" -ForegroundColor $colors.Info
     Write-Host "  $tagCommand" -ForegroundColor $colors.Muted
     Write-Host "  $pushCommand" -ForegroundColor $colors.Muted
     Write-Host ""
+    Write-Host "  Please commit or stash your changes first, then run the script again." -ForegroundColor $colors.Warning
     exit 0
 }
 
+# Determine if we need confirmation (only for existing tags now)
+$needsConfirmation = $false
+$confirmationReason = ""
+
+if ($tagExists) {
+    $needsConfirmation = $true
+    $confirmationReason = "Tag already exists"
+}
+
 # Ask for confirmation
-if (-not (Get-Confirmation "Execute these commands?")) {
-    Write-Info "Operation cancelled by user"
-    exit 0
+if ($needsConfirmation) {
+    if (-not (Get-Confirmation "$confirmationReason. Create tag anyway?")) {
+        Write-Info "Operation cancelled by user"
+        exit 0
+    }
+} else {
+    if (-not (Get-Confirmation "Execute these commands?")) {
+        Write-Info "Operation cancelled by user"
+        exit 0
+    }
 }
 
 # Execute the commands
@@ -313,7 +325,7 @@ try {
     Write-Host ""
     Write-Host "  $($icons.Success)  " -ForegroundColor $colors.Success -NoNewline
     Write-Host "Tag v$fullVersion successfully created and pushed to origin!" -ForegroundColor $colors.Success
-    
+
     Write-Host ""
     Write-Host "  $($icons.Rocket)  " -ForegroundColor $colors.Secondary -NoNewline
     Write-Host "GitHub CI workflow should now be triggered." -ForegroundColor $colors.Secondary
