@@ -176,7 +176,7 @@ Write-Success "Version extracted: $fullVersion"
 Write-StepHeader -Message "Analyzing existing release tags" -Icon $icons.Version
 
 # Get all release tags (starting with 'v')
-$releaseTags = git tag -l "v*" | Sort-Object
+$releaseTags = @(git tag -l "v*" | Sort-Object)
 
 # Check if we have any release tags
 if ($releaseTags.Count -eq 0) {
