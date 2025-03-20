@@ -289,8 +289,17 @@ if ($hasUncommittedChanges) {
 $needsConfirmation = $false
 
 if ($tagExists) {
+    # Prepare delete commands for preview
+    $deleteLocalCommand = "git tag -d v$fullVersion"
+    $deleteRemoteCommand = "git push --delete origin v$fullVersion"
+    
     Write-StepHeader -Message "Existing Tag Management" -Icon $icons.Warning
     Write-Info "Tag v$fullVersion already exists locally"
+    Write-Host ""
+    Write-Host "    If you choose to delete the existing tag, these commands will be executed:" -ForegroundColor $colors.Info
+    Write-Host "    $deleteLocalCommand" -ForegroundColor $colors.Primary
+    Write-Host "    $deleteRemoteCommand (if tag exists remotely)" -ForegroundColor $colors.Primary
+    Write-Host ""
     
     # Ask if user wants to delete the existing tag first
     if (Get-Confirmation "Do you want to delete the existing tag before creating a new one?") {
