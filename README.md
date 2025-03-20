@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="SubSonicMedia/icon.svg" alt="SubSonicMedia Logo" width="200">
+</div>
+
 # SubSonicMedia
 
 [![Build and Test](https://github.com/metaneutrons/SubSonicMedia/actions/workflows/build.yml/badge.svg)](https://github.com/metaneutrons/SubSonicMedia/actions/workflows/build.yml)
