@@ -4,6 +4,7 @@
 
 [![Build and Test](https://github.com/metaneutrons/SubSonicMedia/actions/workflows/build.yml/badge.svg)](https://github.com/metaneutrons/SubSonicMedia/actions/workflows/build.yml)
 [![Publish](https://github.com/metaneutrons/SubSonicMedia/actions/workflows/publish.yml/badge.svg)](https://github.com/metaneutrons/SubSonicMedia/actions/workflows/publish.yml)
+[![Status: Beta](https://img.shields.io/badge/Status-Beta-yellow)](https://github.com/metaneutrons/SubSonicMedia/releases)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![.NET](https://img.shields.io/badge/.NET-8.0-512BD4)](https://dotnet.microsoft.com/download)
 [![NuGet](https://img.shields.io/nuget/v/SubSonicMedia.svg)](https://www.nuget.org/packages/SubSonicMedia/)
