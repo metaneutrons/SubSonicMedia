@@ -254,7 +254,7 @@ else {
 # Check if current tag already exists
 $tagExists = git tag -l "v$fullVersion"
 if ($tagExists) {
-    Write-Warning "Tag v$fullVersion already exists!"
+    Write-Warning "Tag v$fullVersion already exists locally!"
 }
 
 # Get the current date for the tag message
@@ -285,21 +285,59 @@ if ($hasUncommittedChanges) {
     exit 0
 }
 
-# Determine if we need confirmation (only for existing tags now)
+# Handle existing tags
 $needsConfirmation = $false
-$confirmationReason = ""
 
 if ($tagExists) {
-    $needsConfirmation = $true
-    $confirmationReason = "Tag already exists"
+    Write-StepHeader -Message "Existing Tag Management" -Icon $icons.Warning
+    Write-Info "Tag v$fullVersion already exists locally"
+    
+    # Ask if user wants to delete the existing tag first
+    if (Get-Confirmation "Do you want to delete the existing tag before creating a new one?") {
+        Write-Host "    Deleting existing tag..." -ForegroundColor $colors.Muted
+        $deleteLocalResult = Invoke-Expression "git tag -d v$fullVersion 2>&1"
+        
+        if ($LASTEXITCODE -eq 0) {
+            Write-Success "Local tag v$fullVersion deleted successfully"
+            
+            # Check if tag exists remotely and ask to delete it too
+            $remoteTagExists = Invoke-Expression "git ls-remote --tags origin refs/tags/v$fullVersion 2>&1"
+            if ($remoteTagExists) {
+                if (Get-Confirmation "Tag also exists remotely. Delete remote tag as well?") {
+                    Write-Host "    Deleting remote tag..." -ForegroundColor $colors.Muted
+                    $deleteRemoteResult = Invoke-Expression "git push --delete origin v$fullVersion 2>&1"
+                    
+                    if ($LASTEXITCODE -eq 0) {
+                        Write-Success "Remote tag v$fullVersion deleted successfully"
+                    } else {
+                        Write-Warning "Failed to delete remote tag: $deleteRemoteResult"
+                        Write-Warning "Continuing with local operations only"
+                    }
+                }
+            }
+            
+            # Tag has been deleted, no need for further confirmation
+            $needsConfirmation = $false
+        } else {
+            Write-Warning "Failed to delete local tag: $deleteLocalResult"
+            Write-Warning "Will attempt to force create the tag"
+            # Still need confirmation for forcing
+            $needsConfirmation = true
+        }
+    } else {
+        # User chose not to delete, ask if they want to force create
+        $needsConfirmation = true
+    }
 }
 
-# Ask for confirmation
+# Ask for final confirmation
 if ($needsConfirmation) {
-    if (-not (Get-Confirmation "$confirmationReason. Create tag anyway?")) {
+    if (-not (Get-Confirmation "Tag exists. Force create anyway?")) {
         Write-Info "Operation cancelled by user"
         exit 0
     }
+    # If we're here, we need to force create the tag
+    $tagCommand = "git tag -f -a v$fullVersion -m 'Release v$fullVersion ($currentDate)'"
 } else {
     if (-not (Get-Confirmation "Execute these commands?")) {
         Write-Info "Operation cancelled by user"
@@ -311,10 +349,14 @@ if ($needsConfirmation) {
 Write-StepHeader -Message "Creating and pushing tag" -Icon $icons.Wait
 
 try {
-    # Create the tag (with -f to force if it already exists locally)
+    # Create the tag
     Write-Host "    Creating tag..." -ForegroundColor $colors.Muted
-    Invoke-Expression $tagCommand
-    if (-not $?) { throw "Failed to create tag" }
+    $createOutput = Invoke-Expression "$tagCommand 2>&1"
+    $createExitCode = $LASTEXITCODE
+    
+    if ($createExitCode -ne 0) { 
+        throw "Failed to create tag: $createOutput" 
+    }
 
     # Push the tag with error handling for remote tag existence
     Write-Host "    Pushing tag to origin..." -ForegroundColor $colors.Muted
