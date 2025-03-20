@@ -8,7 +8,7 @@
     <Nullable>enable</Nullable>
     <RootNamespace>SubSonicMedia.TestKit</RootNamespace>
     <IsPackable>true</IsPackable>
-    <VersionSuffix>beta</VersionSuffix>
+    <VersionSuffix>alpha.1</VersionSuffix>
     
     <!-- Package metadata -->
     <Title>SubSonicMedia.TestKit</Title>

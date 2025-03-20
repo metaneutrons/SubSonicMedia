@@ -1,0 +1,10 @@
+<Project>
+  <PropertyGroup>
+    <GitVersion_SemVer Condition="'' == ''">1.0.2</GitVersion_SemVer>
+    <GitVersion_MajorMinorPatch Condition="'' == ''">1.0.2</GitVersion_MajorMinorPatch>
+    <!-- PreReleaseLabel and PreReleaseNumber will be determined by GitVersion based on branch -->
+    <GitVersion_AssemblySemVer Condition="'' == ''">1.0.2.0</GitVersion_AssemblySemVer>
+    <GitVersion_AssemblySemFileVer Condition="'' == ''">1.0.2.0</GitVersion_AssemblySemFileVer>
+    <GitVersion_InformationalVersion Condition="'' == ''">1.0.2</GitVersion_InformationalVersion>
+  </PropertyGroup>
+</Project>

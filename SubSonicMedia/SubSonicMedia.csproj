@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <LangVersion>latest</LangVersion>
@@ -13,40 +13,34 @@
     <RepositoryUrl>https://github.com/metaneutrons/SubSonicMedia</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-
     <!-- Version overrides for assembly attributes -->
-    <AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
-    <FileVersion>$(VersionPrefix).0</FileVersion>
-    <InformationalVersion>$(VersionPrefix)</InformationalVersion>
-
+    <AssemblyVersion>1.0.2.0</AssemblyVersion>
+    <FileVersion>1.0.2.0</FileVersion>
+    <InformationalVersion>1.0.2-74+Branch.main.Sha.034831a4cb37ababf0346d64a2d5b5a6ea40c34d</InformationalVersion>
     <!-- NuGet Package Properties -->
     <IsPackable>true</IsPackable>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
     <PackageReleaseNotes>https://github.com/metaneutrons/SubSonicMedia/releases</PackageReleaseNotes>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-
     <!-- Source Link Properties -->
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-
     <!-- StyleCop and code analysis -->
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <Version>1.0.2-74</Version>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>bin\Debug</OutputPath>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <OutputPath>bin\Release</OutputPath>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
@@ -63,19 +57,16 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-
   <ItemGroup>
     <AdditionalFiles Include="$(MSBuildThisFileDirectory)\..\stylecop.json" Link="stylecop.json" />
     <None Include="$(MSBuildThisFileDirectory)\..\README.md" Pack="true" PackagePath="\" />
     <None Include="icon.png" Pack="true" PackagePath="\" />
     <None Include="icon.svg" Pack="true" PackagePath="\" />
   </ItemGroup>
-
   <!-- Define assembly attributes from MSBuild properties -->
   <PropertyGroup>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
   </PropertyGroup>
-  
   <ItemGroup>
     <!-- Expose SubsonicApiVersion as assembly metadata -->
     <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
@@ -83,4 +74,6 @@
       <_Parameter2>$(SubsonicApiVersion)</_Parameter2>
     </AssemblyAttribute>
   </ItemGroup>
+  <!-- Import GitVersion target to generate version information during build -->
+  <Import Project="$(MSBuildThisFileDirectory)\..\GitVersionTarget.targets" />
 </Project>

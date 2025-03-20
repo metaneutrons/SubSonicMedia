@@ -1,0 +1,85 @@
+name: GitVersion Update
+
+on:
+  workflow_dispatch:
+    inputs:
+      create_tag:
+        description: "Create and push Git tag"
+        required: true
+        default: false
+        type: boolean
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Need full history for GitVersion
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install GitVersion
+        run: dotnet tool install --global GitVersion.Tool
+        
+      - name: Run GitVersion
+        id: gitversion
+        run: |
+          # Run GitVersion and capture output
+          VERSION_JSON=$(dotnet gitversion /output json)
+          echo "Version JSON: $VERSION_JSON"
+          
+          # Extract key values and set as outputs
+          SEMVER=$(echo $VERSION_JSON | jq -r '.SemVer')
+          MAJOR_MINOR_PATCH=$(echo $VERSION_JSON | jq -r '.MajorMinorPatch')
+          PRERELEASE_LABEL=$(echo $VERSION_JSON | jq -r '.PreReleaseLabel')
+          PRERELEASE_NUMBER=$(echo $VERSION_JSON | jq -r '.PreReleaseNumber')
+          
+          echo "semver=$SEMVER" >> $GITHUB_OUTPUT
+          echo "majorminorpatch=$MAJOR_MINOR_PATCH" >> $GITHUB_OUTPUT
+          echo "prereleaselabel=$PRERELEASE_LABEL" >> $GITHUB_OUTPUT
+          echo "prereleasenumber=$PRERELEASE_NUMBER" >> $GITHUB_OUTPUT
+          
+          # Generate GitVersion.props file
+          dotnet gitversion /output buildserver /updateprojectfiles
+
+      - name: Update Directory.Build.props
+        run: |
+          # Update the version in Directory.Build.props
+          sed -i "s|<VersionPrefix>.*</VersionPrefix>|<VersionPrefix>${{ steps.gitversion.outputs.majorminorpatch }}</VersionPrefix>|g" SubSonicMedia/Directory.Build.props
+          
+          # Update version suffix if present
+          if [ -n "${{ steps.gitversion.outputs.prereleaselabel }}" ]; then
+            SUFFIX="${{ steps.gitversion.outputs.prereleaselabel }}"
+            if [ -n "${{ steps.gitversion.outputs.prereleasenumber }}" ]; then
+              SUFFIX="${SUFFIX}${{ steps.gitversion.outputs.prereleasenumber }}"
+            fi
+            sed -i "s|<VersionSuffix>.*</VersionSuffix>|<VersionSuffix>${SUFFIX}</VersionSuffix>|g" SubSonicMedia/Directory.Build.props
+          else
+            sed -i "s|<VersionSuffix>.*</VersionSuffix>|<VersionSuffix></VersionSuffix>|g" SubSonicMedia/Directory.Build.props
+          fi
+          
+          # Show the changes
+          git diff SubSonicMedia/Directory.Build.props
+
+      - name: Commit changes
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'github-actions@users.noreply.github.com'
+          git add SubSonicMedia/Directory.Build.props
+          git commit -m "chore: Update version to ${{ steps.gitversion.outputs.semver }} [skip ci]"
+
+      - name: Create and push tag
+        if: ${{ inputs.create_tag }}
+        run: |
+          git tag v${{ steps.gitversion.outputs.semver }}
+          git push origin v${{ steps.gitversion.outputs.semver }}
+          echo "Created and pushed tag v${{ steps.gitversion.outputs.semver }}"
+
+      - name: Push changes
+        run: git push

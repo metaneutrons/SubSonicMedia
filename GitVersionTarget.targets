@@ -1,0 +1,30 @@
+<Project>
+  <!-- Target to run GitVersion and generate GitVersion.props -->
+  <Target Name="GenerateGitVersionProps" BeforeTargets="CoreCompile">
+    <Exec Command="dotnet gitversion /output buildserver /updateprojectfiles" 
+          Condition="'$(GitVersion_SemVer)' == '' And $([MSBuild]::IsOSPlatform('Windows'))" 
+          ContinueOnError="true" />
+    <Exec Command="dotnet gitversion /output buildserver /updateprojectfiles" 
+          Condition="'$(GitVersion_SemVer)' == '' And !$([MSBuild]::IsOSPlatform('Windows'))" 
+          ContinueOnError="true" />
+    
+    <!-- Create GitVersion.props file with version info if GitVersion command succeeded -->
+    <WriteLinesToFile 
+      File="$(MSBuildThisFileDirectory)/GitVersion.props"
+      Overwrite="true"
+      Lines="&lt;Project&gt;
+  &lt;PropertyGroup&gt;
+    &lt;GitVersion_SemVer Condition=&quot;'$(GitVersion_SemVer)' == ''&quot;&gt;$(VersionPrefix)&lt;/GitVersion_SemVer&gt;
+    &lt;GitVersion_MajorMinorPatch Condition=&quot;'$(GitVersion_MajorMinorPatch)' == ''&quot;&gt;$(VersionPrefix)&lt;/GitVersion_MajorMinorPatch&gt;
+    &lt;!-- Support for alpha, beta, and rc prerelease labels --&gt;
+    &lt;GitVersion_PreReleaseLabel Condition=&quot;'$(GitVersion_PreReleaseLabel)' == ''&quot;&gt;$(VersionSuffix)&lt;/GitVersion_PreReleaseLabel&gt;
+    &lt;GitVersion_PreReleaseNumber Condition=&quot;'$(GitVersion_PreReleaseNumber)' == ''&quot;&gt;1&lt;/GitVersion_PreReleaseNumber&gt;
+    &lt;GitVersion_PreReleaseTagWithDash Condition=&quot;'$(GitVersion_PreReleaseLabel)' != ''&quot;&gt;-$(GitVersion_PreReleaseLabel).$(GitVersion_PreReleaseNumber)&lt;/GitVersion_PreReleaseTagWithDash&gt;
+    &lt;GitVersion_AssemblySemVer Condition=&quot;'$(GitVersion_AssemblySemVer)' == ''&quot;&gt;$(VersionPrefix).0&lt;/GitVersion_AssemblySemVer&gt;
+    &lt;GitVersion_AssemblySemFileVer Condition=&quot;'$(GitVersion_AssemblySemFileVer)' == ''&quot;&gt;$(VersionPrefix).0&lt;/GitVersion_AssemblySemFileVer&gt;
+    &lt;GitVersion_InformationalVersion Condition=&quot;'$(GitVersion_InformationalVersion)' == ''&quot;&gt;$(VersionPrefix)&lt;/GitVersion_InformationalVersion&gt;
+  &lt;/PropertyGroup&gt;
+&lt;/Project&gt;"
+      Condition="!Exists('$(MSBuildThisFileDirectory)/GitVersion.props')" />
+  </Target>
+</Project>

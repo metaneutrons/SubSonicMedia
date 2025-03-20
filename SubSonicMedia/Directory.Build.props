@@ -1,10 +1,11 @@
 <Project>
+  <!-- Import GitVersion properties if available (from CI build) -->
+  <Import Project="$(MSBuildThisFileDirectory)/GitVersion.props" Condition="Exists('$(MSBuildThisFileDirectory)/GitVersion.props')" />
+
   <PropertyGroup>
-    <!-- Version information -->
-    <VersionPrefix>1.0.2</VersionPrefix>
-    <VersionSuffix>beta</VersionSuffix>
     <!-- Sync with Subsonic API version supported -->
     <SubsonicApiVersion>1.16.1</SubsonicApiVersion>
+    
     <!-- Package metadata for NuGet -->
     <Authors>Fabian Schmieder</Authors>
     <Company>metaneutrons</Company>
@@ -14,14 +15,34 @@
     <PackageTags>subsonic;music;api;streaming</PackageTags>
     <RepositoryType>git</RepositoryType>
     
-    <!-- CRITICAL: Use hardcoded version values for assembly version attributes -->
-    <!-- Assembly version must be a valid 4-part version -->
-    <AssemblyVersion>1.0.2.0</AssemblyVersion>
-    <FileVersion>1.0.2.0</FileVersion>
-    <!-- InformationalVersion can't have a beta suffix -->
-    <InformationalVersion>1.0.2</InformationalVersion>
+    <!-- Default version information (used when GitVersion is not available) -->
+    <VersionPrefix Condition="'$(GitVersion_MajorMinorPatch)' == ''">1.0.2</VersionPrefix>
+    
+    <!-- For feature branches, use alpha prerelease label -->
+    <VersionSuffix Condition="'$(GitVersion_MajorMinorPatch)' == '' And $(BranchName.StartsWith('feature/')) == 'true'">alpha.1</VersionSuffix>
+    <!-- For develop branch, use beta prerelease label -->
+    <VersionSuffix Condition="'$(GitVersion_MajorMinorPatch)' == '' And $(BranchName) == 'develop'">beta.1</VersionSuffix>
+    <!-- For release branches, use rc prerelease label -->
+    <VersionSuffix Condition="'$(GitVersion_MajorMinorPatch)' == '' And $(BranchName.StartsWith('release/')) == 'true'">rc.1</VersionSuffix>
+    
+    <!-- Use GitVersion when available -->
+    <VersionPrefix Condition="'$(GitVersion_MajorMinorPatch)' != ''">$(GitVersion_MajorMinorPatch)</VersionPrefix>
+    <VersionSuffix Condition="'$(GitVersion_MajorMinorPatch)' != '' And '$(GitVersion_PreReleaseLabel)' != ''">$(GitVersion_PreReleaseLabel).$(GitVersion_PreReleaseNumber)</VersionSuffix>
+    
+    <!-- Assembly version (must be a valid 4-part version) -->
+    <AssemblyVersion Condition="'$(GitVersion_AssemblySemVer)' == ''">$(VersionPrefix).0</AssemblyVersion>
+    <AssemblyVersion Condition="'$(GitVersion_AssemblySemVer)' != ''">$(GitVersion_AssemblySemVer)</AssemblyVersion>
+    
+    <!-- File version -->
+    <FileVersion Condition="'$(GitVersion_AssemblySemFileVer)' == ''">$(VersionPrefix).0</FileVersion>
+    <FileVersion Condition="'$(GitVersion_AssemblySemFileVer)' != ''">$(GitVersion_AssemblySemFileVer)</FileVersion>
+    
+    <!-- Informational version (can include more info but no prerelease suffix for assembly) -->
+    <InformationalVersion Condition="'$(GitVersion_InformationalVersion)' == ''">$(VersionPrefix)</InformationalVersion>
+    <InformationalVersion Condition="'$(GitVersion_InformationalVersion)' != ''">$(GitVersion_InformationalVersion)</InformationalVersion>
+    
     <!-- Version property used by MSBuild -->
-    <Version>1.0.2</Version>
+    <Version>$(VersionPrefix)</Version>
     
     <!-- NuGet package version can include prerelease suffix -->
     <PackageVersion Condition="'$(VersionSuffix)' != ''">$(VersionPrefix)-$(VersionSuffix)</PackageVersion>
