@@ -75,7 +75,7 @@ namespace SubSonicMedia
 
             return requestedVersion <= supportedVersion;
         }
-        
+
         private static bool TryParseSubsonicVersion(string versionString, out int versionNumber)
         {
             versionNumber = 0;

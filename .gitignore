@@ -190,3 +190,6 @@ StyleCopReport.xml
 .run/
 thumbs.db
 tye.yaml
+
+# Generated files
+**/GeneratedVersionInfo.cs

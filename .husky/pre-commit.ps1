@@ -8,10 +8,10 @@ dotnet csharpier .
 # Verify that all files have GPL-3.0 headers
 Write-Host "📝 Checking for GPL-3.0 headers..." -ForegroundColor Cyan
 $missingHeaders = Get-ChildItem -Path ./SubSonicMedia -Include *.cs -Recurse -File |
-    Where-Object { $_.FullName -notlike "*/obj/*" -and $_.FullName -notlike "*/bin/*" } |
-    Where-Object { $_.Name -ne "SubSonicMedia.AssemblyInfo.cs" -and $_.Name -ne "SubSonicMedia.GlobalUsings.g.cs" } |
-    Where-Object { (Get-Content $_.FullName -Raw) -notlike "*GNU General Public License*" } |
-    Select-Object -ExpandProperty FullName
+Where-Object { $_.FullName -notlike "*/obj/*" -and $_.FullName -notlike "*/bin/*" } |
+Where-Object { $_.Name -ne "SubSonicMedia.AssemblyInfo.cs" -and $_.Name -ne "SubSonicMedia.GlobalUsings.g.cs" } |
+Where-Object { (Get-Content $_.FullName -Raw) -notlike "*GNU General Public License*" } |
+Select-Object -ExpandProperty FullName
 
 if ($missingHeaders) {
     Write-Host "⚠️ The following files are missing GPL-3.0 headers:" -ForegroundColor Yellow
@@ -39,9 +39,10 @@ dotnet build SubSonicMedia/SubSonicMedia.csproj /p:TreatWarningsAsErrors=false
 
 # Check for potential secrets
 Write-Host "🔐 Checking for potential secrets or credentials..." -ForegroundColor Cyan
-$secretsPattern = "(password|secret|key|token|credential).*=.*['\"][a-zA-Z0-9]{16,}['\"]" 
-$secrets = Get-ChildItem -Path ./SubSonicMedia -Include *.cs,*.json,*.xml -Recurse -File |
-    Select-String -Pattern $secretsPattern
+# Define pattern with double quotes and proper escaping
+$secretsPattern = "(password|secret|key|token|credential).*=.*[0-9a-zA-Z]{16,}"
+$secrets = Get-ChildItem -Path ./SubSonicMedia -Include *.cs, *.json, *.xml -Recurse -File |
+Select-String -Pattern $secretsPattern
 
 if ($secrets) {
     Write-Host "⚠️ Potential secrets or credentials found:" -ForegroundColor Yellow
