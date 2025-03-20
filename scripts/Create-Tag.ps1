@@ -172,9 +172,81 @@ if ($versionSuffix) {
 
 Write-Success "Version extracted: $fullVersion"
 
-# Check if tag already exists
-$existingTags = git tag -l "v$fullVersion"
-if ($existingTags) {
+# Check existing release tags
+Write-StepHeader -Message "Analyzing existing release tags" -Icon $icons.Version
+
+# Get all release tags (starting with 'v')
+$releaseTags = git tag -l "v*" | Sort-Object
+
+# Check if we have any release tags
+if ($releaseTags.Count -eq 0) {
+    Write-Info "No existing release tags found"
+}
+else {
+    # Display latest tags
+    $latestTags = $releaseTags | Select-Object -Last 5
+    Write-Info "Latest 5 release tags:"
+    foreach ($tag in $latestTags) {
+        Write-Host "      $tag" -ForegroundColor $colors.Muted
+    }
+    
+    # Check for version pattern consistency
+    $versionPattern = '^v\d+\.\d+\.\d+(-[a-zA-Z0-9\.]+)?$'
+    $inconsistentTags = $releaseTags | Where-Object { $_ -notmatch $versionPattern }
+    
+    if ($inconsistentTags.Count -gt 0) {
+        Write-Warning "Found $($inconsistentTags.Count) tags with inconsistent version format:"
+        foreach ($tag in $inconsistentTags) {
+            Write-Host "      $tag" -ForegroundColor $colors.Warning
+        }
+    }
+    
+    # Check for version sequence
+    $versionNumbers = $releaseTags | Where-Object { $_ -match $versionPattern } | ForEach-Object {
+        if ($_ -match 'v(\d+)\.(\d+)\.(\d+)') {
+            [PSCustomObject]@{
+                Tag = $_
+                Major = [int]$Matches[1]
+                Minor = [int]$Matches[2]
+                Patch = [int]$Matches[3]
+                Original = $_
+            }
+        }
+    } | Sort-Object Major, Minor, Patch
+    
+    # Find gaps in version sequence
+    $previousVersion = $null
+    $gapsFound = $false
+    
+    foreach ($version in $versionNumbers) {
+        if ($previousVersion -ne $null) {
+            # Check for unexpected jumps
+            if ($version.Major - $previousVersion.Major -gt 1) {
+                if (-not $gapsFound) {
+                    Write-Warning "Potential gaps in version sequence:"
+                    $gapsFound = $true
+                }
+                Write-Host "      Gap between $($previousVersion.Original) and $($version.Original)" -ForegroundColor $colors.Warning
+            }
+            elseif ($version.Major -eq $previousVersion.Major -and $version.Minor - $previousVersion.Minor -gt 1) {
+                if (-not $gapsFound) {
+                    Write-Warning "Potential gaps in version sequence:"
+                    $gapsFound = $true
+                }
+                Write-Host "      Gap between $($previousVersion.Original) and $($version.Original)" -ForegroundColor $colors.Warning
+            }
+        }
+        $previousVersion = $version
+    }
+    
+    if (-not $gapsFound) {
+        Write-Success "Version sequence appears consistent"
+    }
+}
+
+# Check if current tag already exists
+$existingTag = git tag -l "v$fullVersion"
+if ($existingTag) {
     Write-Warning "Tag v$fullVersion already exists!"
     if (-not (Get-Confirmation "Create tag anyway?")) {
         exit 0
