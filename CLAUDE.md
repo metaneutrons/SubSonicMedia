@@ -11,7 +11,9 @@
 - Run specific test: `cd SubSonicMedia.TestKit && dotnet run test "Connection Test"`
 - List available tests: `cd SubSonicMedia.TestKit && dotnet run list`
 - Display test help: `cd SubSonicMedia.TestKit && dotnet run help`
-- Bump version: `./scripts/Bump-Version.ps1 -Apply`
+- Analyze version bump: `./scripts/Bump-Version.ps1`
+- Apply version bump: `./scripts/Bump-Version.ps1 -Apply`
+- Create and push tag: `./scripts/Create-Tag.ps1`
 - Check for shell scripts: `./scripts/Check-ShellScripts.ps1`
 
 ## Code Style Guidelines
@@ -52,10 +54,11 @@
 
 - **Semantic Version Bump** (.github/workflows/version-bump.yml)
   - Manually triggered from GitHub Actions tab
-  - Options to apply version bump and create tags
+  - Options to apply version bump
   - Force specific bump type (auto, patch, minor, major)
   - Uses ./scripts/Bump-Version.ps1 to analyze commits
-  - Creates GitHub release when version is bumped
+  - Updates version in Directory.Build.props
+  - Tag creation is separate via ./scripts/Create-Tag.ps1
 
 - **Build and Publish NuGet Package** (.github/workflows/publish.yml)
   - Triggered by version tags (v*) or manually
