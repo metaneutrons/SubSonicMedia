@@ -1,12 +1,10 @@
 <Project>
   <PropertyGroup>
     <!-- Version information -->
-    <VersionPrefix>1.0.1</VersionPrefix>
+    <VersionPrefix>1.0.2</VersionPrefix>
     <VersionSuffix>beta</VersionSuffix>
-
     <!-- Sync with Subsonic API version supported -->
     <SubsonicApiVersion>1.16.1</SubsonicApiVersion>
-
     <!-- Package metadata for NuGet -->
     <Authors>Fabian Schmieder</Authors>
     <Company>metaneutrons</Company>
@@ -15,7 +13,6 @@
     <Description>A .NET client library for the Subsonic API</Description>
     <PackageTags>subsonic;music;api;streaming</PackageTags>
     <RepositoryType>git</RepositoryType>
-
     <!-- Assembly info - must use standard version format without suffix -->
     <AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
     <FileVersion>$(VersionPrefix).0</FileVersion>
