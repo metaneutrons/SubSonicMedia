@@ -1,6 +1,4 @@
-<div align="center">
-  <img src="SubSonicMedia/icon.svg" alt="SubSonicMedia Logo" width="200">
-</div>
+![SubSonicMedia Logo](SubSonicMedia/icon.svg)
 
 # SubSonicMedia
 

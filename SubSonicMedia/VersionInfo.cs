@@ -23,11 +23,23 @@ namespace SubSonicMedia
     /// </summary>
     public static class VersionInfo
     {
+        // Fields are declared before properties according to StyleCop rules
         private static readonly Lazy<string> LazyVersion = new Lazy<string>(() =>
         {
             var assembly = typeof(VersionInfo).Assembly;
             var infoVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
             return infoVersion?.InformationalVersion ?? "0.0.0";
+        });
+
+        private static readonly Lazy<string> LazySubsonicApiVersion = new Lazy<string>(() =>
+        {
+            var assembly = typeof(VersionInfo).Assembly;
+            var apiVersionAttr = assembly
+                .GetCustomAttributes<AssemblyMetadataAttribute>()
+                .FirstOrDefault(attr =>
+                    attr.Key.Equals("SubsonicApiVersion", StringComparison.OrdinalIgnoreCase)
+                );
+            return apiVersionAttr?.Value ?? "1.16.1"; // Fallback if not found
         });
 
         /// <summary>
@@ -38,7 +50,7 @@ namespace SubSonicMedia
         /// <summary>
         /// Gets the maximum supported Subsonic API version.
         /// </summary>
-        public static string SubsonicApiVersion => "1.16.1";
+        public static string SubsonicApiVersion => LazySubsonicApiVersion.Value;
 
         /// <summary>
         /// Gets a value indicating whether a specified Subsonic API version is supported.
@@ -63,7 +75,7 @@ namespace SubSonicMedia
 
             return requestedVersion <= supportedVersion;
         }
-
+        
         private static bool TryParseSubsonicVersion(string versionString, out int versionNumber)
         {
             versionNumber = 0;

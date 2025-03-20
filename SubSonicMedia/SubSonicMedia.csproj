@@ -20,7 +20,7 @@
     <PackageIcon>icon.png</PackageIcon>
     <PackageReleaseNotes>https://github.com/metaneutrons/SubSonicMedia/releases</PackageReleaseNotes>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    
+
     <!-- Source Link Properties -->
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
@@ -63,5 +63,19 @@
     <AdditionalFiles Include="$(MSBuildThisFileDirectory)\..\stylecop.json" Link="stylecop.json" />
     <None Include="$(MSBuildThisFileDirectory)\..\README.md" Pack="true" PackagePath="\" />
     <None Include="icon.png" Pack="true" PackagePath="\" />
+    <None Include="icon.svg" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <!-- Define assembly attributes from MSBuild properties -->
+  <PropertyGroup>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <!-- Expose SubsonicApiVersion as assembly metadata -->
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>SubsonicApiVersion</_Parameter1>
+      <_Parameter2>$(SubsonicApiVersion)</_Parameter2>
+    </AssemblyAttribute>
   </ItemGroup>
 </Project>
