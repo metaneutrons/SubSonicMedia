@@ -19,7 +19,9 @@
     <!-- Package version can include prerelease suffix -->
     <PackageVersion Condition="'$(VersionSuffix)' != ''">$(VersionPrefix)-$(VersionSuffix)</PackageVersion>
     <PackageVersion Condition="'$(VersionSuffix)' == ''">$(VersionPrefix)</PackageVersion>
-    <!-- Allow automatic generation of assembly version attributes -->
+    <!-- Allow automatic generation of assembly version attributes but with correct format -->
     <GenerateAssemblyInformationalVersionAttribute>true</GenerateAssemblyInformationalVersionAttribute>
+    <!-- Override InformationalVersion to use proper format -->
+    <InformationalVersion>$(VersionPrefix)</InformationalVersion>
   </PropertyGroup>
 </Project>
