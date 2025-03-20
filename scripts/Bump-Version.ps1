@@ -358,4 +358,4 @@ else {
 
     # Display the command
     Write-Host "    $applyCmd" -ForegroundColor $colors.Primary
-} # end of else block
+}
