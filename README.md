@@ -1,4 +1,4 @@
-![SubSonicMedia Logo](SubSonicMedia/icon.svg)
+![SubSonicMedia Logo](https://raw.githubusercontent.com/metaneutrons/SubSonicMedia/refs/heads/main/SubSonicMedia/icon.svg)
 
 # SubSonicMedia
 

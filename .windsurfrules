@@ -100,4 +100,7 @@ Read [CLAUDE.md](CLAUDE.md) for details.
    - Preventive measure proposals
    - Sharing of learning points
 
+## Git Workflow
+   - don't execute any git commands yourself
+
 I will follow these instructions to deliver high-quality implementations. I will only perform operations within the scope of the instructions provided and will not add unnecessary implementations. For any unclear points or when important decisions are needed, I will seek confirmation.
