@@ -104,9 +104,10 @@ if ($Apply) {
     # Update version in Directory.Build.props
     $PropsXml.Project.PropertyGroup.VersionPrefix = $NewVersion
     
-    # If this is the first release, also remove alpha suffix
-    if ($PropsXml.Project.PropertyGroup.VersionSuffix -eq "alpha") {
+    # Remove prerelease suffix for major and minor version bumps
+    if ($BumpType -eq "major" || $BumpType -eq "minor") {
         $PropsXml.Project.PropertyGroup.VersionSuffix = ""
+        Write-Host "Removing prerelease suffix for $BumpType version bump"
     }
     
     # Save the changes

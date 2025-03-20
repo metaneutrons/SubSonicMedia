@@ -19,7 +19,8 @@
     <!-- Assembly info - must use standard version format without suffix -->
     <AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
     <FileVersion>$(VersionPrefix).0</FileVersion>
-    <!-- InformationalVersion can include prerelease suffix -->
-    <InformationalVersion>$(VersionPrefix)-$(VersionSuffix)</InformationalVersion>
+    <!-- InformationalVersion can include prerelease suffix but needs special handling -->
+    <InformationalVersion Condition="'$(VersionSuffix)' != ''">$(VersionPrefix)-$(VersionSuffix)</InformationalVersion>
+    <InformationalVersion Condition="'$(VersionSuffix)' == ''">$(VersionPrefix)</InformationalVersion>
   </PropertyGroup>
 </Project>
