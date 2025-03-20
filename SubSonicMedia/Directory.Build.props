@@ -16,6 +16,8 @@
     <!-- Assembly info - must use standard version format without suffix -->
     <AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
     <FileVersion>$(VersionPrefix).0</FileVersion>
+    <!-- Prevent auto-generation of AssemblyInformationalVersion with additional .0 suffix -->
+    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
     <!-- InformationalVersion can include prerelease suffix but needs special handling -->
     <InformationalVersion Condition="'$(VersionSuffix)' != ''">$(VersionPrefix)-$(VersionSuffix)</InformationalVersion>
     <InformationalVersion Condition="'$(VersionSuffix)' == ''">$(VersionPrefix)</InformationalVersion>
