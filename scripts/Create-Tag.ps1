@@ -311,20 +311,49 @@ if ($needsConfirmation) {
 Write-StepHeader -Message "Creating and pushing tag" -Icon $icons.Wait
 
 try {
-    # Create the tag
+    # Create the tag (with -f to force if it already exists locally)
     Write-Host "    Creating tag..." -ForegroundColor $colors.Muted
     Invoke-Expression $tagCommand
     if (-not $?) { throw "Failed to create tag" }
 
-    # Push the tag
+    # Push the tag with error handling for remote tag existence
     Write-Host "    Pushing tag to origin..." -ForegroundColor $colors.Muted
-    Invoke-Expression $pushCommand
-    if (-not $?) { throw "Failed to push tag" }
-
-    # Success message
-    Write-Host ""
-    Write-Host "  $($icons.Success)  " -ForegroundColor $colors.Success -NoNewline
-    Write-Host "Tag v$fullVersion successfully created and pushed to origin!" -ForegroundColor $colors.Success
+    $pushOutput = Invoke-Expression "$pushCommand 2>&1"
+    $pushExitCode = $LASTEXITCODE
+    
+    # Check if the push failed because the tag already exists remotely
+    if ($pushExitCode -ne 0) {
+        if ($pushOutput -match "rejected.*already exists") {
+            # Tag exists remotely but we created it locally - this is fine
+            Write-Warning "Tag already exists in remote repository"
+            Write-Info "Local tag was created successfully"
+            
+            # Ask if user wants to force push
+            if (Get-Confirmation "Do you want to force push the tag? This will overwrite the remote tag.") {
+                Write-Host "    Force pushing tag..." -ForegroundColor $colors.Muted
+                Invoke-Expression "git push -f origin v$fullVersion"
+                if ($LASTEXITCODE -eq 0) {
+                    # Success message for force push
+                    Write-Host ""
+                    Write-Host "  $($icons.Success)  " -ForegroundColor $colors.Success -NoNewline
+                    Write-Host "Tag v$fullVersion successfully force-pushed to origin!" -ForegroundColor $colors.Success
+                } else {
+                    throw "Failed to force push tag"
+                }
+            } else {
+                Write-Info "Force push cancelled by user"
+                Write-Info "Local tag was created but not pushed"
+            }
+        } else {
+            # Some other push error
+            throw "Failed to push tag: $pushOutput"
+        }
+    } else {
+        # Success message for normal push
+        Write-Host ""
+        Write-Host "  $($icons.Success)  " -ForegroundColor $colors.Success -NoNewline
+        Write-Host "Tag v$fullVersion successfully created and pushed to origin!" -ForegroundColor $colors.Success
+    }
 
     Write-Host ""
     Write-Host "  $($icons.Rocket)  " -ForegroundColor $colors.Secondary -NoNewline
