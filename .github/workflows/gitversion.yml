@@ -1,4 +1,4 @@
-name: GitVersion Update
+name: Update Version
 
 on:
   workflow_dispatch:
@@ -8,6 +8,16 @@ on:
         required: true
         default: false
         type: boolean
+      increment_type:
+        description: "Version increment type"
+        required: false
+        type: choice
+        options:
+          - auto
+          - major
+          - minor
+          - patch
+        default: "auto"
 
 jobs:
   update-version:
@@ -30,8 +40,13 @@ jobs:
       - name: Run GitVersion
         id: gitversion
         run: |
-          # Run GitVersion and capture output
-          VERSION_JSON=$(dotnet gitversion /output json)
+          # Run GitVersion with optional increment override
+          GITVERSION_ARGS="/output json"
+          if [ "${{ inputs.increment_type }}" != "auto" ]; then
+            GITVERSION_ARGS="$GITVERSION_ARGS /overrideconfig increment=${{ inputs.increment_type }}"
+          fi
+          
+          VERSION_JSON=$(dotnet gitversion $GITVERSION_ARGS)
           echo "Version JSON: $VERSION_JSON"
           
           # Extract key values and set as outputs
@@ -45,33 +60,17 @@ jobs:
           echo "prereleaselabel=$PRERELEASE_LABEL" >> $GITHUB_OUTPUT
           echo "prereleasenumber=$PRERELEASE_NUMBER" >> $GITHUB_OUTPUT
           
-          # Generate GitVersion.props file
-          dotnet gitversion /output buildserver /updateprojectfiles
-
-      - name: Update Directory.Build.props
-        run: |
-          # Update the version in Directory.Build.props
-          sed -i "s|<VersionPrefix>.*</VersionPrefix>|<VersionPrefix>${{ steps.gitversion.outputs.majorminorpatch }}</VersionPrefix>|g" SubSonicMedia/Directory.Build.props
+          # Generate updated GitVersion.props file
+          dotnet gitversion /updateprojectfiles
           
-          # Update version suffix if present
-          if [ -n "${{ steps.gitversion.outputs.prereleaselabel }}" ]; then
-            SUFFIX="${{ steps.gitversion.outputs.prereleaselabel }}"
-            if [ -n "${{ steps.gitversion.outputs.prereleasenumber }}" ]; then
-              SUFFIX="${SUFFIX}${{ steps.gitversion.outputs.prereleasenumber }}"
-            fi
-            sed -i "s|<VersionSuffix>.*</VersionSuffix>|<VersionSuffix>${SUFFIX}</VersionSuffix>|g" SubSonicMedia/Directory.Build.props
-          else
-            sed -i "s|<VersionSuffix>.*</VersionSuffix>|<VersionSuffix></VersionSuffix>|g" SubSonicMedia/Directory.Build.props
-          fi
-          
-          # Show the changes
-          git diff SubSonicMedia/Directory.Build.props
+          # Show the updated properties
+          cat GitVersion.props
 
       - name: Commit changes
         run: |
           git config --global user.name 'GitHub Actions'
           git config --global user.email 'github-actions@users.noreply.github.com'
-          git add SubSonicMedia/Directory.Build.props
+          git add GitVersion.props
           git commit -m "chore: Update version to ${{ steps.gitversion.outputs.semver }} [skip ci]"
 
       - name: Create and push tag

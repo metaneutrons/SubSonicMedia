@@ -1,4 +1,4 @@
-name: Build and Publish NuGet Package
+name: Publish NuGet Package
 
 on:
   push:
@@ -16,42 +16,54 @@ permissions:
   contents: write # Needed for creating GitHub releases
 
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for GitVersion
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "8.0.x"
 
-      - name: Extract version from tag
+      - name: Install GitVersion
+        run: dotnet tool install --global GitVersion.Tool
+
+      - name: Determine version from tag or GitVersion
         id: get_version
-        shell: bash
         run: |
           if [[ $GITHUB_REF == refs/tags/v* ]]; then
-            echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+            # If triggered by a tag, use the tag version
+            VERSION=${GITHUB_REF_NAME#v}
+            echo "Using version from tag: $VERSION"
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+            echo "nugetversion=$VERSION" >> $GITHUB_OUTPUT
+            
+            # For tagged releases, update GitVersion.props to match tag
+            cat > GitVersion.props << EOF
+          <Project>
+            <PropertyGroup>
+              <GitVersion_SemVer>$VERSION</GitVersion_SemVer>
+              <GitVersion_MajorMinorPatch>${VERSION%%-*}</GitVersion_MajorMinorPatch>
+            </PropertyGroup>
+          </Project>
+          EOF
           else
-            echo "VERSION=$(grep -m 1 '<VersionPrefix>' SubSonicMedia/Directory.Build.props | sed -E 's/.*<VersionPrefix>(.*)<\/VersionPrefix>.*/\1/')" >> $GITHUB_OUTPUT
+            # Otherwise, use GitVersion to determine the version
+            VERSION_JSON=$(dotnet gitversion /output json)
+            SEMVER=$(echo "$VERSION_JSON" | jq -r '.SemVer')
+            NUGETVERSION=$(echo "$VERSION_JSON" | jq -r '.NuGetVersion')
+            echo "Using GitVersion: $NUGETVERSION"
+            echo "version=$SEMVER" >> $GITHUB_OUTPUT
+            echo "nugetversion=$NUGETVERSION" >> $GITHUB_OUTPUT
+            
+            # Update project files with GitVersion info
+            dotnet gitversion /output buildserver /updateprojectfiles
           fi
-
-      - name: Update version in Directory.Build.props
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-        run: |
-          sed -i "s|<VersionPrefix>.*</VersionPrefix>|<VersionPrefix>${{ steps.get_version.outputs.VERSION }}</VersionPrefix>|g" SubSonicMedia/Directory.Build.props
-          # If this is a stable release (no suffix in tag), remove any prerelease suffix
-          if [[ ! "${{ steps.get_version.outputs.VERSION }}" =~ .*-.* ]]; then
-            # Remove any version suffix (alpha, beta, etc.)
-            sed -i -E "s|<VersionSuffix>.*</VersionSuffix>|<VersionSuffix></VersionSuffix>|g" SubSonicMedia/Directory.Build.props
-          elif [[ "${{ steps.get_version.outputs.VERSION }}" =~ .*-beta.* ]]; then
-            # Update to beta suffix if tag contains -beta
-            sed -i "s|<VersionSuffix>.*</VersionSuffix>|<VersionSuffix>beta</VersionSuffix>|g" SubSonicMedia/Directory.Build.props
-          fi
-
-      - name: Setup .NET local tools
-        run: dotnet new tool-manifest --force
 
       - name: Restore dependencies
         run: dotnet restore
@@ -69,25 +81,23 @@ jobs:
           files: |
             ./artifacts/*.nupkg
             ./artifacts/*.snupkg
-          name: Release ${{ steps.get_version.outputs.VERSION }}
+          name: Release ${{ steps.get_version.outputs.version }}
           draft: false
-          prerelease: ${{ contains(steps.get_version.outputs.VERSION, '-') }}
+          prerelease: ${{ contains(steps.get_version.outputs.version, '-') }}
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # NuGet publishing steps
+      # NuGet publishing step
       - name: Push to NuGet.org
         if: (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish == 'true')
         run: |
-          # Note: You'll need to add a NUGET_API_KEY secret in your GitHub repository settings
           if [ -z "$NUGET_API_KEY" ]; then
             echo "NuGet API key not found. Package was built but not published."
             exit 1
           else
-            dotnet nuget push "./artifacts/*.nupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json
-            dotnet nuget push "./artifacts/*.snupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json
-            echo "Package and symbols published to NuGet.org successfully"
+            dotnet nuget push "./artifacts/*.nupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
+            echo "Package published to NuGet.org successfully"
           fi
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}

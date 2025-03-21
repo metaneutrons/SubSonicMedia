@@ -1,15 +1,15 @@
-name: Build
+name: Build and Test
 
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
     paths-ignore:
       - "**/*.md"
       - "docs/**"
     tags-ignore:
       - "v*" # Tags are handled by the publish workflow
   pull_request:
-    branches: [main]
+    branches: [main, develop]
     paths-ignore:
       - "**/*.md"
       - "docs/**"
@@ -19,7 +19,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for GitVersion
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -29,17 +32,30 @@ jobs:
       - name: Install GitVersion
         run: dotnet tool install --global GitVersion.Tool
 
-      - name: Run GitVersion
-        run: dotnet gitversion /output buildserver /updateprojectfiles
+      - name: Determine version
+        id: gitversion
+        run: |
+          # Run GitVersion and get version info
+          VERSION_JSON=$(dotnet gitversion /output json)
+          echo "$VERSION_JSON" | jq
+          
+          # Extract version values for later use
+          SEMVER=$(echo "$VERSION_JSON" | jq -r '.SemVer')
+          NUGETVERSION=$(echo "$VERSION_JSON" | jq -r '.NuGetVersion')
+          echo "semver=$SEMVER" >> $GITHUB_OUTPUT
+          echo "nugetversion=$NUGETVERSION" >> $GITHUB_OUTPUT
+          
+          # Update project files with version info
+          dotnet gitversion /output buildserver /updateprojectfiles
 
       - name: Restore dependencies
         run: dotnet restore
 
-      - name: Setup .NET local tools
-        run: dotnet new tool-manifest --force
-
-      - name: Build Release
+      - name: Build
         run: dotnet build --configuration Release --no-restore
+
+      - name: Run code style checks
+        run: dotnet build /p:TreatWarningsAsErrors=true
 
       - name: Pack NuGet package
         run: dotnet pack --configuration Release --no-build -o ./artifacts
@@ -49,3 +65,4 @@ jobs:
         with:
           name: nuget-package
           path: ./artifacts/*.nupkg
+          retention-days: 7
