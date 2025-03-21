@@ -223,7 +223,8 @@ jobs:
                 state: 'closed'
               });
               core.setOutput('status', 'timeout');
-              throw new Error('Timed out waiting for confirmation');
+              core.setFailed('Timed out waiting for confirmation');
+              return 'timeout';
             }
 
             console.log('Publishing confirmed by user.');
@@ -234,17 +235,33 @@ jobs:
               issue_number: issueNumber,
               body: `✅ Publishing confirmed by @${approver}. Proceeding with NuGet.org publishing.`
             });
+            
+            // Set output properly - the key is to use the core module
             core.setOutput('status', 'confirmed');
             console.log('Setting status output to confirmed');
-            return 'confirmed';
-          result-encoding: string
+            return 'confirmed'; // This doesn't set the output correctly in GitHub Actions
 
       - name: Debug Output
         run: |
           echo "Confirmation status: ${{ steps.wait_confirmation.outputs.status }}"
+          echo "Confirmation result: ${{ steps.wait_confirmation.outputs.result }}"
+          echo "All outputs:"
+          echo "${{ toJSON(steps.wait_confirmation.outputs) }}"
+          
+      # Capture the output from the wait_confirmation step
+      - name: Set Confirmation Status
+        id: confirmation_status
+        run: |
+          if [[ "${{ steps.wait_confirmation.outputs.result }}" == "confirmed" || "${{ steps.wait_confirmation.outputs.status }}" == "confirmed" ]]; then
+            echo "Publishing was confirmed by admin"
+            echo "status=confirmed" >> $GITHUB_OUTPUT
+          else
+            echo "Publishing was NOT confirmed"
+            echo "status=not_confirmed" >> $GITHUB_OUTPUT
+          fi
           
       - name: Publish to NuGet.org
-        if: ${{ steps.wait_confirmation.outputs.status == 'confirmed' }}
+        if: steps.confirmation_status.outputs.status == 'confirmed'
         run: |
           echo "Publishing to NuGet.org..."
           dotnet nuget push "./artifacts/*.nupkg" --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
@@ -252,7 +269,7 @@ jobs:
           echo "✅ Package(s) published to NuGet.org successfully!"
 
       - name: Update publish status
-        if: ${{ steps.wait_confirmation.outputs.status == 'confirmed' }}
+        if: steps.confirmation_status.outputs.status == 'confirmed'
         uses: actions/github-script@v6
         with:
           script: |
