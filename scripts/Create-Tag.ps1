@@ -146,6 +146,15 @@ else {
     Write-Success "No uncommitted changes detected"
 }
 
+# Check if we're on main branch
+$currentBranch = git branch --show-current
+if ($currentBranch -ne "main") {
+    Write-Warning "You are not on the main branch (current: $currentBranch)."
+}
+else {
+    Write-Success "Currently on main branch"
+}
+
 # Check for unpushed commits
 Write-StepHeader -Message "Checking for unpushed commits" -Icon $icons.Git
 
@@ -155,15 +164,6 @@ if ($unpushedCommits) {
     $unpushedCommits | ForEach-Object { Write-Host "      $_" -ForegroundColor $colors.Muted }
 } else {
     Write-Success "No unpushed commits detected"
-}
-
-# Check if we're on main branch
-$currentBranch = git branch --show-current
-if ($currentBranch -ne "main") {
-    Write-Warning "You are not on the main branch (current: $currentBranch). This is just a warning, you can continue."
-}
-else {
-    Write-Success "Currently on main branch"
 }
 
 # Extract version using GitVersion if available, otherwise from Directory.Build.props
