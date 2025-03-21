@@ -1,16 +1,6 @@
-workflow: GitFlow/v1
-mode: ContinuousDelivery
+mode: ContinuousDeployment
+assembly-versioning-scheme: MajorMinorPatch
 next-version: 1.0.0
-tag-prefix: '[vV]'
-branches:
-  main:
-    tag: rc
-  support:
-    tag: beta
-  develop:
-    regex: ^develop$
-    tag: beta
-    increment: Patch
-    prevent-increment-of-merged-branch-version: false
-  release:
-    tag: rc
+branches: {}
+ignore:
+  sha: []
