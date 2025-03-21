@@ -41,7 +41,7 @@
     <VersionPrefix Condition="'$(GitVersion_MajorMinorPatch)' != ''">$(GitVersion_MajorMinorPatch)</VersionPrefix>
     <!-- GitVersion 6.1 doesn't support pre-release-label in config, so we handle it here -->
     <!-- Only apply these if GitVersion is available but no branch-specific suffix has been set above -->
-    <VersionSuffix Condition="'$(GitVersion_MajorMinorPatch)' != '' And '$(VersionSuffix)' == '' And '$(GitVersion_PreReleaseNumber)' != ''">$(GitVersion_BranchName.Replace('/', '-')).$(GitVersion_PreReleaseNumber)</VersionSuffix>
+    <VersionSuffix Condition="'$(GitVersion_MajorMinorPatch)' != '' And '$(VersionSuffix)' == '' And '$(GitVersion_PreReleaseLabel)' != ''">$(GitVersion_PreReleaseLabel).$(GitVersion_PreReleaseNumber)</VersionSuffix>
     
     <!-- Assembly version (must be a valid 4-part version) -->
     <AssemblyVersion Condition="'$(GitVersion_AssemblySemVer)' == ''">$(VersionPrefix).0</AssemblyVersion>

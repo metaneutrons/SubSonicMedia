@@ -13,6 +13,10 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
     <PackageTags>subsonic;music;api;testing;toolkit</PackageTags>
+    <AssemblyVersion>1.0.3.0</AssemblyVersion>
+    <FileVersion>1.0.3.0</FileVersion>
+    <InformationalVersion>1.0.3-beta.5+Branch.develop.Sha.04ba150d19191ceb9eef32bf88a6e2ed011aa215</InformationalVersion>
+    <Version>1.0.3-beta.5</Version>
   </PropertyGroup>
   <!-- Switch from NuGet package to project reference since both now target net8.0 -->
   <ItemGroup>

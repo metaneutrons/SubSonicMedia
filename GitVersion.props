@@ -1,14 +1,11 @@
 <Project>
   <PropertyGroup>
-    <GitVersion_SemVer Condition="'' == ''">1.0.0-beta.1</GitVersion_SemVer>
-    <GitVersion_MajorMinorPatch Condition="'' == ''">1.0.0</GitVersion_MajorMinorPatch>
-    <!-- Default prerelease label based on branch (will be overridden by GitVersion) -->
-    <GitVersion_PreReleaseLabel Condition="'$(BranchName)' == 'develop'">beta</GitVersion_PreReleaseLabel>
-    <GitVersion_PreReleaseLabel Condition="$(BranchName.StartsWith('feature/')) == 'true'">alpha</GitVersion_PreReleaseLabel>
-    <GitVersion_PreReleaseLabel Condition="$(BranchName.StartsWith('release/')) == 'true'">rc</GitVersion_PreReleaseLabel>
-    <GitVersion_PreReleaseNumber Condition="'$(GitVersion_PreReleaseLabel)' != ''">1</GitVersion_PreReleaseNumber>
-    <GitVersion_AssemblySemVer Condition="'' == ''">1.0.0.0</GitVersion_AssemblySemVer>
-    <GitVersion_AssemblySemFileVer Condition="'' == ''">1.0.0.0</GitVersion_AssemblySemFileVer>
-    <GitVersion_InformationalVersion Condition="'' == ''">1.0.0-beta.1</GitVersion_InformationalVersion>
+    <GitVersion_SemVer>1.0.3-beta.5</GitVersion_SemVer>
+    <GitVersion_MajorMinorPatch>1.0.3</GitVersion_MajorMinorPatch>
+    <GitVersion_PreReleaseLabel>beta</GitVersion_PreReleaseLabel>
+    <GitVersion_PreReleaseNumber>5</GitVersion_PreReleaseNumber>
+    <GitVersion_AssemblySemVer>1.0.3.0</GitVersion_AssemblySemVer>
+    <GitVersion_AssemblySemFileVer>1.0.3.0</GitVersion_AssemblySemFileVer>
+    <GitVersion_InformationalVersion>1.0.3-beta.5+Branch.develop.Sha.04ba150d19191ceb9eef32bf88a6e2ed011aa215</GitVersion_InformationalVersion>
   </PropertyGroup>
 </Project>
