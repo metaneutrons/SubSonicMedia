@@ -1,16 +1,16 @@
 workflow: GitFlow/v1
-mode: Mainline
+mode: ContinuousDelivery
 next-version: 1.0.0
 tag-prefix: '[vV]'
-increment: Patch
 branches:
   main:
-    label: rc
+    tag: rc
   support:
-    label: beta
+    tag: beta
   develop:
-    label: beta
+    regex: ^develop$
+    tag: beta
+    increment: Patch
+    prevent-increment-of-merged-branch-version: false
   release:
-    label: rc
-ignore:
-  sha: []
+    tag: rc
