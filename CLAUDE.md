@@ -12,7 +12,7 @@
 - List available tests: `cd SubSonicMedia.TestKit && dotnet run list`
 - Display test help: `cd SubSonicMedia.TestKit && dotnet run help`
 - Run GitVersion: `dotnet gitversion`
-- Create and push tag: `./scripts/Create-Tag.ps1`
+- Create and push tag: `./scripts/Create-Tag.ps1` (detects and pushes unpushed commits)
 - Check for shell scripts: `./scripts/Check-ShellScripts.ps1`
 
 ## Code Style Guidelines
@@ -47,6 +47,7 @@
 
 - **Build and Test** (.github/workflows/build.yml)
   - Triggered on push to main/develop branches and PRs
+  - Skips tag pushes (v*) to avoid duplicate builds
   - Validates code with StyleCop and CSharpier
   - Builds solution and runs basic tests
   - Creates NuGet packages for verification
@@ -58,7 +59,8 @@
   - Labels releases as Beta or Release based on tag format
 
 - **Update Main Branch** (.github/workflows/update-main.yml)
-  - Triggered by version tags (v*)
+  - Triggered by version tags (v*) created from the develop branch
+  - Only proceeds if tag originates from develop branch
   - Updates main branch to match the latest tag
   - Follows specific rules for beta vs. stable releases
   - Requires PAT_TOKEN with workflows permission

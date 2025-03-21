@@ -39,6 +39,11 @@ Every commit to `develop` or `main` triggers:
 - Test runs
 - Package creation (but not publishing)
 
+The workflow is optimized to prevent duplicate builds:
+- The Build and Test workflow only runs on branch pushes
+- Tag pushes (v*) skip the Build and Test workflow
+- This prevents the same code from being built twice
+
 ### 2. Creating Beta Releases
 
 When ready for a beta release:
@@ -73,11 +78,16 @@ When ready for a stable release:
 
 The `update-main.yml` workflow determines when to update the main branch:
 
-1. **Before First Stable Release**:
-   - Every tag (beta or stable) updates the main branch
+1. **Branch Origin Verification**:
+   - Only tags created from the `develop` branch are considered
+   - Tags created from other branches do not update main
+   - This ensures consistent release workflow
+
+2. **Before First Stable Release**:
+   - Every tag (beta or stable) from develop updates the main branch
    - This keeps main in sync with develop until the first stable release
 
-2. **After First Stable Release**:
+3. **After First Stable Release**:
    - Only stable tags (without a suffix) update the main branch
    - Beta tags no longer affect the main branch
    - This ensures main only contains stable versions
@@ -91,9 +101,13 @@ Publishing to NuGet.org is a separate manual step with approval:
 3. Enter the version tag to publish (e.g., `v1.0.3-beta.5` or `v1.0.3`)
 4. The workflow creates an issue requiring admin approval
 5. A repository admin must comment `/publish` on the issue
-6. Only after approval will the package be published to NuGet.org
+6. After approval, the workflow automatically publishes the package to NuGet.org
+7. A confirmation comment is added to the issue with publish details
 
-This two-step process ensures packages are only published after explicit review and approval by a repository administrator.
+This approval-based workflow ensures:
+- Packages are only published after explicit review by a repository admin
+- There's a complete audit trail of who approved each publish
+- The issue contains a record of the published version and timestamp
 
 ## Github Releases
 
@@ -120,12 +134,36 @@ GitHub releases are created automatically when tags are pushed:
    - Required for publishing to NuGet.org
    - Must be added as a `NUGET_API_KEY` repository secret
 
+## Helper Scripts
+
+### Create-Tag.ps1
+
+The `Create-Tag.ps1` script automates the tag creation and push process:
+
+```pwsh
+./scripts/Create-Tag.ps1
+```
+
+Features:
+- Automatic version detection using GitVersion
+- Detection of uncommitted changes
+- Automatic detection and pushing of unpushed commits
+- Support for developing on the develop branch (no confirmation required)
+- Tag verification on remote after pushing
+- Clear display of git commands being executed
+- Prompts for confirmation at critical points
+
 ## Example Workflow
 
 1. Develop and commit changes to the `develop` branch
-2. Create a beta release with `git tag v1.0.3-beta.1 && git push origin v1.0.3-beta.1`
+2. Run `./scripts/Create-Tag.ps1` to create and push a beta tag
+   - The script will detect unpushed commits and offer to push them
+   - It will create a tag based on the current version from GitVersion
 3. Test the beta release 
 4. Make additional improvements with more beta releases as needed
-5. When ready for stable: `git tag v1.0.3 && git push origin v1.0.3`
+5. When ready for stable: manually create a stable tag without beta suffix
+   ```bash
+   git tag v1.0.3 && git push origin v1.0.3
+   ```
 6. Run the "Publish to NuGet.org" workflow and approve as needed
 7. Continue development for the next version on the `develop` branch
