@@ -151,25 +151,11 @@ Write-StepHeader -Message "Checking for unpushed commits" -Icon $icons.Git
 
 $unpushedCommits = git log --branches --not --remotes --oneline
 if ($unpushedCommits) {
-    Write-Warning "You have unpushed commits that need to be pushed first:"
+    Write-Warning "You have unpushed commits:"
     $unpushedCommits | ForEach-Object { Write-Host "      $_" -ForegroundColor $colors.Muted }
     
-    if (Get-Confirmation "Push all pending commits to remote first?") {
-        $currentBranch = git branch --show-current
-        Write-Host "    Pushing commits on branch $currentBranch to origin..." -ForegroundColor $colors.Muted
-        $pushCommitsOutput = Invoke-Expression "git push origin $currentBranch 2>&1"
-        
-        if ($LASTEXITCODE -eq 0) {
-            Write-Success "All commits successfully pushed to origin"
-        } else {
-            Write-Error "Failed to push commits: $pushCommitsOutput"
-        }
-    } else {
-        Write-Warning "Creating a tag without pushing commits first may lead to issues"
-        if (-not (Get-Confirmation "Continue anyway?")) {
-            exit 0
-        }
-    }
+    Write-Info "These commits will be pushed together with the tag in a single operation"
+    Write-Info "This will prevent duplicate GitHub workflow runs"
 } else {
     Write-Success "No unpushed commits detected"
 }
@@ -435,6 +421,10 @@ else {
 Write-StepHeader -Message "Creating and pushing tag" -Icon $icons.Wait
 
 try {
+    # Check if we have unpushed commits that need to be included
+    $hasUnpushedCommits = $null -ne (git log --branches --not --remotes --oneline)
+    $currentBranch = git branch --show-current
+    
     # Create the tag
     Write-Host "    Creating tag..." -ForegroundColor $colors.Muted
     $createOutput = Invoke-Expression "$tagCommand 2>&1"
@@ -443,12 +433,25 @@ try {
     if ($createExitCode -ne 0) {
         throw "Failed to create tag: $createOutput"
     }
-
-    # Push the tag with error handling for remote tag existence
-    Write-Host "    Pushing tag to origin..." -ForegroundColor $colors.Muted
-    Write-Host "    Executing: $pushCommand" -ForegroundColor $colors.Muted
-    $pushOutput = Invoke-Expression "$pushCommand 2>&1"
-    $pushExitCode = $LASTEXITCODE
+    
+    # Determine if we should do a combined push (commits + tag) or just tag
+    if ($hasUnpushedCommits) {
+        Write-Host "    Preparing combined push (commits + tag)..." -ForegroundColor $colors.Muted
+        
+        # Build the appropriate push command
+        $combinedPushCommand = "git push origin $currentBranch v$fullVersion"
+        Write-Host "    Executing: $combinedPushCommand" -ForegroundColor $colors.Muted
+        
+        # Execute the combined push
+        $pushOutput = Invoke-Expression "$combinedPushCommand 2>&1"
+        $pushExitCode = $LASTEXITCODE
+    } else {
+        # Just push the tag normally
+        Write-Host "    Pushing tag to origin..." -ForegroundColor $colors.Muted
+        Write-Host "    Executing: $pushCommand" -ForegroundColor $colors.Muted
+        $pushOutput = Invoke-Expression "$pushCommand 2>&1"
+        $pushExitCode = $LASTEXITCODE
+    }
     
     # Print the output for verification
     if ($pushOutput) {
@@ -465,7 +468,22 @@ try {
             # Ask if user wants to force push
             if (Get-Confirmation "Do you want to force push the tag? This will overwrite the remote tag.") {
                 Write-Host "    Force pushing tag..." -ForegroundColor $colors.Muted
-                Invoke-Expression "git push -f origin v$fullVersion"
+                
+                # If we have unpushed commits, push them separately
+                if ($hasUnpushedCommits) {
+                    Write-Host "    First pushing commits on branch $currentBranch..." -ForegroundColor $colors.Muted
+                    $pushBranchOutput = Invoke-Expression "git push origin $currentBranch 2>&1"
+                    
+                    if ($LASTEXITCODE -ne 0) {
+                        Write-Warning "Failed to push commits: $pushBranchOutput"
+                        Write-Warning "Will still attempt to push tag..."
+                    } else {
+                        Write-Success "Branch commits pushed successfully"
+                    }
+                }
+                
+                # Now force push the tag
+                $forceOutput = Invoke-Expression "git push -f origin v$fullVersion 2>&1"
                 if ($LASTEXITCODE -eq 0) {
                     # Success message for force push
                     Write-Host ""
@@ -473,7 +491,7 @@ try {
                     Write-Host "Tag v$fullVersion successfully force-pushed to origin!" -ForegroundColor $colors.Success
                 }
                 else {
-                    throw "Failed to force push tag"
+                    throw "Failed to force push tag: $forceOutput"
                 }
             }
             else {
@@ -495,7 +513,11 @@ try {
             # Success message for normal push
             Write-Host ""
             Write-Host "  $($icons.Success)  " -ForegroundColor $colors.Success -NoNewline
-            Write-Host "Tag v$fullVersion successfully created and pushed to origin!" -ForegroundColor $colors.Success
+            if ($hasUnpushedCommits) {
+                Write-Host "Tag v$fullVersion and branch commits successfully pushed to origin!" -ForegroundColor $colors.Success
+            } else {
+                Write-Host "Tag v$fullVersion successfully created and pushed to origin!" -ForegroundColor $colors.Success
+            }
         } else {
             Write-Warning "Tag v$fullVersion was created locally but could not be verified on remote."
             Write-Warning "The push command appeared to succeed but the tag may not exist remotely."
@@ -507,7 +529,7 @@ try {
     Write-Host "  $($icons.Rocket)  " -ForegroundColor $colors.Secondary -NoNewline
     Write-Host "GitHub CI workflow should now be triggered." -ForegroundColor $colors.Secondary
     
-    # Final check for any unpushed commits (could happen if tag was created but commits weren't pushed)
+    # Final check for any unpushed commits (could happen if combined push failed partially)
     $finalUnpushedCommits = git log --branches --not --remotes --oneline
     if ($finalUnpushedCommits) {
         Write-Host ""
@@ -515,7 +537,6 @@ try {
         $finalUnpushedCommits | ForEach-Object { Write-Host "      $_" -ForegroundColor $colors.Muted }
         
         if (Get-Confirmation "Push all remaining commits to remote now?") {
-            $currentBranch = git branch --show-current
             Write-Host "    Pushing commits on branch $currentBranch to origin..." -ForegroundColor $colors.Muted
             $pushFinalOutput = Invoke-Expression "git push origin $currentBranch 2>&1"
             
