@@ -30,8 +30,10 @@
     "cSpell.words": [
         "Ansi",
         "appsettings",
+        "bitrate",
         "buildtransitive",
         "contentfiles",
+        "coverart",
         "csharpier",
         "dotnet",
         "github",
@@ -40,6 +42,9 @@
         "nullable",
         "pwsh",
         "Schmieder",
-        "stylecop"
+        "stylecop",
+        "xunit",
+        "yourpassword",
+        "yourusername"
     ]
 }
