@@ -5,6 +5,10 @@ on:
     tags:
       - "v*" # This will trigger on any tag starting with 'v'
 
+# Add permissions to allow the workflow to push to the repository
+permissions:
+  contents: write
+
 jobs:
   update-main:
     runs-on: ubuntu-latest
