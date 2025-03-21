@@ -1,10 +1,10 @@
-mode: ContinuousDelivery
+workflow: GitFlow/v1
+mode: ManualDeployment
 next-version: 1.0.0
-
-# Version bump messages in commits
-major-version-bump-message: '\+semver:\s?(breaking|major)'
-minor-version-bump-message: '\+semver:\s?(feature|minor)'
-patch-version-bump-message: '\+semver:\s?(fix|patch)'
-no-bump-message: '\+semver:\s?(none|skip)'
-
-commit-message-incrementing: Enabled
+branches:
+  main:
+    label: rc
+  support:
+    label: beta
+  develop:
+    label: beta
