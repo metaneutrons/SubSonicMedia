@@ -1,0 +1,88 @@
+name: Update Main Branch
+
+on:
+  push:
+    tags:
+      - "v*" # This will trigger on any tag starting with 'v'
+
+jobs:
+  update-main:
+    runs-on: ubuntu-latest
+    # Wait for tag-release workflow to complete
+    needs: []
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Full history for GitVersion
+          ref: main
+
+      - name: Setup Git
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'github-actions@users.noreply.github.com'
+
+      - name: Get tag information
+        id: tag-info
+        run: |
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+          echo "Triggered by tag: $TAG_NAME"
+
+          # Check if this is a prerelease tag (contains dash)
+          if [[ "$TAG_NAME" == *"-"* ]]; then
+            echo "is_prerelease=true" >> $GITHUB_OUTPUT
+            echo "This is a prerelease tag (contains '-')"
+          else
+            echo "is_prerelease=false" >> $GITHUB_OUTPUT
+            echo "This is a release tag (no '-')"
+          fi
+
+          # Get tag's commit reference
+          TAG_COMMIT=$(git rev-list -n 1 $TAG_NAME)
+          echo "tag_commit=$TAG_COMMIT" >> $GITHUB_OUTPUT
+          echo "Tag commit: $TAG_COMMIT"
+
+      - name: Check if release exists
+        id: check-releases
+        run: |
+          # Count stable releases (no dash in tag name)
+          RELEASE_COUNT=$(git tag -l 'v*' | grep -v '-' | wc -l)
+          echo "release_count=$RELEASE_COUNT" >> $GITHUB_OUTPUT
+          echo "Number of stable releases: $RELEASE_COUNT"
+
+      - name: Update main branch to tag
+        run: |
+          # Logic to update main branch:
+          # 1. Always update if this is a stable release (no dash)
+          # 2. Update for prereleases only if there are no stable releases yet
+
+          if [[ "${{ steps.tag-info.outputs.is_prerelease }}" == "false" ]] || [[ "${{ steps.check-releases.outputs.release_count }}" == "0" ]]; then
+            echo "Updating main branch to tag: ${{ steps.tag-info.outputs.tag_name }}"
+
+            # Get current state of main
+            MAIN_COMMIT=$(git rev-parse HEAD)
+            echo "Current main commit: $MAIN_COMMIT"
+
+            # Update main to the tag's commit
+            git reset --hard ${{ steps.tag-info.outputs.tag_commit }}
+            echo "Reset main to tag commit: ${{ steps.tag-info.outputs.tag_commit }}"
+
+            # Push changes to main
+            git push origin main --force
+            echo "Main branch updated to ${{ steps.tag-info.outputs.tag_name }}"
+          else
+            echo "Skipping main branch update: current tag is a prerelease and stable releases already exist"
+          fi
+
+      - name: Display update summary
+        run: |
+          echo "✅ Main branch update process completed"
+          if [[ "${{ steps.tag-info.outputs.is_prerelease }}" == "false" ]] || [[ "${{ steps.check-releases.outputs.release_count }}" == "0" ]]; then
+            echo "Main branch was updated to ${{ steps.tag-info.outputs.tag_name }}"
+          else
+            echo "Main branch was NOT updated (prerelease with existing stable releases)"
+          fi
+          echo ""
+          echo "GitHub Release creation is handled by tag-release.yml workflow"

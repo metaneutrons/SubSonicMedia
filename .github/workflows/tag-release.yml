@@ -1,0 +1,93 @@
+name: Tag Release
+
+on:
+  push:
+    tags:
+      - "v*" # Push events to matching v*, i.e. v1.0.0, v20.15.10
+
+permissions:
+  contents: write # Needed for creating GitHub releases
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Full history for GitVersion
+          ref: ${{ github.head_ref || github.ref_name }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0.10.2
+        with:
+          versionSpec: "6.x"
+
+      - name: Determine version
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v0.10.2
+        with:
+          useConfigFile: true
+          updateAssemblyInfo: true
+
+      # If we're building from a tag, ensure version matches tag
+      - name: Override version from tag
+        id: version
+        run: |
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          TAG_VERSION=${TAG_NAME#v}
+          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+          echo "version=$TAG_VERSION" >> $GITHUB_OUTPUT
+          echo "Tag version: $TAG_VERSION"
+
+          # Check if this is a prerelease tag (contains dash)
+          if [[ "$TAG_NAME" == *"-"* ]]; then
+            echo "is_prerelease=true" >> $GITHUB_OUTPUT
+            echo "This is a prerelease tag (contains '-')"
+          else
+            echo "is_prerelease=false" >> $GITHUB_OUTPUT
+            echo "This is a release tag (no '-')"
+          fi
+
+          # Instead of overwriting GitVersion.props, set environment variables
+          echo "GitVersion_SemVer=$TAG_VERSION" >> $GITHUB_ENV
+          echo "GitVersion_MajorMinorPatch=${TAG_VERSION%%-*}" >> $GITHUB_ENV
+          echo "GitVersion_NuGetVersion=$TAG_VERSION" >> $GITHUB_ENV
+
+          echo "Using version from tag: $TAG_VERSION"
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build Release
+        run: dotnet build --configuration Release --no-restore /p:Version=${{ env.GitVersion_SemVer }} /p:PackageVersion=${{ env.GitVersion_SemVer }}
+
+      - name: Pack NuGet package
+        run: dotnet pack --configuration Release --no-build -o ./artifacts /p:Version=${{ env.GitVersion_SemVer }} /p:PackageVersion=${{ env.GitVersion_SemVer }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ./artifacts/*.nupkg
+            ./artifacts/*.snupkg
+          name: ${{ steps.version.outputs.is_prerelease == 'true' && 'Beta' || 'Release' }} ${{ steps.version.outputs.tag_name }}
+          draft: false
+          prerelease: ${{ steps.version.outputs.is_prerelease == 'true' }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload NuGet Package
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-package
+          path: |
+            ./artifacts/*.nupkg
+            ./artifacts/*.snupkg

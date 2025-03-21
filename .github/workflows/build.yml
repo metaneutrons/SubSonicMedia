@@ -22,7 +22,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Full history for GitVersion
+          fetch-depth: 0 # Full history for GitVersion
           ref: ${{ github.head_ref || github.ref_name }}
 
       - name: Setup .NET
@@ -33,15 +33,14 @@ jobs:
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v0.10.2
         with:
-          versionSpec: '6.x'
-          
+          versionSpec: "6.x"
+
       - name: Determine version
         id: gitversion
         uses: gittools/actions/gitversion/execute@v0.10.2
         with:
           useConfigFile: true
           updateAssemblyInfo: true
-          updateProjectFiles: true
 
       - name: Display GitVersion outputs
         run: |
