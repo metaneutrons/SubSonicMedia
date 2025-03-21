@@ -1,11 +1,22 @@
+mode: ContinuousDeployment
 next-version: 1.0.0
+tag-prefix: 'v'
+major-version-bump-message: '\+semver:\s?(breaking|major)'
+minor-version-bump-message: '\+semver:\s?(feature|minor)'
+patch-version-bump-message: '\+semver:\s?(fix|patch)'
 branches:
   develop:
-    regex: ^develop
+    regex: ^develop$
     mode: ContinuousDeployment
     label: beta
     increment: Patch
+    track-merge-target: true
+    tracks-release-branches: true
+    is-release-branch: false
   main:
     regex: ^main$
     mode: ContinuousDelivery
     label: ''
+    increment: Patch
+    is-release-branch: true
+    track-merge-target: false
