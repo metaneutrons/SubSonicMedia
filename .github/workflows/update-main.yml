@@ -8,6 +8,7 @@ on:
 # Add permissions to allow the workflow to push to the repository
 permissions:
   contents: write
+  workflows: write  # Add permission to modify workflow files
 
 jobs:
   update-main:
