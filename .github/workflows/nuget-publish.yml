@@ -115,6 +115,7 @@ jobs:
           result-encoding: string
 
       - name: Wait for confirmation
+        id: wait_confirmation
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -201,6 +202,7 @@ jobs:
                 issue_number: issueNumber,
                 body: `✅ Publishing cancelled by @${canceller}.`
               });
+              core.setOutput('status', 'cancelled');
               return 'cancelled';
             }
 
@@ -220,6 +222,7 @@ jobs:
                 issue_number: issueNumber,
                 state: 'closed'
               });
+              core.setOutput('status', 'timeout');
               throw new Error('Timed out waiting for confirmation');
             }
 
@@ -231,11 +234,17 @@ jobs:
               issue_number: issueNumber,
               body: `✅ Publishing confirmed by @${approver}. Proceeding with NuGet.org publishing.`
             });
+            core.setOutput('status', 'confirmed');
+            console.log('Setting status output to confirmed');
             return 'confirmed';
           result-encoding: string
 
+      - name: Debug Output
+        run: |
+          echo "Confirmation status: ${{ steps.wait_confirmation.outputs.status }}"
+          
       - name: Publish to NuGet.org
-        if: ${{ steps.confirm.outputs.result == 'confirmed' }}
+        if: ${{ steps.wait_confirmation.outputs.status == 'confirmed' }}
         run: |
           echo "Publishing to NuGet.org..."
           dotnet nuget push "./artifacts/*.nupkg" --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
@@ -243,7 +252,7 @@ jobs:
           echo "✅ Package(s) published to NuGet.org successfully!"
 
       - name: Update publish status
-        if: ${{ steps.confirm.outputs.result == 'confirmed' }}
+        if: ${{ steps.wait_confirmation.outputs.status == 'confirmed' }}
         uses: actions/github-script@v6
         with:
           script: |
