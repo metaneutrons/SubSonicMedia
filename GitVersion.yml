@@ -1,6 +1,8 @@
 workflow: GitFlow/v1
-mode: ManualDeployment
+mode: Mainline
 next-version: 1.0.0
+tag-prefix: '[vV]'
+increment: Patch
 branches:
   main:
     label: rc
@@ -8,3 +10,7 @@ branches:
     label: beta
   develop:
     label: beta
+  release:
+    label: rc
+ignore:
+  sha: []
