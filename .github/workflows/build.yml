@@ -1,13 +1,17 @@
 name: Build and Test
 
+# This workflow is configured to run only for branch pushes and PRs,
+# but NOT for tag pushes, which are handled by the tag-release.yml workflow.
+# This prevents duplicate builds when tags are pushed.
+
 on:
+  # Only run on branch pushes, not tag pushes
   push:
     branches: [main, develop]
     paths-ignore:
       - "**/*.md"
       - "docs/**"
-    tags-ignore:
-      - "v*" # Tags are handled by the publish workflow
+  # Handle pull requests separately
   pull_request:
     branches: [main, develop]
     paths-ignore:
