@@ -120,7 +120,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const core = require('@actions/core');
+            // core is already imported in GitHub Actions script context
             const issueNumber = ${{ steps.confirm.outputs.result }};
 
             console.log(`Waiting for confirmation on issue #${issueNumber}...`);
@@ -236,10 +236,10 @@ jobs:
               body: `✅ Publishing confirmed by @${approver}. Proceeding with NuGet.org publishing.`
             });
             
-            // Set output properly - the key is to use the core module
+            // Set output using the core module (automatically available in GitHub Actions script context)
             core.setOutput('status', 'confirmed');
             console.log('Setting status output to confirmed');
-            return 'confirmed'; // This doesn't set the output correctly in GitHub Actions
+            return 'confirmed';
 
       - name: Debug Output
         run: |
