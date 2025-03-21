@@ -7,20 +7,12 @@
     <Nullable>enable</Nullable>
     <RootNamespace>SubSonicMedia.TestKit</RootNamespace>
     <IsPackable>true</IsPackable>
-    <VersionSuffix>alpha.1</VersionSuffix>
     <!-- Package metadata -->
     <Title>SubSonicMedia.TestKit</Title>
     <Description>A comprehensive testing toolkit for validating the SubSonicMedia API against your Subsonic server.</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/metaneutrons/SubSonicMedia</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/metaneutrons/SubSonicMedia</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
+    <PackageIcon>icon.png</PackageIcon>
     <PackageTags>subsonic;music;api;testing;toolkit</PackageTags>
-    <AssemblyVersion>1.0.2.0</AssemblyVersion>
-    <FileVersion>1.0.2.0</FileVersion>
-    <InformationalVersion>1.0.2-alpha.76+Branch.develop.Sha.ac3326dc1548b200a9bf766605dc5d5d86c57397</InformationalVersion>
-    <Version>1.0.2-alpha.76</Version>
   </PropertyGroup>
   <!-- Switch from NuGet package to project reference since both now target net8.0 -->
   <ItemGroup>
@@ -51,6 +43,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Include="icon.png" Pack="true" PackagePath="\" />
+    <None Include="icon.svg" Pack="true" PackagePath="\" />
   </ItemGroup>
   <!-- Custom MSBuild target for running tests conditionally -->
   <Target Name="RunTestsConditionally" Condition="Exists('$(MSBuildProjectDirectory)/.env')">

@@ -10,13 +10,7 @@
     <Description>.NET library for interacting with the Subsonic API supporting Subsonic API $(SubsonicApiVersion)</Description>
     <PackageProjectUrl>https://github.com/metaneutrons/SubSonicMedia</PackageProjectUrl>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/metaneutrons/SubSonicMedia</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <!-- Version overrides for assembly attributes -->
-    <AssemblyVersion>1.0.2.0</AssemblyVersion>
-    <FileVersion>1.0.2.0</FileVersion>
-    <InformationalVersion>1.0.2+Branch.develop.Sha.f58d731e17c29fc962921de921f340f8e4ac2fa9</InformationalVersion>
     <!-- NuGet Package Properties -->
     <IsPackable>true</IsPackable>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -32,7 +26,6 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <Version>1.0.2</Version>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>bin\Debug</OutputPath>
@@ -74,6 +67,5 @@
       <_Parameter2>$(SubsonicApiVersion)</_Parameter2>
     </AssemblyAttribute>
   </ItemGroup>
-  <!-- Import GitVersion target to generate version information during build -->
-  <Import Project="$(MSBuildThisFileDirectory)\..\GitVersionTarget.targets" />
+  <!-- GitVersion is imported via Directory.Build.props at solution level -->
 </Project>
