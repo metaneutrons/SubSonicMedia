@@ -1,11 +1,11 @@
-mode: ContinuousDeployment
-assembly-versioning-scheme: MajorMinorPatch
-tag-prefix: 'v'
 next-version: 1.0.0
 branches:
   develop:
+    regex: ^develop
     mode: ContinuousDeployment
     label: beta
     increment: Patch
-    prevent-increment-of-merged-branch-version: false
-    source-branches: []
+  main:
+    regex: ^main$
+    mode: ContinuousDelivery
+    label: ''
