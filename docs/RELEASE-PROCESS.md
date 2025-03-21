@@ -40,9 +40,12 @@ Every commit to `develop` or `main` triggers:
 - Package creation (but not publishing)
 
 The workflow is optimized to prevent duplicate builds:
-- The Build and Test workflow only runs on branch pushes
-- Tag pushes (v*) skip the Build and Test workflow
-- This prevents the same code from being built twice
+- The Build and Test workflow runs on branch pushes but has special logic:
+  - Initial job checks if the commit has a version tag
+  - Skips the build if a version tag is found
+  - This prevents duplicate builds when commits and tags are pushed together
+- Tag pushes (v*) are handled by the Tag Release workflow
+- This intelligent skipping prevents the same code from being built twice
 
 ### 2. Creating Beta Releases
 
@@ -147,22 +150,29 @@ The `Create-Tag.ps1` script automates the tag creation and push process:
 Features:
 - Automatic version detection using GitVersion
 - Detection of uncommitted changes
-- Automatic detection and pushing of unpushed commits
+- Automatic detection of unpushed commits
+- Combined pushing of commits and tags in a single Git operation
 - Support for developing on the develop branch (no confirmation required)
-- Tag verification on remote after pushing
-- Clear display of git commands being executed
+- Comprehensive verification of both tag and commits on remote after pushing
+- Clean command preview without step numbers when simple operations
 - Prompts for confirmation at critical points
+- Prevents duplicate GitHub workflow runs through optimized push strategy
 
 ## Example Workflow
 
 1. Develop and commit changes to the `develop` branch
 2. Run `./scripts/Create-Tag.ps1` to create and push a beta tag
-   - The script will detect unpushed commits and offer to push them
+   - The script will detect and push any unpushed commits together with the tag
    - It will create a tag based on the current version from GitVersion
+   - The build workflow will automatically skip duplicate builds
 3. Test the beta release 
 4. Make additional improvements with more beta releases as needed
-5. When ready for stable: manually create a stable tag without beta suffix
+5. When ready for stable: run the script again or manually create a stable tag without beta suffix
    ```bash
+   # Either using the script:
+   ./scripts/Create-Tag.ps1
+   
+   # Or manually:
    git tag v1.0.3 && git push origin v1.0.3
    ```
 6. Run the "Publish to NuGet.org" workflow and approve as needed

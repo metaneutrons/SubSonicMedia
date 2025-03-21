@@ -12,7 +12,7 @@
 - List available tests: `cd SubSonicMedia.TestKit && dotnet run list`
 - Display test help: `cd SubSonicMedia.TestKit && dotnet run help`
 - Run GitVersion: `dotnet gitversion`
-- Create and push tag: `./scripts/Create-Tag.ps1` (detects and pushes unpushed commits)
+- Create and push tag: `./scripts/Create-Tag.ps1` (combines commit and tag push in a single operation)
 - Check for shell scripts: `./scripts/Check-ShellScripts.ps1`
 
 ## Code Style Guidelines
@@ -47,7 +47,8 @@
 
 - **Build and Test** (.github/workflows/build.yml)
   - Triggered on push to main/develop branches and PRs
-  - Skips tag pushes (v*) to avoid duplicate builds
+  - Intelligently skips builds for commits that have version tags
+  - Prevents duplicate builds when commits and tags are pushed together
   - Validates code with StyleCop and CSharpier
   - Builds solution and runs basic tests
   - Creates NuGet packages for verification
@@ -92,7 +93,7 @@
 ## Configuration
 
 - .env file required for testing with required keys: SUBSONIC_SERVER_URL, SUBSONIC_USERNAME, SUBSONIC_PASSWORD
-- Optional config: SUBSONIC_API_VERSION, SUBSONIC_RESPONSE_FORMAT, RECORD_TEST_RESULTS, OUTPUT_DIRECTORY, FAIL_FAST, JUNIT_XML_OUTPUT
+- Optional config: SUBSONIC_API_VERSION, RECORD_TEST_RESULTS, OUTPUT_DIRECTORY, FAIL_FAST, JUNIT_XML_OUTPUT
 
 ## Target Framework
 
