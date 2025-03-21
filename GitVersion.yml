@@ -5,6 +5,7 @@ next-version: 1.0.0
 branches:
   develop:
     mode: ContinuousDeployment
-    tag: beta
+    label: beta
+    increment: Patch
     prevent-increment-of-merged-branch-version: false
     source-branches: []
