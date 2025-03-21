@@ -8,7 +8,6 @@ on:
 # Add permissions to allow the workflow to push to the repository
 permissions:
   contents: write
-  workflows: write  # Add permission to modify workflow files
 
 jobs:
   update-main:
@@ -74,7 +73,9 @@ jobs:
             git reset --hard ${{ steps.tag-info.outputs.tag_commit }}
             echo "Reset main to tag commit: ${{ steps.tag-info.outputs.tag_commit }}"
 
-            # Push changes to main
+            # Push changes to main using PAT for full permissions
+            # Using PAT_TOKEN which needs to be added as a repository secret
+            git remote set-url origin https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git
             git push origin main --force
             echo "Main branch updated to ${{ steps.tag-info.outputs.tag_name }}"
           else
