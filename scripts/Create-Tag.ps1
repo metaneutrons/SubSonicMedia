@@ -9,10 +9,17 @@
 
     NOTE: This project uses GitVersion for versioning. You may also use the
     "GitVersion Update" workflow in GitHub Actions to update version and create tags.
+.PARAMETER Version
+    Optional. Manually specify a SemVer 2.0 version to use instead of extracting from GitVersion.
+    Example: -Version "2.0.0-alpha.1"
 .NOTES
     Author: Fabian Schmieder
     Date:   $(Get-Date -Format "yyyy-MM-dd")
 #>
+param (
+    [Parameter(Mandatory = $false)]
+    [string]$Version
+)
 
 # Set strict mode and error handling
 Set-StrictMode -Version Latest
@@ -166,66 +173,80 @@ if ($unpushedCommits) {
     Write-Success "No unpushed commits detected"
 }
 
-# Extract version using GitVersion if available, otherwise from Directory.Build.props
+# Extract version using command line parameter, GitVersion, or Directory.Build.props
 Write-StepHeader -Message "Extracting version information" -Icon $icons.Version
 
-# Check if GitVersion is installed
-$gitVersionInstalled = $null -ne (Get-Command "dotnet-gitversion" -ErrorAction SilentlyContinue) -or
-                       $null -ne (Get-Command "gitversion" -ErrorAction SilentlyContinue)
-
-if ($gitVersionInstalled) {
-    # Use GitVersion to get version info
-    Write-Info "Running GitVersion to determine version..."
+# Check if version was provided as a parameter
+if ($Version) {
+    Write-Info "Using manually specified version: $Version"
+    $fullVersion = $Version
     
-    try {
-        $gitVersionOutput = dotnet gitversion /output json | ConvertFrom-Json
+    # Split into prefix/suffix for later use if needed
+    if ($Version -match '^(\d+\.\d+\.\d+)(?:-(.+))?$') {
+        $versionPrefix = $Matches[1]
+        $versionSuffix = if ($Matches.Count -gt 2) { $Matches[2] } else { "" }
+    } else {
+        Write-Error "Provided version '$Version' is not a valid SemVer 2.0 format (e.g., 1.2.3 or 1.2.3-beta.4)"
+    }
+} else {
+    # Check if GitVersion is installed
+    $gitVersionInstalled = $null -ne (Get-Command "dotnet-gitversion" -ErrorAction SilentlyContinue) -or
+                           $null -ne (Get-Command "gitversion" -ErrorAction SilentlyContinue)
+
+    if ($gitVersionInstalled) {
+        # Use GitVersion to get version info
+        Write-Info "Running GitVersion to determine version..."
         
-        $versionPrefix = $gitVersionOutput.MajorMinorPatch
-        
-        # Check if this is a prerelease
-        if ($gitVersionOutput.PreReleaseLabel) {
-            $versionSuffix = $gitVersionOutput.PreReleaseLabel
+        try {
+            $gitVersionOutput = dotnet gitversion /output json | ConvertFrom-Json
             
-            # Add number if available
-            if ($gitVersionOutput.PreReleaseNumber) {
-                $versionSuffix += ".$($gitVersionOutput.PreReleaseNumber)"
+            $versionPrefix = $gitVersionOutput.MajorMinorPatch
+            
+            # Check if this is a prerelease
+            if ($gitVersionOutput.PreReleaseLabel) {
+                $versionSuffix = $gitVersionOutput.PreReleaseLabel
+                
+                # Add number if available
+                if ($gitVersionOutput.PreReleaseNumber) {
+                    $versionSuffix += ".$($gitVersionOutput.PreReleaseNumber)"
+                }
+                
+                # Construct full version with suffix
+                $fullVersion = "$versionPrefix-$versionSuffix"
             }
-            
-            # Construct full version with suffix
-            $fullVersion = "$versionPrefix-$versionSuffix"
+            else {
+                # No suffix for stable releases
+                $versionSuffix = ""
+                $fullVersion = $versionPrefix
+            }
         }
-        else {
-            # No suffix for stable releases
-            $versionSuffix = ""
-            $fullVersion = $versionPrefix
+        catch {
+            Write-Warning "Error running GitVersion: $_"
+            Write-Warning "Falling back to Directory.Build.props..."
+            $gitVersionInstalled = $false
         }
     }
-    catch {
-        Write-Warning "Error running GitVersion: $_"
-        Write-Warning "Falling back to Directory.Build.props..."
-        $gitVersionInstalled = $false
-    }
-}
 
-# Fallback to Directory.Build.props if GitVersion not available or failed
-if (-not $gitVersionInstalled) {
-    $buildPropsPath = Join-Path $repoRoot "SubSonicMedia" "Directory.Build.props"
-    if (-not (Test-Path $buildPropsPath)) {
-        Write-Error "Directory.Build.props not found at $buildPropsPath"
-    }
+    # Fallback to Directory.Build.props if GitVersion not available or failed
+    if (-not $gitVersionInstalled) {
+        $buildPropsPath = Join-Path $repoRoot "SubSonicMedia" "Directory.Build.props"
+        if (-not (Test-Path $buildPropsPath)) {
+            Write-Error "Directory.Build.props not found at $buildPropsPath"
+        }
 
-    [xml]$buildProps = Get-Content $buildPropsPath
-    $versionPrefix = $buildProps.Project.PropertyGroup.VersionPrefix
-    $versionSuffix = $buildProps.Project.PropertyGroup.VersionSuffix
+        [xml]$buildProps = Get-Content $buildPropsPath
+        $versionPrefix = $buildProps.Project.PropertyGroup.VersionPrefix
+        $versionSuffix = $buildProps.Project.PropertyGroup.VersionSuffix
 
-    if (-not $versionPrefix) {
-        Write-Error "Could not extract VersionPrefix from Directory.Build.props"
-    }
+        if (-not $versionPrefix) {
+            Write-Error "Could not extract VersionPrefix from Directory.Build.props"
+        }
 
-    # Construct the full version string
-    $fullVersion = $versionPrefix
-    if ($versionSuffix) {
-        $fullVersion += "-$versionSuffix"
+        # Construct the full version string
+        $fullVersion = $versionPrefix
+        if ($versionSuffix) {
+            $fullVersion += "-$versionSuffix"
+        }
     }
 }
 
@@ -250,7 +271,7 @@ else {
     }
 
     # Check for version pattern consistency
-    $versionPattern = '^v\d+\.\d+\.\d+(-[a-zA-Z0-9\.]+)?$'
+    $versionPattern = '^v\d+\.\d+\.\d+(-[a-zA-Z0-9\.\-]+)?$'
     $inconsistentTags = @($releaseTags | Where-Object { $_ -notmatch $versionPattern })
 
     if ($inconsistentTags.Count -gt 0) {
@@ -261,46 +282,86 @@ else {
     }
 
     # Check for version sequence
-    $versionNumbers = @($releaseTags | Where-Object { $_ -match $versionPattern } | ForEach-Object {
-            if ($_ -match 'v(\d+)\.(\d+)\.(\d+)') {
-                [PSCustomObject]@{
-                    Tag      = $_
-                    Major    = [int]$Matches[1]
-                    Minor    = [int]$Matches[2]
-                    Patch    = [int]$Matches[3]
-                    Original = $_
+    # Create an array to hold version objects for comparison analysis
+    $versionNumbers = @()
+    foreach ($tag in $releaseTags) {
+        if ($tag -match '^v(\d+)\.(\d+)\.(\d+)') {
+            try {
+                $major = [int]$Matches[1]
+                $minor = [int]$Matches[2]
+                $patch = [int]$Matches[3]
+                
+                $versionObj = [PSCustomObject]@{
+                    Tag      = $tag
+                    Major    = $major
+                    Minor    = $minor
+                    Patch    = $patch
+                    Original = $tag
                 }
+                
+                $versionNumbers += $versionObj
+            } catch {
+                # Skip if there was an error parsing the version
             }
-        }) | Sort-Object Major, Minor, Patch
+        }
+    }
+    
+    # Sort versions by SemVer components
+    if ($versionNumbers.Count -gt 0) {
+        $versionNumbers = $versionNumbers | Sort-Object Major, Minor, Patch
+    }
 
     # Find gaps in version sequence
     $previousVersion = $null
     $gapsFound = $false
 
-    foreach ($version in $versionNumbers) {
-        if ($null -ne $previousVersion) {
-            # Check for unexpected jumps
-            if ($version.Major - $previousVersion.Major -gt 1) {
-                if (-not $gapsFound) {
-                    Write-Warning "Potential gaps in version sequence:"
-                    $gapsFound = $true
+    # Only check for gaps if we have version numbers to compare
+    if ($versionNumbers.Count -gt 0) {
+        foreach ($version in $versionNumbers) {
+            if ($null -ne $previousVersion) {
+                # Check for unexpected jumps
+                try {
+                    # Only proceed if we can verify both versions have needed properties
+                    if ($null -ne $version.Major -and $null -ne $previousVersion.Major) {
+                        if (($version.Major - $previousVersion.Major) -gt 1) {
+                            if (-not $gapsFound) {
+                                Write-Warning "Potential gaps in version sequence:"
+                                $gapsFound = $true
+                            }
+                            Write-Host "      Gap between $($previousVersion.Original) and $($version.Original)" -ForegroundColor $colors.Warning
+                        }
+                        elseif (($version.Major -eq $previousVersion.Major) -and 
+                               ($null -ne $version.Minor) -and 
+                               ($null -ne $previousVersion.Minor) -and 
+                               (($version.Minor - $previousVersion.Minor) -gt 1)) {
+                            if (-not $gapsFound) {
+                                Write-Warning "Potential gaps in version sequence:"
+                                $gapsFound = $true
+                            }
+                            Write-Host "      Gap between $($previousVersion.Original) and $($version.Original)" -ForegroundColor $colors.Warning
+                        }
+                    }
+                } catch {
+                    # Skip comparison if any error occurs
                 }
-                Write-Host "      Gap between $($previousVersion.Original) and $($version.Original)" -ForegroundColor $colors.Warning
             }
-            elseif ($version.Major -eq $previousVersion.Major -and $version.Minor - $previousVersion.Minor -gt 1) {
-                if (-not $gapsFound) {
-                    Write-Warning "Potential gaps in version sequence:"
-                    $gapsFound = $true
-                }
-                Write-Host "      Gap between $($previousVersion.Original) and $($version.Original)" -ForegroundColor $colors.Warning
-            }
+            $previousVersion = $version
         }
-        $previousVersion = $version
-    }
 
-    if (-not $gapsFound) {
-        Write-Success "Version sequence appears consistent"
+        if (-not $gapsFound) {
+            Write-Success "Version sequence appears consistent"
+        }
+    } else {
+        Write-Info "No standard version tags found for gap analysis"
     }
+}
+
+# Add information about manual version option if version was auto-detected
+if (-not $Version) {
+    Write-Host ""
+    Write-Host "    $($icons.Info)  " -ForegroundColor $colors.Info -NoNewline
+    Write-Host "TIP: You can manually set a SemVer 2.0 tag with: " -ForegroundColor $colors.Info -NoNewline
+    Write-Host "./scripts/Create-Tag.ps1 -Version \"2.0.0-alpha.1\"" -ForegroundColor $colors.Primary
 }
 
 # Check if current tag already exists
