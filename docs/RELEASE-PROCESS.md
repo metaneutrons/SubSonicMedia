@@ -1,151 +1,131 @@
 # Release Process
 
-This document outlines the automated release process for SubSonicMedia packages.
+This document outlines the release process for SubSonicMedia packages.
 
-## Automated Release Process
+## Branch Strategy
 
-The project uses GitHub Actions to automate the release process. Here's how it works:
+Our release process uses two primary branches:
 
-### 1. Normal Development
+1. **Develop Branch** (`develop`):
+   - This is where all development happens
+   - Features, fixes, and improvements are committed here
+   - Beta releases are tagged from this branch
+   - Version numbers include a beta suffix (e.g., `1.0.3-beta.5`)
 
-- Regular commits to `main` branch trigger the `build.yml` workflow
-- This workflow builds and tests the code but does not create releases or publish packages
+2. **Main Branch** (`main`):
+   - This is the stable release branch
+   - Updated automatically from tagged versions 
+   - Contains only production-ready code
+   - Has special update rules (detailed below)
+   - Version numbers have no suffix (e.g., `1.0.3`)
 
-### 2. Version Bumping
+## GitVersion Integration
 
-The project includes helper scripts to manage versioning:
+We use GitVersion to automatically calculate version numbers based on Git history:
 
-1. Use the `Bump-Version.ps1` script to analyze commits and bump the version:
-   ```powershell
-   # Analyze commits and suggest a version bump
-   ./scripts/Bump-Version.ps1
-   
-   # Apply the suggested version bump
-   ./scripts/Bump-Version.ps1 -Apply
-   
-   # Force a specific bump type
-   ./scripts/Bump-Version.ps1 -ForceBump minor -Apply
-   
-   # Change version stage (alpha, beta, release)
-   ./scripts/Bump-Version.ps1 -Stage beta -Apply
-   ```
+- Version numbers follow Semantic Versioning (SemVer)
+- The format is `{major}.{minor}.{patch}[-{prerelease}]`
+- Branch names influence the prerelease label:
+  - `develop` branch uses `-beta.{n}` suffix
+  - `main` branch has no suffix
 
-2. Commit the version changes:
+## Release Workflows
+
+### 1. Automated Build and Validation
+
+Every commit to `develop` or `main` triggers:
+- Code building and validation
+- Style checking
+- Test runs
+- Package creation (but not publishing)
+
+### 2. Creating Beta Releases
+
+When ready for a beta release:
+
+1. Ensure you're on the `develop` branch
+2. Create and push a tag with beta suffix:
    ```bash
-   git add SubSonicMedia/Directory.Build.props
-   git commit -m "chore: bump version to 1.0.0-beta [skip ci]"
+   git tag v1.0.3-beta.5
+   git push origin v1.0.3-beta.5
    ```
+3. This triggers:
+   - GitHub release creation with "Beta" label
+   - Main branch update (if no stable release exists yet)
+   - Package creation (but not publishing to NuGet.org)
 
-### 3. Creating a Release
+### 3. Creating Stable Releases
 
-To create a new release and publish packages to NuGet:
+When ready for a stable release:
 
-1. Use the `Create-Tag.ps1` script to create a version tag (requires a clean working directory):
-   ```powershell
-   ./scripts/Create-Tag.ps1
-   ```
-   
-   This will:
-   - Extract the version from Directory.Build.props
-   - Create a tag like `v1.0.0-beta` or `v1.0.0`
-   - Push the tag to origin
-
-2. Alternatively, create and push a tag manually:
+1. Ensure you're on the `develop` branch with all changes tested
+2. Create and push a tag without a suffix:
    ```bash
-   git tag v1.0.0-beta   # For prerelease
-   # OR
-   git tag v1.0.0        # For stable release
-
-   git push origin v1.0.0-beta  # Push the tag
+   git tag v1.0.3
+   git push origin v1.0.3
    ```
+3. This triggers:
+   - GitHub release creation with "Release" label
+   - Main branch update (always updates for stable releases)
+   - Package creation (but not publishing to NuGet.org)
 
-3. The `publish.yml` workflow automatically:
-   - Builds the projects
-   - Creates NuGet packages
-   - Creates a GitHub release
-   - Publishes packages to NuGet.org
-   - Marks the release as prerelease if the version contains a hyphen (e.g., `-beta`)
+### 4. Main Branch Update Rules
 
-### 3. Manual Triggering
+The `update-main.yml` workflow determines when to update the main branch:
 
-You can also manually trigger the publish workflow from the GitHub Actions tab if needed.
+1. **Before First Stable Release**:
+   - Every tag (beta or stable) updates the main branch
+   - This keeps main in sync with develop until the first stable release
 
-## Version Handling
+2. **After First Stable Release**:
+   - Only stable tags (without a suffix) update the main branch
+   - Beta tags no longer affect the main branch
+   - This ensures main only contains stable versions
 
-- Version information is stored in `SubSonicMedia/Directory.Build.props`
-- The version consists of two parts:
-  - `<VersionPrefix>` - The numeric version (e.g., `1.0.0`)
-  - `<VersionSuffix>` - Optional prerelease identifier (e.g., `beta`)
-- When using the helper scripts:
-  - `Bump-Version.ps1` updates the version in Directory.Build.props
-  - `Create-Tag.ps1` creates a tag based on the current version
-- When pushing a tag manually, the CI workflow extracts the version from the tag name (removing the 'v' prefix)
-- For prerelease versions (e.g., `v1.0.0-beta`), the workflow sets `<VersionSuffix>beta</VersionSuffix>`
-- For stable versions (e.g., `v1.0.0`), the workflow removes any version suffix
+### 5. Publishing to NuGet.org
 
-## Requirements
+Publishing to NuGet.org is a separate manual step with approval:
 
-- GitHub repository secrets:
-  - `NUGET_API_KEY`: Required for publishing to NuGet.org
+1. Go to the GitHub Actions tab
+2. Run the "Publish to NuGet.org" workflow
+3. Enter the version tag to publish (e.g., `v1.0.3-beta.5` or `v1.0.3`)
+4. The workflow creates an issue requiring admin approval
+5. A repository admin must comment `/publish` on the issue
+6. Only after approval will the package be published to NuGet.org
 
-## Versioning Guidelines
+This two-step process ensures packages are only published after explicit review and approval by a repository administrator.
 
-Follow [Semantic Versioning](https://semver.org/) principles:
+## Github Releases
 
-- **MAJOR** version for incompatible API changes
-- **MINOR** version for backward-compatible functionality additions
-- **PATCH** version for backward-compatible bug fixes
-- **Prerelease** identifiers (e.g., `-beta`) for prerelease versions
+GitHub releases are created automatically when tags are pushed:
 
-## Example Release Flow
+- **Beta Releases**:
+  - Tagged with a version containing a hyphen (e.g., `v1.0.3-beta.5`)
+  - Labeled as "Beta" with prerelease flag
+  - Include NuGet packages as assets
 
-1. Development on `main` branch with version set to `1.0.0-alpha`
+- **Stable Releases**:
+  - Tagged with a version without a hyphen (e.g., `v1.0.3`)
+  - Labeled as "Release" without prerelease flag
+  - Include NuGet packages as assets
 
-2. Ready for beta release:
-   ```powershell
-   # Transition to beta stage
-   ./scripts/Bump-Version.ps1 -Stage beta -Apply
-   
-   # Commit the changes
-   git add SubSonicMedia/Directory.Build.props
-   git commit -m "chore: transition to beta [skip ci]"
-   
-   # Create and push the tag
-   ./scripts/Create-Tag.ps1
-   ```
+## Special Requirements
 
-3. Testing and refinement with patch updates:
-   ```powershell
-   # Bump patch version for fixes
-   ./scripts/Bump-Version.ps1 -Apply
-   
-   # Commit the changes
-   git add SubSonicMedia/Directory.Build.props
-   git commit -m "chore: bump version [skip ci]"
-   
-   # Create and push the tag
-   ./scripts/Create-Tag.ps1
-   ```
+1. **Personal Access Token (PAT)**:
+   - Required for the `update-main.yml` workflow
+   - Needs `contents` and `workflows` permissions
+   - Must be added as a `PAT_TOKEN` repository secret
 
-4. Ready for stable release:
-   ```powershell
-   # Transition to release (removes suffix)
-   ./scripts/Bump-Version.ps1 -Stage release -Apply
-   
-   # Commit the changes
-   git add SubSonicMedia/Directory.Build.props
-   git commit -m "chore: prepare stable release [skip ci]"
-   
-   # Create and push the tag
-   ./scripts/Create-Tag.ps1
-   ```
+2. **NuGet API Key**:
+   - Required for publishing to NuGet.org
+   - Must be added as a `NUGET_API_KEY` repository secret
 
-5. Start next development cycle:
-   ```powershell
-   # Bump minor version and set to alpha
-   ./scripts/Bump-Version.ps1 -ForceBump minor -Stage alpha -Apply
-   
-   # Commit the changes
-   git add SubSonicMedia/Directory.Build.props
-   git commit -m "chore: start next development cycle [skip ci]"
-   ```
+## Example Workflow
+
+1. Develop and commit changes to the `develop` branch
+2. Create a beta release with `git tag v1.0.3-beta.1 && git push origin v1.0.3-beta.1`
+3. Test the beta release 
+4. Make additional improvements with more beta releases as needed
+5. When ready for stable: `git tag v1.0.3 && git push origin v1.0.3`
+6. Run the "Publish to NuGet.org" workflow and approve as needed
+7. Continue development for the next version on the `develop` branch

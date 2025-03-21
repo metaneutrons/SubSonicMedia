@@ -32,19 +32,31 @@ GitVersion analyzes your branch structure and commit messages to determine the a
 The GitVersion configuration is in `GitVersion.yml`:
 
 ```yaml
-workflow: GitFlow/v1
-mode: ManualDeployment
+mode: ContinuousDeployment
+assembly-versioning-scheme: MajorMinorPatch
+assembly-file-versioning-scheme: MajorMinorPatch
+assembly-informational-format: '{InformationalVersion}'
+tag-prefix: '[vV]'
+
 branches:
   main:
-    label: rc
-  support:
+    regex: ^main$
+    label: ''
+    increment: Patch
+    is-release-branch: true
+
+  develop:
+    regex: ^develop$
     label: beta
+    increment: Minor
+    is-release-branch: false
 ```
 
 This configuration uses:
-- `ManualDeployment` mode: Version is only incremented when you explicitly trigger it
-- GitFlow branching: Supports feature, develop, release, and main branches
-- Custom labels: Uses appropriate prerelease labels based on branch type
+- `ContinuousDeployment` mode: Version is calculated from Git history
+- Branch-specific configurations:
+  - `main` branch: Release branch with no label, increment Patch version
+  - `develop` branch: Development branch with beta label, increment Minor version
 
 ### Branch Naming Conventions
 
@@ -116,7 +128,7 @@ Add new feature
 +semver: minor
 ```
 
-## Version Management Options
+## Version Management and Release Process
 
 ### Local Development
 
@@ -127,71 +139,66 @@ Add new feature
 
 2. **View Version Information**:
    ```
-   dotnet gitversion
+   dotnet gitversion /nocache
    ```
 
-3. **Update Build Files**:
+### Branch Strategy
+
+Our strategy uses two primary branches:
+
+1. **Develop Branch**:
+   - All development happens here
+   - Versioned with beta suffix (e.g., `1.0.3-beta.5`) 
+   - Tags can be created for beta releases
+   - Until the first stable release, main branch follows develop
+
+2. **Main Branch**:
+   - Stable release branch
+   - Updated automatically from tagged versions
+   - After first stable release, only updated from stable (non-beta) tags
+   - Stable releases have no suffix (e.g., `1.0.3`)
+
+### Release Process
+
+#### Beta Releases (from develop branch)
+
+1. Develop and commit changes to the develop branch
+2. When ready for a beta release:
+   ```bash
+   # Create a beta tag (from develop branch)
+   git tag v1.0.3-beta.5
+   git push origin v1.0.3-beta.5
    ```
-   dotnet gitversion /updateprojectfiles
+3. This triggers:
+   - `tag-release.yml` workflow: Creates GitHub release with NuGet packages
+   - `update-main.yml` workflow: Updates main branch if no stable release exists yet
+
+#### Stable Releases
+
+1. When ready for a stable release:
+   ```bash
+   # Create a stable tag (from develop branch)
+   git tag v1.0.3
+   git push origin v1.0.3
    ```
+2. This triggers:
+   - `tag-release.yml` workflow: Creates GitHub release with NuGet packages
+   - `update-main.yml` workflow: Always updates main branch to this stable version
 
-4. **Trigger Version Updates**:
-   - Create a new Git tag: `git tag v1.2.3`
-   - Use commit message conventions:
-     - `+semver: major` - Bump major version
-     - `+semver: minor` - Bump minor version
-     - `+semver: patch` - Bump patch version
+### Publishing to NuGet.org
 
-### Manual Release Process
+We publish to NuGet.org manually with approval:
 
-We use a manual release process to ensure control over when and how versions are incremented:
+1. Go to the "Actions" tab in your GitHub repository
+2. Select the "Publish to NuGet.org" workflow
+3. Click "Run workflow"
+4. Enter the version tag to publish (e.g., `v1.0.3-beta.5` or `v1.0.3`)
+5. The workflow will:
+   - Create a confirmation issue requiring admin approval
+   - Wait for a repository admin to comment `/publish` on the issue
+   - Publish the package to NuGet.org after approval
 
-1. **Option 1: GitHub Actions Workflow**
-   
-   The "GitVersion Update" workflow can be triggered manually from the GitHub Actions tab:
-   
-   1. Go to the "Actions" tab in your GitHub repository
-   2. Select the "GitVersion Update" workflow
-   3. Click "Run workflow"
-   4. Options:
-      - **Create and push Git tag**: When set to `true`, the workflow will create and push a Git tag based on the GitVersion-generated version
-
-2. **Option 2: Local Tag Creation**
-   
-   Use the Create-Tag.ps1 script that now integrates with GitVersion:
-
-   ```
-   ./scripts/Create-Tag.ps1
-   ```
-
-   This script will:
-   - Use GitVersion to determine the current version
-   - Perform pre-checks (no uncommitted files)
-   - Create and push a Git tag after confirmation
-
-3. **Manual Version Management (Fallback)**
-
-   If you prefer to manage versions manually:
-
-   1. Edit the version in `SubSonicMedia/Directory.Build.props`
-   2. Commit and push the change
-   3. Create and push a tag: `git tag v1.2.3 && git push origin v1.2.3`
-
-## Complete Release Process
-
-1. Make your changes and commit them using the conventional commit format
-2. Push your changes to GitHub
-3. Use one of the version management options above to:
-   - Use GitVersion to determine the appropriate version
-   - Update version information in the build files
-   - Create and push a new version tag
-4. The tag push will trigger the "Build and Publish NuGet Package" workflow
-5. Alternatively, you can trigger the publish workflow manually:
-   - Go to the "Actions" tab in your GitHub repository
-   - Select the "Build and Publish NuGet Package" workflow
-   - Click "Run workflow"
-   - Choose whether to publish to NuGet.org
-6. If all checks pass, the package will be published to NuGet.org
+This two-step process ensures packages are only published after explicit review and approval by a repository administrator.
 
 ## Tag Naming Convention
 

@@ -46,23 +46,28 @@
 ### GitHub Workflows
 
 - **Build and Test** (.github/workflows/build.yml)
-  - Triggered on push to main branch and PRs
+  - Triggered on push to main/develop branches and PRs
   - Validates code with StyleCop and CSharpier
   - Builds solution and runs basic tests
   - Creates NuGet packages for verification
 
-- **GitVersion Update** (.github/workflows/gitversion.yml)
-  - Manually triggered from GitHub Actions tab
-  - Options to create tag or just update version
-  - Uses GitVersion for semantic versioning
-  - Updates Directory.Build.props with new version
-  - Optionally creates and pushes a tag
-
-- **Build and Publish NuGet Package** (.github/workflows/publish.yml)
-  - Triggered by version tags (v*) or manually
+- **Tag Release** (.github/workflows/tag-release.yml)
+  - Triggered by version tags (v*)
   - Builds and validates code
-  - Publishes package to NuGet.org
-  - Creates GitHub release for tag
+  - Creates GitHub releases with NuGet packages
+  - Labels releases as Beta or Release based on tag format
+
+- **Update Main Branch** (.github/workflows/update-main.yml)
+  - Triggered by version tags (v*)
+  - Updates main branch to match the latest tag
+  - Follows specific rules for beta vs. stable releases
+  - Requires PAT_TOKEN with workflows permission
+
+- **NuGet Publish** (.github/workflows/nuget-publish.yml)
+  - Manually triggered with a specific version tag
+  - Creates an approval issue requiring admin confirmation
+  - Publishes packages to NuGet.org only after explicit approval
+  - Provides full audit trail of who approved the publish
 
 - **Dependabot**
   - Auto-updates NuGet packages (weekly)
