@@ -149,10 +149,7 @@ else {
 # Check if we're on main branch
 $currentBranch = git branch --show-current
 if ($currentBranch -ne "main") {
-    Write-Warning "You are not on the main branch (current: $currentBranch)"
-    if (-not (Get-Confirmation "Continue anyway?")) {
-        exit 0
-    }
+    Write-Warning "You are not on the main branch (current: $currentBranch). This is just a warning, you can continue."
 }
 else {
     Write-Success "Currently on main branch"
@@ -421,8 +418,14 @@ try {
 
     # Push the tag with error handling for remote tag existence
     Write-Host "    Pushing tag to origin..." -ForegroundColor $colors.Muted
+    Write-Host "    Executing: $pushCommand" -ForegroundColor $colors.Muted
     $pushOutput = Invoke-Expression "$pushCommand 2>&1"
     $pushExitCode = $LASTEXITCODE
+    
+    # Print the output for verification
+    if ($pushOutput) {
+        Write-Host "    Push output: $pushOutput" -ForegroundColor $colors.Muted
+    }
 
     # Check if the push failed because the tag already exists remotely
     if ($pushExitCode -ne 0) {
@@ -456,10 +459,20 @@ try {
         }
     }
     else {
-        # Success message for normal push
-        Write-Host ""
-        Write-Host "  $($icons.Success)  " -ForegroundColor $colors.Success -NoNewline
-        Write-Host "Tag v$fullVersion successfully created and pushed to origin!" -ForegroundColor $colors.Success
+        # Verify tag exists on remote
+        Write-Host "    Verifying tag on remote..." -ForegroundColor $colors.Muted
+        $remoteTagCheck = Invoke-Expression "git ls-remote --tags origin refs/tags/v$fullVersion 2>&1"
+        
+        if ($remoteTagCheck) {
+            # Success message for normal push
+            Write-Host ""
+            Write-Host "  $($icons.Success)  " -ForegroundColor $colors.Success -NoNewline
+            Write-Host "Tag v$fullVersion successfully created and pushed to origin!" -ForegroundColor $colors.Success
+        } else {
+            Write-Warning "Tag v$fullVersion was created locally but could not be verified on remote."
+            Write-Warning "The push command appeared to succeed but the tag may not exist remotely."
+            Write-Host "    Remote verification output: $remoteTagCheck" -ForegroundColor $colors.Muted
+        }
     }
 
     Write-Host ""
