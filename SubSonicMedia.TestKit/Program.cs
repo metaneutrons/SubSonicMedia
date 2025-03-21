@@ -210,9 +210,6 @@ void DisplayHelp()
         $"  SUBSONIC_API_VERSION     API version to use (optional, defaults to {VersionInfo.SubsonicApiVersion})"
     );
     AnsiConsole.WriteLine(
-        "  SUBSONIC_RESPONSE_FORMAT Response format (optional, defaults to json)"
-    );
-    AnsiConsole.WriteLine(
         "  RECORD_TEST_RESULTS      Whether to record test results (optional, defaults to true)"
     );
     AnsiConsole.WriteLine("  OUTPUT_DIRECTORY         Directory to save test results (optional)");

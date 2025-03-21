@@ -51,9 +51,6 @@ SUBSONIC_SERVER_URL=https://your-server-url
 SUBSONIC_USERNAME=your-username
 SUBSONIC_PASSWORD=your-password
 
-# API configuration
-SUBSONIC_RESPONSE_FORMAT=json
-
 # Test configuration
 RECORD_TEST_RESULTS=true
 OUTPUT_DIRECTORY=./TestResults
