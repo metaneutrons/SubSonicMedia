@@ -146,6 +146,34 @@ else {
     Write-Success "No uncommitted changes detected"
 }
 
+# Check for unpushed commits
+Write-StepHeader -Message "Checking for unpushed commits" -Icon $icons.Git
+
+$unpushedCommits = git log --branches --not --remotes --oneline
+if ($unpushedCommits) {
+    Write-Warning "You have unpushed commits that need to be pushed first:"
+    $unpushedCommits | ForEach-Object { Write-Host "      $_" -ForegroundColor $colors.Muted }
+    
+    if (Get-Confirmation "Push all pending commits to remote first?") {
+        $currentBranch = git branch --show-current
+        Write-Host "    Pushing commits on branch $currentBranch to origin..." -ForegroundColor $colors.Muted
+        $pushCommitsOutput = Invoke-Expression "git push origin $currentBranch 2>&1"
+        
+        if ($LASTEXITCODE -eq 0) {
+            Write-Success "All commits successfully pushed to origin"
+        } else {
+            Write-Error "Failed to push commits: $pushCommitsOutput"
+        }
+    } else {
+        Write-Warning "Creating a tag without pushing commits first may lead to issues"
+        if (-not (Get-Confirmation "Continue anyway?")) {
+            exit 0
+        }
+    }
+} else {
+    Write-Success "No unpushed commits detected"
+}
+
 # Check if we're on main branch
 $currentBranch = git branch --show-current
 if ($currentBranch -ne "main") {
@@ -478,6 +506,30 @@ try {
     Write-Host ""
     Write-Host "  $($icons.Rocket)  " -ForegroundColor $colors.Secondary -NoNewline
     Write-Host "GitHub CI workflow should now be triggered." -ForegroundColor $colors.Secondary
+    
+    # Final check for any unpushed commits (could happen if tag was created but commits weren't pushed)
+    $finalUnpushedCommits = git log --branches --not --remotes --oneline
+    if ($finalUnpushedCommits) {
+        Write-Host ""
+        Write-Warning "You still have unpushed commits after tag creation:"
+        $finalUnpushedCommits | ForEach-Object { Write-Host "      $_" -ForegroundColor $colors.Muted }
+        
+        if (Get-Confirmation "Push all remaining commits to remote now?") {
+            $currentBranch = git branch --show-current
+            Write-Host "    Pushing commits on branch $currentBranch to origin..." -ForegroundColor $colors.Muted
+            $pushFinalOutput = Invoke-Expression "git push origin $currentBranch 2>&1"
+            
+            if ($LASTEXITCODE -eq 0) {
+                Write-Success "All remaining commits successfully pushed to origin"
+            } else {
+                Write-Warning "Failed to push remaining commits: $pushFinalOutput"
+                Write-Warning "You should push these commits manually"
+            }
+        } else {
+            Write-Warning "Remember to push your commits manually with: git push origin $currentBranch"
+        }
+    }
+    
     Write-Host ""
 }
 catch {
