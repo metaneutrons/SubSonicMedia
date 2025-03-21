@@ -1,5 +1,8 @@
 name: Update Main Branch
 
+# This workflow is designed to update the main branch with tagged releases
+# It should only run when tags are created from the develop branch
+
 on:
   push:
     tags:
@@ -14,20 +17,55 @@ jobs:
     runs-on: ubuntu-latest
     # Wait for tag-release workflow to complete
     needs: []
-
+    
     steps:
       - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Full history for GitVersion
+          
+      - name: Verify tag is from develop branch
+        id: verify-branch
+        run: |
+          # Get the tag name
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          echo "Tag: $TAG_NAME"
+          
+          # Get the commit that the tag points to
+          TAG_COMMIT=$(git rev-list -n 1 $TAG_NAME)
+          echo "Tag commit: $TAG_COMMIT"
+          
+          # Find what branch this commit belongs to
+          BRANCH_NAME=$(git branch -r --contains $TAG_COMMIT | grep -v "HEAD" | sed 's/^[[:space:]]*origin\///' | head -n 1)
+          echo "Branch: $BRANCH_NAME"
+          
+          # Check if the branch is develop
+          if [[ "$BRANCH_NAME" == "develop" ]]; then
+            echo "✅ Tag was created from develop branch"
+            echo "continue=true" >> $GITHUB_OUTPUT
+          else
+            echo "⚠️ Tag was NOT created from develop branch"
+            echo "⚠️ Workflow will exit without updating main branch"
+            echo "continue=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+      
+      # Only proceed if the tag was created from develop branch
+      - name: Checkout main branch
+        if: steps.verify-branch.outputs.continue == 'true'
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Full history for GitVersion
           ref: main
 
       - name: Setup Git
+        if: steps.verify-branch.outputs.continue == 'true'
         run: |
           git config --global user.name 'GitHub Actions'
           git config --global user.email 'github-actions@users.noreply.github.com'
 
       - name: Get tag information
+        if: steps.verify-branch.outputs.continue == 'true'
         id: tag-info
         run: |
           TAG_NAME=${GITHUB_REF#refs/tags/}
@@ -49,6 +87,7 @@ jobs:
           echo "Tag commit: $TAG_COMMIT"
 
       - name: Check if release exists
+        if: steps.verify-branch.outputs.continue == 'true'
         id: check-releases
         run: |
           # Count stable releases (no dash in tag name)
@@ -57,6 +96,7 @@ jobs:
           echo "Number of stable releases: $RELEASE_COUNT"
 
       - name: Update main branch to tag
+        if: steps.verify-branch.outputs.continue == 'true'
         run: |
           # Logic to update main branch:
           # 1. Always update if this is a stable release (no dash)
@@ -83,6 +123,7 @@ jobs:
           fi
 
       - name: Display update summary
+        if: steps.verify-branch.outputs.continue == 'true'
         run: |
           echo "✅ Main branch update process completed"
           if [[ "${{ steps.tag-info.outputs.is_prerelease }}" == "false" ]] || [[ "${{ steps.check-releases.outputs.release_count }}" == "0" ]]; then
@@ -92,3 +133,10 @@ jobs:
           fi
           echo ""
           echo "GitHub Release creation is handled by tag-release.yml workflow"
+          
+      - name: Message for non-develop tags
+        if: steps.verify-branch.outputs.continue != 'true'
+        run: |
+          echo "⚠️ Update Main Branch workflow did not proceed"
+          echo "This tag was not created from the develop branch"
+          echo "The main branch was NOT updated"
