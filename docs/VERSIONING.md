@@ -1,12 +1,14 @@
 # Versioning in SubSonicMedia
 
-This project follows [Semantic Versioning](https://semver.org/) principles and uses both GitVersion and commit message conventions to automatically determine version bumps.
+This project follows [Semantic Versioning](https://semver.org/) principles and uses GitVersion to automatically determine version bumps based on Git history and conventional commits.
 
 ## GitVersion Integration
 
-The project now uses [GitVersion](https://gitversion.net/) to automatically generate version numbers based on Git history. This eliminates the need to manually update version numbers in multiple places.
+The project uses [GitVersion](https://gitversion.net/) to automate versioning, which eliminates the need to manually update version numbers in multiple places.
 
 ### How GitVersion Works
+
+GitVersion analyzes your branch structure and commit messages to determine the appropriate version number for your project. The configuration is set to `ManualDeployment` mode, which gives you full control over when version numbers change.
 
 1. **GitVersion** analyzes your Git repository to determine the current version based on:
    - Git tags
@@ -24,6 +26,25 @@ The project now uses [GitVersion](https://gitversion.net/) to automatically gene
    - The `GitVersionTarget.targets` file runs GitVersion during build
    - Version information is stored in `GitVersion.props`
    - `Directory.Build.props` imports and uses these properties
+
+### GitVersion Configuration
+
+The GitVersion configuration is in `GitVersion.yml`:
+
+```yaml
+workflow: GitFlow/v1
+mode: ManualDeployment
+branches:
+  main:
+    label: rc
+  support:
+    label: beta
+```
+
+This configuration uses:
+- `ManualDeployment` mode: Version is only incremented when you explicitly trigger it
+- GitFlow branching: Supports feature, develop, release, and main branches
+- Custom labels: Uses appropriate prerelease labels based on branch type
 
 ### Branch Naming Conventions
 
@@ -97,56 +118,94 @@ Add new feature
 
 ## Version Management Options
 
-### GitVersion
-
-With GitVersion integrated into the build process, you can:
+### Local Development
 
 1. **Install GitVersion**:
    ```
    dotnet tool install --global GitVersion.Tool
    ```
 
-2. **Trigger Version Updates**:
+2. **View Version Information**:
+   ```
+   dotnet gitversion
+   ```
+
+3. **Update Build Files**:
+   ```
+   dotnet gitversion /updateprojectfiles
+   ```
+
+4. **Trigger Version Updates**:
    - Create a new Git tag: `git tag v1.2.3`
    - Use commit message conventions:
      - `+semver: major` - Bump major version
      - `+semver: minor` - Bump minor version
      - `+semver: patch` - Bump patch version
 
-3. **For CI/CD**:
-   GitVersion is already integrated into the CI/CD pipeline:
-   - The build workflow automatically runs GitVersion during builds
-   - The GitVersion workflow can be manually triggered for version updates
+### Manual Release Process
 
-### GitHub Workflow
+We use a manual release process to ensure control over when and how versions are incremented:
 
-The GitVersion workflow can be triggered manually from the GitHub Actions tab:
+1. **Option 1: GitHub Actions Workflow**
+   
+   The "GitVersion Update" workflow can be triggered manually from the GitHub Actions tab:
+   
+   1. Go to the "Actions" tab in your GitHub repository
+   2. Select the "GitVersion Update" workflow
+   3. Click "Run workflow"
+   4. Options:
+      - **Create and push Git tag**: When set to `true`, the workflow will create and push a Git tag based on the GitVersion-generated version
 
-1. Go to the "Actions" tab in your GitHub repository
-2. Select the "GitVersion Update" workflow
-3. Click "Run workflow"
-4. Options:
-   - **Create and push Git tag**: When set to `true`, the workflow will create and push a Git tag based on the GitVersion-generated version
+2. **Option 2: Local Tag Creation**
+   
+   Use the Create-Tag.ps1 script that now integrates with GitVersion:
 
-### Manual Version Management
+   ```
+   ./scripts/Create-Tag.ps1
+   ```
 
-If you prefer to manage versions manually:
+   This script will:
+   - Use GitVersion to determine the current version
+   - Perform pre-checks (no uncommitted files)
+   - Create and push a Git tag after confirmation
 
-1. Edit the version in `SubSonicMedia/Directory.Build.props`
-2. Commit and push the change
-3. Create and push a tag: `git tag v1.2.3 && git push origin v1.2.3`
+3. **Manual Version Management (Fallback)**
+
+   If you prefer to manage versions manually:
+
+   1. Edit the version in `SubSonicMedia/Directory.Build.props`
+   2. Commit and push the change
+   3. Create and push a tag: `git tag v1.2.3 && git push origin v1.2.3`
 
 ## Complete Release Process
 
 1. Make your changes and commit them using the conventional commit format
 2. Push your changes to GitHub
 3. Use one of the version management options above to:
-   - Analyze commits since the last tag
-   - Determine the appropriate version bump
-   - Update the version in Directory.Build.props
+   - Use GitVersion to determine the appropriate version
+   - Update version information in the build files
    - Create and push a new version tag
 4. The tag push will trigger the "Build and Publish NuGet Package" workflow
-5. If all checks pass, the package will be published to NuGet.org
+5. Alternatively, you can trigger the publish workflow manually:
+   - Go to the "Actions" tab in your GitHub repository
+   - Select the "Build and Publish NuGet Package" workflow
+   - Click "Run workflow"
+   - Choose whether to publish to NuGet.org
+6. If all checks pass, the package will be published to NuGet.org
+
+## Tag Naming Convention
+
+Tags should follow the format `v{version}` (e.g., `v1.2.3` or `v1.2.3-beta.1`).
+
+## Integration with MSBuild
+
+GitVersion is integrated with the build system via:
+
+1. `GitVersion.props`: Contains version properties used by MSBuild
+2. `GitVersionTarget.targets`: MSBuild target that runs GitVersion
+3. `Directory.Build.props`: Imports GitVersion properties
+
+This ensures consistent versioning across local and CI builds.
 
 ## API Version
 
@@ -154,9 +213,10 @@ The Subsonic API version supported by this library is specified separately in `D
 
 ## Benefits
 
+- **Automated Semantic Versioning**: Version numbers are derived from Git history
+- **Manual Control**: ManualDeployment mode ensures you control when versions change
 - **Single Source of Truth**: Version information is derived from Git
-- **Automatic Updates**: No need to manually update version numbers
-- **Proper NuGet Versioning**: Correctly handles prerelease suffixes
 - **Assembly Version Compliance**: Ensures assembly versions follow .NET requirements
+- **Proper NuGet Versioning**: Correctly handles prerelease suffixes
+- **CI/CD Integration**: Properly integrated with GitHub Actions workflows
 - **Flexible Options**: Multiple ways to manage versions depending on your workflow
-- **CI/CD Integration**: Seamless integration with your build pipeline

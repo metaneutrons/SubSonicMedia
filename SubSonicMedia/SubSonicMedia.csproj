@@ -16,7 +16,7 @@
     <!-- Version overrides for assembly attributes -->
     <AssemblyVersion>1.0.2.0</AssemblyVersion>
     <FileVersion>1.0.2.0</FileVersion>
-    <InformationalVersion>1.0.2+Branch.develop.Sha.1ffb1d5b10d36a2cbaec65b316b21251d1b99ef7</InformationalVersion>
+    <InformationalVersion>1.0.2+Branch.develop.Sha.f58d731e17c29fc962921de921f340f8e4ac2fa9</InformationalVersion>
     <!-- NuGet Package Properties -->
     <IsPackable>true</IsPackable>
     <PackageReadmeFile>README.md</PackageReadmeFile>

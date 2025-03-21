@@ -4,8 +4,11 @@
     Creates a new Git tag for GitHub CI based on the project version.
 .DESCRIPTION
     This script performs all necessary pre-checks (no uncommitted files),
-    extracts the version number from the project's versioning schema,
+    extracts the version number from the project's versioning schema using GitVersion,
     and proposes the Git commands to execute after confirmation.
+
+    NOTE: This project uses GitVersion for versioning. You may also use the
+    "GitVersion Update" workflow in GitHub Actions to update version and create tags.
 .NOTES
     Author: Fabian Schmieder
     Date:   $(Get-Date -Format "yyyy-MM-dd")
@@ -155,26 +158,67 @@ else {
     Write-Success "Currently on main branch"
 }
 
-# Extract version from Directory.Build.props
+# Extract version using GitVersion if available, otherwise from Directory.Build.props
 Write-StepHeader -Message "Extracting version information" -Icon $icons.Version
 
-$buildPropsPath = Join-Path $repoRoot "SubSonicMedia" "Directory.Build.props"
-if (-not (Test-Path $buildPropsPath)) {
-    Write-Error "Directory.Build.props not found at $buildPropsPath"
+# Check if GitVersion is installed
+$gitVersionInstalled = $null -ne (Get-Command "dotnet-gitversion" -ErrorAction SilentlyContinue) -or
+                       $null -ne (Get-Command "gitversion" -ErrorAction SilentlyContinue)
+
+if ($gitVersionInstalled) {
+    # Use GitVersion to get version info
+    Write-Info "Running GitVersion to determine version..."
+    
+    try {
+        $gitVersionOutput = dotnet gitversion /output json | ConvertFrom-Json
+        
+        $versionPrefix = $gitVersionOutput.MajorMinorPatch
+        
+        # Check if this is a prerelease
+        if ($gitVersionOutput.PreReleaseLabel) {
+            $versionSuffix = $gitVersionOutput.PreReleaseLabel
+            
+            # Add number if available
+            if ($gitVersionOutput.PreReleaseNumber) {
+                $versionSuffix += ".$($gitVersionOutput.PreReleaseNumber)"
+            }
+            
+            # Construct full version with suffix
+            $fullVersion = "$versionPrefix-$versionSuffix"
+        }
+        else {
+            # No suffix for stable releases
+            $versionSuffix = ""
+            $fullVersion = $versionPrefix
+        }
+    }
+    catch {
+        Write-Warning "Error running GitVersion: $_"
+        Write-Warning "Falling back to Directory.Build.props..."
+        $gitVersionInstalled = $false
+    }
 }
 
-[xml]$buildProps = Get-Content $buildPropsPath
-$versionPrefix = $buildProps.Project.PropertyGroup.VersionPrefix
-$versionSuffix = $buildProps.Project.PropertyGroup.VersionSuffix
+# Fallback to Directory.Build.props if GitVersion not available or failed
+if (-not $gitVersionInstalled) {
+    $buildPropsPath = Join-Path $repoRoot "SubSonicMedia" "Directory.Build.props"
+    if (-not (Test-Path $buildPropsPath)) {
+        Write-Error "Directory.Build.props not found at $buildPropsPath"
+    }
 
-if (-not $versionPrefix) {
-    Write-Error "Could not extract VersionPrefix from Directory.Build.props"
-}
+    [xml]$buildProps = Get-Content $buildPropsPath
+    $versionPrefix = $buildProps.Project.PropertyGroup.VersionPrefix
+    $versionSuffix = $buildProps.Project.PropertyGroup.VersionSuffix
 
-# Construct the full version string
-$fullVersion = $versionPrefix
-if ($versionSuffix) {
-    $fullVersion += "-$versionSuffix"
+    if (-not $versionPrefix) {
+        Write-Error "Could not extract VersionPrefix from Directory.Build.props"
+    }
+
+    # Construct the full version string
+    $fullVersion = $versionPrefix
+    if ($versionSuffix) {
+        $fullVersion += "-$versionSuffix"
+    }
 }
 
 Write-Success "Version extracted: $fullVersion"

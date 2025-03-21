@@ -1,5 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
@@ -9,7 +8,6 @@
     <RootNamespace>SubSonicMedia.TestKit</RootNamespace>
     <IsPackable>true</IsPackable>
     <VersionSuffix>alpha.1</VersionSuffix>
-    
     <!-- Package metadata -->
     <Title>SubSonicMedia.TestKit</Title>
     <Description>A comprehensive testing toolkit for validating the SubSonicMedia API against your Subsonic server.</Description>
@@ -19,13 +17,15 @@
     <RepositoryUrl>https://github.com/metaneutrons/SubSonicMedia</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>subsonic;music;api;testing;toolkit</PackageTags>
+    <AssemblyVersion>1.0.2.0</AssemblyVersion>
+    <FileVersion>1.0.2.0</FileVersion>
+    <InformationalVersion>1.0.2-alpha.76+Branch.develop.Sha.ac3326dc1548b200a9bf766605dc5d5d86c57397</InformationalVersion>
+    <Version>1.0.2-alpha.76</Version>
   </PropertyGroup>
-
   <!-- Switch from NuGet package to project reference since both now target net8.0 -->
   <ItemGroup>
     <ProjectReference Include="..\SubSonicMedia\SubSonicMedia.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="CSharpier.MsBuild" Version="0.30.6">
       <PrivateAssets>all</PrivateAssets>
@@ -43,18 +43,15 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-
   <ItemGroup>
     <AdditionalFiles Include="$(MSBuildThisFileDirectory)\..\stylecop.json" Link="stylecop.json" />
   </ItemGroup>
-
   <ItemGroup>
     <None Update=".env" Condition="Exists('$(MSBuildProjectDirectory)/.env')">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
-
   <!-- Custom MSBuild target for running tests conditionally -->
   <Target Name="RunTestsConditionally" Condition="Exists('$(MSBuildProjectDirectory)/.env')">
     <Message Importance="high" Text="Running SubSonicMedia TestKit..." />
@@ -64,5 +61,4 @@
     <Message Importance="high" Text="Tests completed successfully!" Condition="'$(ErrorCode)' == '0'" />
     <Error Text="Tests failed with exit code $(ErrorCode)" Condition="'$(ErrorCode)' != '0'" />
   </Target>
-
 </Project>

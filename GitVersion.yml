@@ -1,22 +1,21 @@
 mode: ContinuousDeployment
-next-version: 1.0.0
-tag-prefix: 'v'
-major-version-bump-message: '\+semver:\s?(breaking|major)'
-minor-version-bump-message: '\+semver:\s?(feature|minor)'
-patch-version-bump-message: '\+semver:\s?(fix|patch)'
+assembly-versioning-scheme: MajorMinorPatch
+assembly-file-versioning-scheme: MajorMinorPatch
+assembly-informational-format: '{InformationalVersion}'
+tag-prefix: '[vV]'
+
 branches:
-  develop:
-    regex: ^develop$
-    mode: ContinuousDeployment
-    label: beta
-    increment: Patch
-    track-merge-target: true
-    tracks-release-branches: true
-    is-release-branch: false
   main:
     regex: ^main$
-    mode: ContinuousDelivery
     label: ''
     increment: Patch
     is-release-branch: true
-    track-merge-target: false
+
+  develop:
+    regex: ^develop$
+    label: beta
+    increment: Minor
+    is-release-branch: false
+
+ignore:
+  sha: []
