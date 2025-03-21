@@ -35,50 +35,39 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Install GitVersion
-        run: dotnet tool install --global GitVersion.Tool
-        
-      - name: Run GitVersion
+        uses: gittools/actions/gitversion/setup@v0.10.2
+        with:
+          versionSpec: '6.x'
+          
+      - name: Determine version
         id: gitversion
+        uses: gittools/actions/gitversion/execute@v0.10.2
+        with:
+          useConfigFile: true
+          updateAssemblyInfo: true
+          updateProjectFiles: true
+          additionalArguments: ${{ inputs.increment_type != 'auto' && format('/overrideconfig increment={0}', inputs.increment_type) || '' }}
+
+      - name: Display GitVersion outputs
         run: |
-          # Run GitVersion with optional increment override
-          GITVERSION_ARGS="/output json"
-          if [ "${{ inputs.increment_type }}" != "auto" ]; then
-            GITVERSION_ARGS="$GITVERSION_ARGS /overrideconfig increment=${{ inputs.increment_type }}"
-          fi
-          
-          VERSION_JSON=$(dotnet gitversion $GITVERSION_ARGS)
-          echo "Version JSON: $VERSION_JSON"
-          
-          # Extract key values and set as outputs
-          SEMVER=$(echo $VERSION_JSON | jq -r '.SemVer')
-          MAJOR_MINOR_PATCH=$(echo $VERSION_JSON | jq -r '.MajorMinorPatch')
-          PRERELEASE_LABEL=$(echo $VERSION_JSON | jq -r '.PreReleaseLabel')
-          PRERELEASE_NUMBER=$(echo $VERSION_JSON | jq -r '.PreReleaseNumber')
-          
-          echo "semver=$SEMVER" >> $GITHUB_OUTPUT
-          echo "majorminorpatch=$MAJOR_MINOR_PATCH" >> $GITHUB_OUTPUT
-          echo "prereleaselabel=$PRERELEASE_LABEL" >> $GITHUB_OUTPUT
-          echo "prereleasenumber=$PRERELEASE_NUMBER" >> $GITHUB_OUTPUT
-          
-          # Generate updated GitVersion.props file
-          dotnet gitversion /updateprojectfiles
-          
-          # Show the updated properties
-          cat GitVersion.props
+          echo "SemVer: ${{ steps.gitversion.outputs.semVer }}"
+          echo "MajorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}"
+          echo "PreReleaseLabel: ${{ steps.gitversion.outputs.preReleaseLabel }}"
+          echo "PreReleaseNumber: ${{ steps.gitversion.outputs.preReleaseNumber }}"
 
       - name: Commit changes
         run: |
           git config --global user.name 'GitHub Actions'
           git config --global user.email 'github-actions@users.noreply.github.com'
           git add GitVersion.props
-          git commit -m "chore: Update version to ${{ steps.gitversion.outputs.semver }} [skip ci]"
+          git commit -m "chore: Update version to ${{ steps.gitversion.outputs.semVer }} [skip ci]"
 
       - name: Create and push tag
         if: ${{ inputs.create_tag }}
         run: |
-          git tag v${{ steps.gitversion.outputs.semver }}
-          git push origin v${{ steps.gitversion.outputs.semver }}
-          echo "Created and pushed tag v${{ steps.gitversion.outputs.semver }}"
+          git tag v${{ steps.gitversion.outputs.semVer }}
+          git push origin v${{ steps.gitversion.outputs.semVer }}
+          echo "Created and pushed tag v${{ steps.gitversion.outputs.semVer }}"
 
       - name: Push changes
         run: git push

@@ -30,23 +30,24 @@ jobs:
           dotnet-version: "8.0.x"
 
       - name: Install GitVersion
-        run: dotnet tool install --global GitVersion.Tool
-
+        uses: gittools/actions/gitversion/setup@v0.10.2
+        with:
+          versionSpec: '6.x'
+          
       - name: Determine version
         id: gitversion
+        uses: gittools/actions/gitversion/execute@v0.10.2
+        with:
+          useConfigFile: true
+          updateAssemblyInfo: true
+          updateProjectFiles: true
+
+      - name: Display GitVersion outputs
         run: |
-          # Run GitVersion and get version info
-          VERSION_JSON=$(dotnet gitversion /output json)
-          echo "$VERSION_JSON" | jq
-          
-          # Extract version values for later use
-          SEMVER=$(echo "$VERSION_JSON" | jq -r '.SemVer')
-          NUGETVERSION=$(echo "$VERSION_JSON" | jq -r '.NuGetVersion')
-          echo "semver=$SEMVER" >> $GITHUB_OUTPUT
-          echo "nugetversion=$NUGETVERSION" >> $GITHUB_OUTPUT
-          
-          # Update project files with version info
-          dotnet gitversion /output buildserver /updateprojectfiles
+          echo "SemVer: ${{ steps.gitversion.outputs.semVer }}"
+          echo "NuGetVersion: ${{ steps.gitversion.outputs.nuGetVersion }}"
+          echo "FullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}"
+          echo "Updated project files with version info"
 
       - name: Restore dependencies
         run: dotnet restore
