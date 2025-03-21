@@ -153,9 +153,6 @@ $unpushedCommits = git log --branches --not --remotes --oneline
 if ($unpushedCommits) {
     Write-Warning "You have unpushed commits:"
     $unpushedCommits | ForEach-Object { Write-Host "      $_" -ForegroundColor $colors.Muted }
-    
-    Write-Info "These commits will be pushed together with the tag in a single operation"
-    Write-Info "This will prevent duplicate GitHub workflow runs"
 } else {
     Write-Success "No unpushed commits detected"
 }
@@ -338,13 +335,30 @@ if ($tagExists) {
     Write-Host "    $deleteRemoteCommand (if tag exists remotely)" -ForegroundColor $colors.Primary
     Write-Host ""
     Write-Host "    Step 2 (create new tag):" -ForegroundColor $colors.Info
+    Write-Host "    $tagCommand" -ForegroundColor $colors.Primary
+    
+    # Check if we need to show combined push command
+    $hasUnpushedCommits = $null -ne (git log --branches --not --remotes --oneline)
+    $currentBranch = git branch --show-current
+    if ($hasUnpushedCommits) {
+        Write-Host "    git push origin $currentBranch v$fullVersion" -ForegroundColor $colors.Primary
+    } else {
+        Write-Host "    $pushCommand" -ForegroundColor $colors.Primary
+    }
 }
 else {
-    Write-Host "    Step 1 (create tag):" -ForegroundColor $colors.Info
+    # Just show commands without "Step 1" label
+    $hasUnpushedCommits = $null -ne (git log --branches --not --remotes --oneline)
+    $currentBranch = git branch --show-current
+    
+    Write-Host "    $tagCommand" -ForegroundColor $colors.Primary
+    if ($hasUnpushedCommits) {
+        Write-Host "    git push origin $currentBranch v$fullVersion" -ForegroundColor $colors.Primary
+    } else {
+        Write-Host "    $pushCommand" -ForegroundColor $colors.Primary
+    }
 }
 
-Write-Host "    $tagCommand" -ForegroundColor $colors.Primary
-Write-Host "    $pushCommand" -ForegroundColor $colors.Primary
 Write-Host ""
 
 # Handle uncommitted changes as a blocker
@@ -509,12 +523,29 @@ try {
         Write-Host "    Verifying tag on remote..." -ForegroundColor $colors.Muted
         $remoteTagCheck = Invoke-Expression "git ls-remote --tags origin refs/tags/v$fullVersion 2>&1"
         
+        # Verify no unpushed commits if we had them before
+        $verifyCommitsPushed = $true
+        if ($hasUnpushedCommits) {
+            Write-Host "    Verifying all commits were pushed..." -ForegroundColor $colors.Muted
+            $remainingUnpushedCommits = git log --branches --not --remotes --oneline
+            if ($remainingUnpushedCommits) {
+                Write-Warning "Some commits were not pushed to the remote during the operation:"
+                $remainingUnpushedCommits | ForEach-Object { Write-Host "      $_" -ForegroundColor $colors.Muted }
+                $verifyCommitsPushed = $false
+            }
+        }
+        
         if ($remoteTagCheck) {
             # Success message for normal push
             Write-Host ""
             Write-Host "  $($icons.Success)  " -ForegroundColor $colors.Success -NoNewline
+            
             if ($hasUnpushedCommits) {
-                Write-Host "Tag v$fullVersion and branch commits successfully pushed to origin!" -ForegroundColor $colors.Success
+                if ($verifyCommitsPushed) {
+                    Write-Host "Tag v$fullVersion and branch commits successfully pushed to origin!" -ForegroundColor $colors.Success
+                } else {
+                    Write-Host "Tag v$fullVersion was pushed, but some commits may not have been pushed!" -ForegroundColor $colors.Warning
+                }
             } else {
                 Write-Host "Tag v$fullVersion successfully created and pushed to origin!" -ForegroundColor $colors.Success
             }
