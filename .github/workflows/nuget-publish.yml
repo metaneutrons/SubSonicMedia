@@ -97,9 +97,14 @@ jobs:
               You are about to publish the following version to NuGet.org:
               **Version:** ${{ github.event.inputs.version_tag }}
 
-              This action requires a manual confirmation. Please check the workflow run and add a comment with:
+              ### ⚠️ Authorization Required
+              This action requires manual confirmation from a repository admin.
+
+              Please check the workflow run and add a comment with:
               - \`/publish\` to confirm and proceed with publishing
               - \`/cancel\` to cancel the operation
+
+              **Note:** Comments from other users will be ignored for security purposes.
 
               This issue will be closed automatically after the action is completed.
               `
@@ -114,6 +119,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            const core = require('@actions/core');
             const issueNumber = ${{ steps.confirm.outputs.result }};
 
             console.log(`Waiting for confirmation on issue #${issueNumber}...`);
@@ -132,11 +138,42 @@ jobs:
               });
 
               for (const comment of comments) {
+                // Check if the comment author is repo admin or specifically metaneutrons
+                const commentAuthor = comment.user.login;
+                let isAuthorized = false;
+
+                // Check if user has admin permissions on the repo
+                try {
+                  const { data: permission } = await github.rest.repos.getCollaboratorPermissionLevel({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    username: commentAuthor
+                  });
+
+                  isAuthorized = permission.permission === 'admin';
+                  console.log(`User ${commentAuthor} has permission level: ${permission.permission}`);
+                } catch (error) {
+                  console.log(`Error checking permissions for ${commentAuthor}: ${error}`);
+                  isAuthorized = false;
+                }
+
+                if (!isAuthorized) {
+                  console.log(`Ignoring comment from unauthorized user: ${commentAuthor}`);
+                  continue;
+                }
+
+                // Process command from authorized user
                 if (comment.body.trim().toLowerCase() === '/publish') {
                   confirmed = true;
+                  // Store who approved for output later
+                  core.exportVariable('APPROVER', commentAuthor);
+                  console.log(`Publish confirmed by authorized user: ${commentAuthor}`);
                   break;
                 } else if (comment.body.trim().toLowerCase() === '/cancel') {
                   cancelled = true;
+                  // Store who cancelled for output later
+                  core.exportVariable('CANCELLER', commentAuthor);
+                  console.log(`Publish cancelled by authorized user: ${commentAuthor}`);
                   break;
                 }
               }
@@ -157,32 +194,42 @@ jobs:
 
             if (cancelled) {
               console.log('Publish operation cancelled by user.');
+              const canceller = process.env.CANCELLER || 'an authorized user';
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: issueNumber,
-                body: '✅ Publishing cancelled by user.'
+                body: `✅ Publishing cancelled by @${canceller}.`
               });
               return 'cancelled';
             }
 
             if (!confirmed) {
               console.log('Timed out waiting for confirmation.');
+              // Make sure to close the issue when we time out
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: issueNumber,
                 body: '⚠️ Timed out waiting for confirmation. Publishing cancelled.'
               });
+              // Explicitly close the issue again to ensure it's closed
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                state: 'closed'
+              });
               throw new Error('Timed out waiting for confirmation');
             }
 
             console.log('Publishing confirmed by user.');
+            const approver = process.env.APPROVER || 'an authorized user';
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: issueNumber,
-              body: '✅ Publishing confirmed. Proceeding with NuGet.org publishing.'
+              body: `✅ Publishing confirmed by @${approver}. Proceeding with NuGet.org publishing.`
             });
             return 'confirmed';
           result-encoding: string
@@ -201,6 +248,7 @@ jobs:
         with:
           script: |
             const issueNumber = ${{ steps.confirm.outputs.result }};
+            const approver = process.env.APPROVER || 'an authorized user';
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -208,6 +256,7 @@ jobs:
               body: `✅ Package published to NuGet.org successfully!
 
               **Version:** ${{ github.event.inputs.version_tag }}
+              **Approved by:** @${approver}
               **Published at:** ${new Date().toISOString()}
               `
             });
