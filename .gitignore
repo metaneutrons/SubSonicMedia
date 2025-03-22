@@ -201,3 +201,6 @@ tye.yaml
 *.tar
 *.7z
 *.rar
+
+# explicit local files
+.claudecode
