@@ -22,41 +22,42 @@ We will use the following tools and libraries for our testing strategy:
 
 ## Project Structure
 
-We'll create a dedicated test project with the following structure:
+We have created a dedicated test project with the following structure:
 
 ```
 SubSonicMedia.Tests/
 ├── Clients/                    # Tests for client implementations
 │   ├── BrowsingClientTests.cs
-│   ├── SearchClientTests.cs
 │   ├── MediaClientTests.cs
 │   ├── PlaylistClientTests.cs
-│   ├── BookmarkClientTests.cs
-│   ├── RadioClientTests.cs
+│   ├── SearchClientTests.cs
 │   ├── SystemClientTests.cs
 │   └── UserClientTests.cs
 ├── Core/                       # Tests for core functionality
-│   ├── SubsonicClientTests.cs
-│   ├── AuthenticationTests.cs
-│   └── RequestBuilderTests.cs
-├── Helpers/                    # Testing helpers and utilities
-│   ├── WireMockServerFactory.cs
-│   ├── TestKitResponseLoader.cs
-│   └── TestDataFactory.cs
+│   └── ConnectionTests.cs
 ├── Fixtures/                   # Shared test fixtures
 │   └── WireMockServerFixture.cs
-├── TestResources/              # Copied test resources from TestKit output
-│   ├── Browsing/
-│   ├── Search/
-│   ├── Media/
-│   ├── Playlists/
-│   ├── Bookmarks/
-│   ├── Radio/
-│   ├── System/
-│   └── User/
-└── Utilities/                  # Test utilities
-    ├── JsonFileManager.cs
-    └── AssertionExtensions.cs
+├── Helpers/                    # Testing helpers and utilities
+│   └── TestKitResponseLoader.cs
+├── TestInitializer.cs          # Global test initialization
+├── TestResources/              # Resources for testing
+│   └── TestKitOutputs/         # Copied test resources from TestKit output
+│       ├── bookmarks_list.json
+│       ├── browsing_artist_detail.json
+│       ├── browsing_artists.json
+│       ├── browsing_music_folders.json
+│       ├── connection_ping.json
+│       ├── playlist_details.json
+│       ├── playlists_list.json
+│       ├── radio_stations.json
+│       ├── radio_stations_after_create.json
+│       ├── search_results.json
+│       ├── system_license.json
+│       ├── system_ping.json
+│       ├── system_scan_status.json
+│       ├── user_details.json
+│       └── users_list.json
+└── README.md                   # Documentation for the test project
 ```
 
 ## TestKit Output Files
@@ -546,19 +547,30 @@ jobs:
 
 If you need test data for a new API endpoint or scenario not already covered by existing TestKit outputs, follow these steps:
 
-1. Run TestKit against a live Subsonic server:
+1. Configure your `.env` file in the SubSonicMedia.TestKit directory with the following settings:
 
-   ```bash
-   dotnet run --project TestKit/TestKit.csproj -- --server=http://yourserver:port --user=yourusername --password=yourpassword --generate-outputs
+   ```env
+   SUBSONIC_SERVER_URL=https://your-server-url
+   SUBSONIC_USERNAME=your-username
+   SUBSONIC_PASSWORD=your-password
+   RECORD_TEST_RESULTS=true
+   OUTPUT_DIRECTORY=./outputs
    ```
 
-2. Copy the generated output files to the test resources directory:
+2. Run TestKit against a live Subsonic server:
 
    ```bash
-   cp -R TestKit/Outputs/* SubSonicMedia.Tests/TestResources/
+   cd SubSonicMedia.TestKit
+   dotnet run
    ```
 
-3. Update your tests to use the new data files.
+3. The test results will be automatically synchronized with the SubSonicMedia.Tests project's TestResources directory when you run the tests.
+
+4. You can also manually copy the test results if needed:
+
+   ```bash
+   cp -R SubSonicMedia.TestKit/outputs/* SubSonicMedia.Tests/TestResources/TestKitOutputs/
+   ```
 
 ## Implementation Plan
 

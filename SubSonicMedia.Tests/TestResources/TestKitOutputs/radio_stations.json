@@ -1,0 +1,27 @@
+{
+  "InternetRadioStations": {
+    "InternetRadioStation": [
+      {
+        "Id": "4b55878e12064840843bf8f27483052c",
+        "Name": "Swiss Jazz",
+        "StreamUrl": "https://stream.srg-ssr.ch/rsj/aacp_96.m3u",
+        "HomepageUrl": null
+      },
+      {
+        "Id": "WRuBtIMFiuViPeF1KUBaC2",
+        "Name": "Test Station 20250320102555",
+        "StreamUrl": "https://example.com/stream.mp3",
+        "HomepageUrl": null
+      },
+      {
+        "Id": "eUp9L4XloDiO2XMp6vZOuR",
+        "Name": "Test Station 20250321214304",
+        "StreamUrl": "https://example.com/stream.mp3",
+        "HomepageUrl": null
+      }
+    ]
+  },
+  "status": "ok",
+  "version": "1.16.1",
+  "error": null
+}

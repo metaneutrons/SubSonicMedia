@@ -1,0 +1,11 @@
+{
+  "MusicFolders": [
+    {
+      "Id": 1,
+      "Name": "Music Library"
+    }
+  ],
+  "status": "ok",
+  "version": "1.16.1",
+  "error": null
+}

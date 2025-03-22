@@ -67,11 +67,28 @@ var response = await client.Browsing.GetArtists();
 var streamUrl = client.Media.GetStreamUrl("songId");
 ```
 
-## 🧪 TestKit
+## 🧪 Testing
 
-The project includes a comprehensive TestKit for validating the SubSonicMedia API against your Subsonic server.
+The project includes two complementary testing approaches:
 
-### Features
+### Unit Tests (SubSonicMedia.Tests)
+
+Standard xUnit tests for the library with mocked API responses:
+
+- Fast execution with no external dependencies
+- WireMock.NET for API response simulation
+- FluentAssertions for readable test assertions
+- Uses recorded responses from the TestKit
+- Ideal for CI/CD pipelines and rapid local testing
+
+```bash
+# Run the unit tests
+dotnet test SubSonicMedia.Tests
+```
+
+### Integration Tests (SubSonicMedia.TestKit)
+
+A comprehensive TestKit for validating against a real Subsonic server:
 
 - Structured API tests with clear pass/fail results
 - JSON output for test results

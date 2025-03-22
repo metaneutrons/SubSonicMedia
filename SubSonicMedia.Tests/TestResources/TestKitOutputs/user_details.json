@@ -1,0 +1,26 @@
+{
+  "User": {
+    "Username": "",
+    "Email": "",
+    "IsAdmin": false,
+    "SettingsRole": false,
+    "DownloadRole": false,
+    "UploadRole": false,
+    "PlaylistRole": false,
+    "CoverArtRole": false,
+    "CommentRole": false,
+    "PodcastRole": false,
+    "StreamRole": false,
+    "JukeboxRole": false,
+    "ShareRole": false,
+    "VideoConversionRole": false,
+    "LdapAuthenticated": null,
+    "MaxBitRate": null,
+    "ScrobblingEnabled": "",
+    "AvatarScheme": "",
+    "FolderIds": []
+  },
+  "status": "ok",
+  "version": "1.16.1",
+  "error": null
+}

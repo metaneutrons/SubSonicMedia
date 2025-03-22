@@ -1,0 +1,158 @@
+{
+  "Artist": {
+    "Id": "1y5ZiGNiyUQquqOiJ1bGb2",
+    "Name": "Keith Jarrett",
+    "CoverArt": "ar-1y5ZiGNiyUQquqOiJ1bGb2_0",
+    "AlbumCount": 12,
+    "ArtistImageUrl": "https://music.schmieder.eu/share/img/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImFyLTF5NVppR05peVVRcXVxT2lKMWJHYjJfMCIsImlzcyI6Ik5EIn0.d2RRsBP94L1WxLS4FLh3CgkURPiodW-YAoOzsOOB-ME?size=600",
+    "Album": [
+      {
+        "Id": "5FsxSG6N1Zv16jO87wgOly",
+        "Name": "Solo Concerts",
+        "Artist": "Keith Jarrett",
+        "ArtistId": "1y5ZiGNiyUQquqOiJ1bGb2",
+        "CoverArt": "al-5FsxSG6N1Zv16jO87wgOly_64e91043",
+        "SongCount": 8,
+        "Duration": 7753,
+        "Created": null,
+        "Year": 1973,
+        "Genre": "Jazz"
+      },
+      {
+        "Id": "5HEzwE8WkpaibH0e9zpdD8",
+        "Name": "The Koln Concert",
+        "Artist": "Keith Jarrett",
+        "ArtistId": "1y5ZiGNiyUQquqOiJ1bGb2",
+        "CoverArt": "al-5HEzwE8WkpaibH0e9zpdD8_64e91057",
+        "SongCount": 4,
+        "Duration": 4049,
+        "Created": null,
+        "Year": 1975,
+        "Genre": "Jazz"
+      },
+      {
+        "Id": "3SiK3zaQ2WN1RiOd8BNbeD",
+        "Name": "Arbour Zena",
+        "Artist": "Keith Jarrett",
+        "ArtistId": "1y5ZiGNiyUQquqOiJ1bGb2",
+        "CoverArt": "al-3SiK3zaQ2WN1RiOd8BNbeD_64e90f80",
+        "SongCount": 3,
+        "Duration": 3180,
+        "Created": null,
+        "Year": 1976,
+        "Genre": "Jazz"
+      },
+      {
+        "Id": "5Gnt8lyavZl0yGYYL77H3N",
+        "Name": "Ritual",
+        "Artist": "Keith Jarrett",
+        "ArtistId": "1y5ZiGNiyUQquqOiJ1bGb2",
+        "CoverArt": "al-5Gnt8lyavZl0yGYYL77H3N_64e91011",
+        "SongCount": 2,
+        "Duration": 1933,
+        "Created": null,
+        "Year": 1977,
+        "Genre": "Classical"
+      },
+      {
+        "Id": "5y9sM6ExC4wsYwxr2NIcHD",
+        "Name": "My Song",
+        "Artist": "Keith Jarrett",
+        "ArtistId": "1y5ZiGNiyUQquqOiJ1bGb2",
+        "CoverArt": "al-5y9sM6ExC4wsYwxr2NIcHD_64e90fd8",
+        "SongCount": 6,
+        "Duration": 2913,
+        "Created": null,
+        "Year": 1978,
+        "Genre": "Jazz"
+      },
+      {
+        "Id": "57lv0CaI6zVW6fY4O3RNnG",
+        "Name": "Concerts: Bregenz, Munchen",
+        "Artist": "Keith Jarrett",
+        "ArtistId": "1y5ZiGNiyUQquqOiJ1bGb2",
+        "CoverArt": "al-57lv0CaI6zVW6fY4O3RNnG_64e90fb0",
+        "SongCount": 10,
+        "Duration": 9019,
+        "Created": null,
+        "Year": 1981,
+        "Genre": "Jazz"
+      },
+      {
+        "Id": "1KnGUEljjp2KY9C9VeWU3W",
+        "Name": "Das Wohltemperierte Klavier, Buch I",
+        "Artist": "Keith Jarrett",
+        "ArtistId": "1y5ZiGNiyUQquqOiJ1bGb2",
+        "CoverArt": "al-1KnGUEljjp2KY9C9VeWU3W_64e90fb9",
+        "SongCount": 48,
+        "Duration": 6338,
+        "Created": null,
+        "Year": 1988,
+        "Genre": "Klassik"
+      },
+      {
+        "Id": "6zFlKnybhgjEISr8SX5OU2",
+        "Name": "Das Wohltemperierte Klavier, Buch II",
+        "Artist": "Keith Jarrett",
+        "ArtistId": "1y5ZiGNiyUQquqOiJ1bGb2",
+        "CoverArt": "al-6zFlKnybhgjEISr8SX5OU2_64e90fc9",
+        "SongCount": 24,
+        "Duration": 8993,
+        "Created": null,
+        "Year": 1991,
+        "Genre": "Classical"
+      },
+      {
+        "Id": "4vFS2ZFEbT99RKgkexd21v",
+        "Name": "Paris / London - Testament",
+        "Artist": "Keith Jarrett",
+        "ArtistId": "1y5ZiGNiyUQquqOiJ1bGb2",
+        "CoverArt": "al-4vFS2ZFEbT99RKgkexd21v_64e91008",
+        "SongCount": 20,
+        "Duration": 9734,
+        "Created": null,
+        "Year": 2009,
+        "Genre": "Jazz"
+      },
+      {
+        "Id": "3K3XJv1VpB1E0S5GK3Z9Cs",
+        "Name": "Jasmine",
+        "Artist": "Keith Jarrett",
+        "ArtistId": "1y5ZiGNiyUQquqOiJ1bGb2",
+        "CoverArt": "al-3K3XJv1VpB1E0S5GK3Z9Cs_64e90fd3",
+        "SongCount": 8,
+        "Duration": 3769,
+        "Created": null,
+        "Year": 2010,
+        "Genre": "Jazz"
+      },
+      {
+        "Id": "67MFODieb2HYhKVhlNfFeQ",
+        "Name": "Rio",
+        "Artist": "Keith Jarrett",
+        "ArtistId": "1y5ZiGNiyUQquqOiJ1bGb2",
+        "CoverArt": "al-67MFODieb2HYhKVhlNfFeQ_64e9100f",
+        "SongCount": 15,
+        "Duration": 5435,
+        "Created": null,
+        "Year": 2011,
+        "Genre": "Jazz"
+      },
+      {
+        "Id": "6mwZYpXx7XSwgoY8L1YNM0",
+        "Name": "Sleeper: Tokyo, April 16th, 1979",
+        "Artist": "Keith Jarrett",
+        "ArtistId": "1y5ZiGNiyUQquqOiJ1bGb2",
+        "CoverArt": "al-6mwZYpXx7XSwgoY8L1YNM0_64e9101c",
+        "SongCount": 7,
+        "Duration": 6416,
+        "Created": null,
+        "Year": 2012,
+        "Genre": "Jazz"
+      }
+    ]
+  },
+  "status": "ok",
+  "version": "1.16.1",
+  "error": null
+}

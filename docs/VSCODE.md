@@ -17,15 +17,21 @@ Press `Ctrl+Shift+B` (or `Cmd+Shift+B` on macOS) to access the build tasks:
 - **build**: Builds the entire solution
 - **build-library**: Builds only the SubSonicMedia library
 - **build-testkit**: Builds only the TestKit
+- **build-tests**: Builds only the unit tests
 - **publish**: Publishes the SubSonicMedia library
 - **watch**: Watches for changes and automatically rebuilds the TestKit
 
 ## Running and Debugging
 
-Press `F5` to start debugging the TestKit. Two debug configurations are available:
+Press `F5` to select a debug configuration:
 
+### TestKit Configurations
 - **Run TestKit**: Runs the TestKit with standard settings
 - **Debug TestKit**: Runs the TestKit with enhanced debugging (disables Just My Code)
+
+### Unit Tests Configurations
+- **Run Unit Tests**: Runs all xUnit tests
+- **Debug Unit Tests**: Runs xUnit tests with enhanced debugging
 
 ## Recommended Extensions
 

@@ -1,0 +1,21 @@
+{
+  "Playlists": {
+    "Playlist": [
+      {
+        "Id": "b3ee7c6f-0db0-4007-acc5-bf47d91749f9",
+        "Name": "Best of Keith",
+        "Comment": null,
+        "Owner": "fabian",
+        "Public": false,
+        "SongCount": 4,
+        "Duration": 4049,
+        "Created": "2025-03-16T12:22:45.1446493+01:00",
+        "Changed": "2025-03-16T12:22:45.225899+01:00",
+        "CoverArt": "pl-b3ee7c6f-0db0-4007-acc5-bf47d91749f9_67d6b485"
+      }
+    ]
+  },
+  "status": "ok",
+  "version": "1.16.1",
+  "error": null
+}

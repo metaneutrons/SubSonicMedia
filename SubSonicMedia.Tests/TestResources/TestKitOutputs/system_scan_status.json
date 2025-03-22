@@ -1,0 +1,11 @@
+{
+  "ScanStatus": {
+    "Scanning": false,
+    "Count": 0,
+    "FolderCount": 0,
+    "Folder": ""
+  },
+  "status": "ok",
+  "version": "1.16.1",
+  "error": null
+}

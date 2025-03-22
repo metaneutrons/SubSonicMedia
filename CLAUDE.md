@@ -7,13 +7,17 @@
 - Format code: `dotnet csharpier .`
 - Run StyleCop check: `dotnet build /p:TreatWarningsAsErrors=true`
 - Fix StyleCop issues: `./scripts/Fix-StyleCopIssues.ps1`
-- Run all tests: `cd SubSonicMedia.TestKit && dotnet run`
-- Run specific test: `cd SubSonicMedia.TestKit && dotnet run test "Connection Test"`
-- List available tests: `cd SubSonicMedia.TestKit && dotnet run list`
-- Display test help: `cd SubSonicMedia.TestKit && dotnet run help`
+- Run xUnit tests: `dotnet test SubSonicMedia.Tests`
 - Run GitVersion: `dotnet gitversion`
 - Create and push tag: `./scripts/Create-Tag.ps1` (combines commit and tag push in a single operation)
 - Check for shell scripts: `./scripts/Check-ShellScripts.ps1`
+
+## TestKit Commands
+
+- Run all integration tests: `cd SubSonicMedia.TestKit && dotnet run`
+- Run specific integration test: `cd SubSonicMedia.TestKit && dotnet run test "Connection Test"`
+- List available integration tests: `cd SubSonicMedia.TestKit && dotnet run list`
+- Display TestKit help: `cd SubSonicMedia.TestKit && dotnet run help`
 
 ## Code Style Guidelines
 
