@@ -272,6 +272,69 @@ namespace SubSonicMedia.Utilities
                     }
                 }
             }
+            // Handle Indexes response
+            else if (
+                response is Responses.Browsing.IndexesResponse indexesResponse
+                && rootNode["indexes"] != null
+            )
+            {
+                var indexesNode = rootNode["indexes"];
+
+                // Parse last modified timestamp (convert long timestamp to DateTime)
+                if (indexesNode?["lastModified"] != null)
+                {
+                    try
+                    {
+                        var lastModifiedLong = indexesNode["lastModified"]?.GetValue<long>() ?? 0;
+                        indexesResponse.Indexes.LastModified = DateTimeOffset
+                            .FromUnixTimeMilliseconds(lastModifiedLong)
+                            .DateTime;
+                    }
+                    catch
+                    {
+                        // If we can't parse, leave it as default
+                    }
+                }
+
+                // Handle index array (artists are grouped by letter/index)
+                if (indexesNode?["index"] is JsonArray indexArray)
+                {
+                    foreach (var indexNode in indexArray)
+                    {
+                        if (indexNode == null)
+                        {
+                            continue;
+                        }
+
+                        var index = new Responses.Browsing.Index
+                        {
+                            Name = indexNode["name"]?.GetValue<string>() ?? string.Empty,
+                        };
+
+                        // Parse artists in this index
+                        if (indexNode["artist"] is JsonArray artistsArray)
+                        {
+                            foreach (var artistNode in artistsArray)
+                            {
+                                if (artistNode == null)
+                                {
+                                    continue;
+                                }
+
+                                var artist = new Responses.Browsing.Artist
+                                {
+                                    Id = artistNode["id"]?.GetValue<string>() ?? string.Empty,
+                                    Name = artistNode["name"]?.GetValue<string>() ?? string.Empty,
+                                };
+
+                                index.Artist.Add(artist);
+                            }
+                        }
+
+                        indexesResponse.Indexes.Index.Add(index);
+                    }
+                }
+            }
             // Handle Artists response
             else if (
                 response is Responses.Browsing.ArtistsResponse artistsResponse
@@ -327,13 +390,13 @@ namespace SubSonicMedia.Utilities
                     }
                 }
             }
-            // Handle Search3 response
+            // Handle Search response
             else if (
-                response is Responses.Search.Search3Response searchResponse
-                && rootNode["searchResult3"] != null
+                response is Responses.Search.SearchResponse searchResponse
+                && rootNode["searchResult"] != null
             )
             {
-                var searchResultNode = rootNode?["searchResult3"];
+                var searchResultNode = rootNode?["searchResult"];
 
                 // Parse artist results
                 if (searchResultNode?["artist"] is JsonArray artistsArray)
@@ -414,6 +477,388 @@ namespace SubSonicMedia.Utilities
                         };
 
                         searchResponse.SearchResult.Songs.Add(song);
+                    }
+                }
+            }
+            // Handle Search2 response (same format as Search)
+            else if (
+                response is Responses.Search.SearchResponse search2Response
+                && rootNode["searchResult2"] != null
+            )
+            {
+                var searchResultNode = rootNode?["searchResult2"];
+
+                // Parse artist results
+                if (searchResultNode?["artist"] is JsonArray artistsArray)
+                {
+                    foreach (var artistNode in artistsArray)
+                    {
+                        if (artistNode == null)
+                        {
+                            continue;
+                        }
+
+                        var artist = new Responses.Search.Models.Artist
+                        {
+                            Id = artistNode["id"]?.GetValue<string>() ?? string.Empty,
+                            Name = artistNode["name"]?.GetValue<string>() ?? string.Empty,
+                            AlbumCount = artistNode["albumCount"]?.GetValue<int>() ?? 0,
+                            CoverArt = artistNode["coverArt"]?.GetValue<string>(),
+                        };
+
+                        search2Response.SearchResult.Artists.Add(artist);
+                    }
+                }
+
+                // Parse album results
+                if (searchResultNode?["album"] is JsonArray albumsArray)
+                {
+                    foreach (var albumNode in albumsArray)
+                    {
+                        if (albumNode == null)
+                        {
+                            continue;
+                        }
+
+                        var album = new Responses.Search.Models.Album
+                        {
+                            Id = albumNode["id"]?.GetValue<string>() ?? string.Empty,
+                            Name = albumNode["name"]?.GetValue<string>() ?? string.Empty,
+                            Artist = albumNode["artist"]?.GetValue<string>() ?? string.Empty,
+                            ArtistId = albumNode["artistId"]?.GetValue<string>() ?? string.Empty,
+                            CoverArt = albumNode["coverArt"]?.GetValue<string>(),
+                            SongCount = albumNode["songCount"]?.GetValue<int>() ?? 0,
+                            Duration = albumNode["duration"]?.GetValue<int>() ?? 0,
+                            Year = albumNode["year"]?.GetValue<int>() ?? 0,
+                            Genre = albumNode["genre"]?.GetValue<string>(),
+                        };
+
+                        search2Response.SearchResult.Albums.Add(album);
+                    }
+                }
+
+                // Parse song results
+                if (searchResultNode?["song"] is JsonArray songsArray)
+                {
+                    foreach (var songNode in songsArray)
+                    {
+                        if (songNode == null)
+                        {
+                            continue;
+                        }
+
+                        var song = new Responses.Search.Models.Song
+                        {
+                            Id = songNode["id"]?.GetValue<string>() ?? string.Empty,
+                            Title = songNode["title"]?.GetValue<string>() ?? string.Empty,
+                            Album = songNode["album"]?.GetValue<string>() ?? string.Empty,
+                            Artist = songNode["artist"]?.GetValue<string>() ?? string.Empty,
+                            AlbumId = songNode["albumId"]?.GetValue<string>() ?? string.Empty,
+                            ArtistId = songNode["artistId"]?.GetValue<string>() ?? string.Empty,
+                            Track = songNode["track"]?.GetValue<int>() ?? 0,
+                            Year = songNode["year"]?.GetValue<int>() ?? 0,
+                            Genre = songNode["genre"]?.GetValue<string>() ?? string.Empty,
+                            CoverArt = songNode["coverArt"]?.GetValue<string>() ?? string.Empty,
+                            Size = songNode["size"]?.GetValue<long>() ?? 0,
+                            ContentType =
+                                songNode["contentType"]?.GetValue<string>() ?? string.Empty,
+                            Duration = songNode["duration"]?.GetValue<int>() ?? 0,
+                            Path = songNode["path"]?.GetValue<string>() ?? string.Empty,
+                        };
+
+                        search2Response.SearchResult.Songs.Add(song);
+                    }
+                }
+            }
+            // Handle Search3 response
+            else if (
+                response is Responses.Search.Search3Response search3Response
+                && rootNode["searchResult3"] != null
+            )
+            {
+                var searchResultNode = rootNode?["searchResult3"];
+
+                // Parse artist results
+                if (searchResultNode?["artist"] is JsonArray artistsArray)
+                {
+                    foreach (var artistNode in artistsArray)
+                    {
+                        if (artistNode == null)
+                        {
+                            continue;
+                        }
+
+                        var artist = new Responses.Search.Models.Artist
+                        {
+                            Id = artistNode["id"]?.GetValue<string>() ?? string.Empty,
+                            Name = artistNode["name"]?.GetValue<string>() ?? string.Empty,
+                            AlbumCount = artistNode["albumCount"]?.GetValue<int>() ?? 0,
+                            CoverArt = artistNode["coverArt"]?.GetValue<string>(),
+                        };
+
+                        search3Response.SearchResult.Artists.Add(artist);
+                    }
+                }
+
+                // Parse additional count/offset information
+                search3Response.SearchResult.ArtistCount =
+                    searchResultNode?["artistCount"]?.GetValue<int>() ?? 0;
+                search3Response.SearchResult.ArtistOffset =
+                    searchResultNode?["artistOffset"]?.GetValue<int>() ?? 0;
+                search3Response.SearchResult.AlbumCount =
+                    searchResultNode?["albumCount"]?.GetValue<int>() ?? 0;
+                search3Response.SearchResult.AlbumOffset =
+                    searchResultNode?["albumOffset"]?.GetValue<int>() ?? 0;
+                search3Response.SearchResult.SongCount =
+                    searchResultNode?["songCount"]?.GetValue<int>() ?? 0;
+                search3Response.SearchResult.SongOffset =
+                    searchResultNode?["songOffset"]?.GetValue<int>() ?? 0;
+
+                // Parse album results
+                if (searchResultNode?["album"] is JsonArray albumsArray)
+                {
+                    foreach (var albumNode in albumsArray)
+                    {
+                        if (albumNode == null)
+                        {
+                            continue;
+                        }
+
+                        var album = new Responses.Search.Models.Album
+                        {
+                            Id = albumNode["id"]?.GetValue<string>() ?? string.Empty,
+                            Name = albumNode["name"]?.GetValue<string>() ?? string.Empty,
+                            Artist = albumNode["artist"]?.GetValue<string>() ?? string.Empty,
+                            ArtistId = albumNode["artistId"]?.GetValue<string>() ?? string.Empty,
+                            CoverArt = albumNode["coverArt"]?.GetValue<string>(),
+                            SongCount = albumNode["songCount"]?.GetValue<int>() ?? 0,
+                            Duration = albumNode["duration"]?.GetValue<int>() ?? 0,
+                            Year = albumNode["year"]?.GetValue<int>() ?? 0,
+                            Genre = albumNode["genre"]?.GetValue<string>(),
+                        };
+
+                        search3Response.SearchResult.Albums.Add(album);
+                    }
+                }
+
+                // Parse song results
+                if (searchResultNode?["song"] is JsonArray songsArray)
+                {
+                    foreach (var songNode in songsArray)
+                    {
+                        if (songNode == null)
+                        {
+                            continue;
+                        }
+
+                        var song = new Responses.Search.Models.Song
+                        {
+                            Id = songNode["id"]?.GetValue<string>() ?? string.Empty,
+                            Title = songNode["title"]?.GetValue<string>() ?? string.Empty,
+                            Album = songNode["album"]?.GetValue<string>() ?? string.Empty,
+                            Artist = songNode["artist"]?.GetValue<string>() ?? string.Empty,
+                            AlbumId = songNode["albumId"]?.GetValue<string>() ?? string.Empty,
+                            ArtistId = songNode["artistId"]?.GetValue<string>() ?? string.Empty,
+                            Track = songNode["track"]?.GetValue<int>() ?? 0,
+                            Year = songNode["year"]?.GetValue<int>() ?? 0,
+                            Genre = songNode["genre"]?.GetValue<string>() ?? string.Empty,
+                            CoverArt = songNode["coverArt"]?.GetValue<string>() ?? string.Empty,
+                            Size = songNode["size"]?.GetValue<long>() ?? 0,
+                            ContentType =
+                                songNode["contentType"]?.GetValue<string>() ?? string.Empty,
+                            Duration = songNode["duration"]?.GetValue<int>() ?? 0,
+                            Path = songNode["path"]?.GetValue<string>() ?? string.Empty,
+                        };
+
+                        search3Response.SearchResult.Songs.Add(song);
+                    }
+                }
+            }
+            // Handle PlayQueue response
+            else if (
+                response is Responses.Playlists.PlayQueueResponse playQueueResponse
+                && rootNode["playQueue"] != null
+            )
+            {
+                var playQueueNode = rootNode["playQueue"];
+
+                // Set playQueue properties
+                playQueueResponse.PlayQueue.Current = playQueueNode?["current"]?.GetValue<string>();
+                playQueueResponse.PlayQueue.Position =
+                    playQueueNode?["position"]?.GetValue<long>() ?? 0;
+                playQueueResponse.PlayQueue.Username = playQueueNode?[
+                    "username"
+                ]?.GetValue<string>();
+
+                // Handle changed timestamp (might be in different formats)
+                if (playQueueNode?["changed"] != null)
+                {
+                    try
+                    {
+                        // It might be a datetime string
+                        var changedString = playQueueNode?["changed"]?.GetValue<string>();
+                        if (DateTime.TryParse(changedString, out var changedDateTime))
+                        {
+                            playQueueResponse.PlayQueue.Changed = new DateTimeOffset(
+                                changedDateTime
+                            ).ToUnixTimeMilliseconds();
+                        }
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            // Or it might be a timestamp already
+                            playQueueResponse.PlayQueue.Changed =
+                                playQueueNode?["changed"]?.GetValue<long>() ?? 0;
+                        }
+                        catch
+                        {
+                            // If parsing fails, leave it as 0
+                        }
+                    }
+                }
+
+                // Parse entries/songs in the play queue
+                if (playQueueNode?["entry"] is JsonArray entriesArray)
+                {
+                    foreach (var entryNode in entriesArray)
+                    {
+                        if (entryNode == null)
+                        {
+                            continue;
+                        }
+
+                        var entry = new Responses.Browsing.Models.Child
+                        {
+                            Id = entryNode["id"]?.GetValue<string>() ?? string.Empty,
+                            Title = entryNode["title"]?.GetValue<string>() ?? string.Empty,
+                            Album = entryNode["album"]?.GetValue<string>() ?? string.Empty,
+                            Artist = entryNode["artist"]?.GetValue<string>() ?? string.Empty,
+                            CoverArt = entryNode["coverArt"]?.GetValue<string>() ?? string.Empty,
+                            Duration = entryNode["duration"]?.GetValue<int>() ?? 0,
+                            BitRate = entryNode["bitRate"]?.GetValue<int>() ?? 0,
+                            Track = entryNode["track"]?.GetValue<int>() ?? 0,
+                            Year = entryNode["year"]?.GetValue<int>() ?? 0,
+                            Genre = entryNode["genre"]?.GetValue<string>() ?? string.Empty,
+                            Size = entryNode["size"]?.GetValue<long>() ?? 0,
+                            ContentType =
+                                entryNode["contentType"]?.GetValue<string>() ?? string.Empty,
+                            Path = entryNode["path"]?.GetValue<string>() ?? string.Empty,
+                        };
+
+                        playQueueResponse.PlayQueue.Entry.Add(entry);
+                    }
+                }
+            }
+            // Handle Internet Radio Stations response
+            else if (
+                response is Responses.Radio.InternetRadioStationsResponse radioStationsResponse
+                && rootNode["internetRadioStations"] != null
+            )
+            {
+                var stationsNode = rootNode?["internetRadioStations"];
+
+                // Parse radio stations
+                if (stationsNode?["internetRadioStation"] is JsonArray stationsArray)
+                {
+                    foreach (var stationNode in stationsArray)
+                    {
+                        if (stationNode == null)
+                        {
+                            continue;
+                        }
+
+                        var station = new Responses.Radio.Models.InternetRadioStation
+                        {
+                            Id = stationNode["id"]?.GetValue<string>() ?? string.Empty,
+                            Name = stationNode["name"]?.GetValue<string>() ?? string.Empty,
+                            StreamUrl =
+                                stationNode["streamUrl"]?.GetValue<string>() ?? string.Empty,
+                            HomepageUrl = stationNode["homepageUrl"]?.GetValue<string>(),
+                        };
+
+                        radioStationsResponse.InternetRadioStations.InternetRadioStation.Add(
+                            station
+                        );
+                    }
+                }
+            }
+            // Handle Music Directory response
+            else if (
+                response is Responses.Browsing.MusicDirectoryResponse directoryResponse
+                && rootNode["directory"] != null
+            )
+            {
+                var directoryNode = rootNode["directory"];
+
+                // Parse directory fields
+                directoryResponse.Directory.Id =
+                    directoryNode?["id"]?.GetValue<string>() ?? string.Empty;
+                directoryResponse.Directory.Name =
+                    directoryNode?["name"]?.GetValue<string>() ?? string.Empty;
+                directoryResponse.Directory.Parent = directoryNode?["parent"]?.GetValue<string>();
+                directoryResponse.Directory.Starred =
+                    directoryNode?["starred"]?.GetValue<bool>() ?? false;
+                directoryResponse.Directory.UserRating = directoryNode?[
+                    "userRating"
+                ]?.GetValue<int>();
+                directoryResponse.Directory.AverageRating = directoryNode?[
+                    "averageRating"
+                ]?.GetValue<double>();
+                directoryResponse.Directory.PlayCount = directoryNode?[
+                    "playCount"
+                ]?.GetValue<int>();
+
+                // Parse child elements
+                if (directoryNode?["child"] is JsonArray childrenArray)
+                {
+                    foreach (var childNode in childrenArray)
+                    {
+                        if (childNode == null)
+                        {
+                            continue;
+                        }
+
+                        var child = new Responses.Browsing.Models.Child
+                        {
+                            Id = childNode["id"]?.GetValue<string>() ?? string.Empty,
+                            Parent = childNode["parent"]?.GetValue<string>(),
+                            IsDir = childNode["isDir"]?.GetValue<bool>() ?? false,
+                            Title = childNode["title"]?.GetValue<string>() ?? string.Empty,
+                            Album = childNode["album"]?.GetValue<string>() ?? string.Empty,
+                            Artist = childNode["artist"]?.GetValue<string>() ?? string.Empty,
+                            AlbumArtist =
+                                childNode["albumArtist"]?.GetValue<string>() ?? string.Empty,
+                            Track = childNode["track"]?.GetValue<int>(),
+                            Year = childNode["year"]?.GetValue<int>(),
+                            Genre = childNode["genre"]?.GetValue<string>() ?? string.Empty,
+                            CoverArt = childNode["coverArt"]?.GetValue<string>() ?? string.Empty,
+                            Size = childNode["size"]?.GetValue<long>(),
+                            ContentType =
+                                childNode["contentType"]?.GetValue<string>() ?? string.Empty,
+                            Suffix = childNode["suffix"]?.GetValue<string>() ?? string.Empty,
+                            TranscodedContentType =
+                                childNode["transcodedContentType"]?.GetValue<string>()
+                                ?? string.Empty,
+                            TranscodedSuffix =
+                                childNode["transcodedSuffix"]?.GetValue<string>() ?? string.Empty,
+                            Duration = childNode["duration"]?.GetValue<int>(),
+                            BitRate = childNode["bitRate"]?.GetValue<int>(),
+                            Path = childNode["path"]?.GetValue<string>() ?? string.Empty,
+                            IsVideo = childNode["isVideo"]?.GetValue<bool>(),
+                            PlayCount = childNode["playCount"]?.GetValue<int>(),
+                            Created = childNode["created"]?.GetValue<long>(),
+                            Starred = childNode["starred"]?.GetValue<bool>() ?? false,
+                            AlbumId = childNode["albumId"]?.GetValue<string>() ?? string.Empty,
+                            ArtistId = childNode["artistId"]?.GetValue<string>() ?? string.Empty,
+                            Type = childNode["type"]?.GetValue<string>() ?? string.Empty,
+                            DiscNumber = childNode["discNumber"]?.GetValue<int>(),
+                            UserRating = childNode["userRating"]?.GetValue<int>(),
+                            AverageRating = childNode["averageRating"]?.GetValue<double>(),
+                        };
+
+                        directoryResponse.Directory.Children.Add(child);
                     }
                 }
             }
@@ -516,36 +961,628 @@ namespace SubSonicMedia.Utilities
                     }
                 }
             }
-            // Handle Internet Radio Stations response
+            // Handle System.LicenseResponse
             else if (
-                response is Responses.Radio.InternetRadioStationsResponse radioStationsResponse
-                && rootNode["internetRadioStations"] != null
+                response is Responses.System.LicenseResponse licenseResponse
+                && rootNode["license"] != null
             )
             {
-                var stationsNode = rootNode?["internetRadioStations"];
+                var licenseNode = rootNode["license"];
 
-                // Parse radio stations
-                if (stationsNode?["internetRadioStation"] is JsonArray stationsArray)
+                licenseResponse.License.Valid = licenseNode?["valid"]?.GetValue<bool>() ?? false;
+                licenseResponse.License.Email =
+                    licenseNode?["email"]?.GetValue<string>() ?? string.Empty;
+                licenseResponse.License.Key =
+                    licenseNode?["key"]?.GetValue<string>() ?? string.Empty;
+                licenseResponse.License.LicenseVersion =
+                    licenseNode?["licenseVersion"]?.GetValue<string>() ?? string.Empty;
+                licenseResponse.License.Trial =
+                    licenseNode?["trial"]?.GetValue<string>() ?? string.Empty;
+
+                // Parse dates if present
+                if (licenseNode?["expires"] != null)
                 {
-                    foreach (var stationNode in stationsArray)
+                    DateTime.TryParse(
+                        licenseNode["expires"]?.GetValue<string>(),
+                        out DateTime expires
+                    );
+                    licenseResponse.License.Expires = expires;
+                }
+
+                if (licenseNode?["licenseExpires"] != null)
+                {
+                    DateTime.TryParse(
+                        licenseNode["licenseExpires"]?.GetValue<string>(),
+                        out DateTime licenseExpires
+                    );
+                    licenseResponse.License.LicenseExpires = licenseExpires;
+                }
+
+                if (licenseNode?["trialExpires"] != null)
+                {
+                    DateTime.TryParse(
+                        licenseNode["trialExpires"]?.GetValue<string>(),
+                        out DateTime trialExpires
+                    );
+                    licenseResponse.License.TrialExpires = trialExpires;
+                }
+            }
+            // Handle System.ScanStatusResponse
+            else if (
+                response is Responses.System.ScanStatusResponse scanStatusResponse
+                && rootNode["scanStatus"] != null
+            )
+            {
+                var scanStatusNode = rootNode["scanStatus"];
+
+                scanStatusResponse.ScanStatus.Scanning =
+                    scanStatusNode?["scanning"]?.GetValue<bool>() ?? false;
+                scanStatusResponse.ScanStatus.Count =
+                    scanStatusNode?["count"]?.GetValue<int>() ?? 0;
+                scanStatusResponse.ScanStatus.FolderCount =
+                    scanStatusNode?["folderCount"]?.GetValue<int>() ?? 0;
+                scanStatusResponse.ScanStatus.Folder =
+                    scanStatusNode?["folder"]?.GetValue<string>() ?? string.Empty;
+            }
+            // Handle UserResponse - for a single user
+            else if (
+                response is Responses.User.UserResponse userResponse
+                && rootNode["user"] != null
+            )
+            {
+                var userNode = rootNode["user"];
+
+                userResponse.User.Username =
+                    userNode?["username"]?.GetValue<string>() ?? string.Empty;
+                userResponse.User.Email = userNode?["email"]?.GetValue<string>() ?? string.Empty;
+                userResponse.User.ScrobblingEnabled =
+                    userNode?["scrobblingEnabled"]?.GetValue<string>() ?? string.Empty;
+                userResponse.User.AvatarScheme =
+                    userNode?["avatarScheme"]?.GetValue<string>() ?? string.Empty;
+
+                // Parse boolean roles
+                userResponse.User.IsAdmin = userNode?["adminRole"]?.GetValue<bool>() ?? false;
+                userResponse.User.SettingsRole =
+                    userNode?["settingsRole"]?.GetValue<bool>() ?? false;
+                userResponse.User.DownloadRole =
+                    userNode?["downloadRole"]?.GetValue<bool>() ?? false;
+                userResponse.User.UploadRole = userNode?["uploadRole"]?.GetValue<bool>() ?? false;
+                userResponse.User.PlaylistRole =
+                    userNode?["playlistRole"]?.GetValue<bool>() ?? false;
+                userResponse.User.CoverArtRole =
+                    userNode?["coverArtRole"]?.GetValue<bool>() ?? false;
+                userResponse.User.CommentRole = userNode?["commentRole"]?.GetValue<bool>() ?? false;
+                userResponse.User.PodcastRole = userNode?["podcastRole"]?.GetValue<bool>() ?? false;
+                userResponse.User.StreamRole = userNode?["streamRole"]?.GetValue<bool>() ?? false;
+                userResponse.User.JukeboxRole = userNode?["jukeboxRole"]?.GetValue<bool>() ?? false;
+                userResponse.User.ShareRole = userNode?["shareRole"]?.GetValue<bool>() ?? false;
+                userResponse.User.VideoConversionRole =
+                    userNode?["videoConversionRole"]?.GetValue<bool>() ?? false;
+
+                // Parse nullable values
+                if (userNode?["ldapAuthenticated"] != null)
+                {
+                    userResponse.User.LdapAuthenticated = userNode["ldapAuthenticated"]
+                        ?.GetValue<bool>();
+                }
+
+                if (userNode?["maxBitRate"] != null)
+                {
+                    userResponse.User.MaxBitRate = userNode["maxBitRate"]?.GetValue<int>();
+                }
+
+                // Parse folder IDs if present
+                if (userNode?["folder"] is JsonArray folderArray)
+                {
+                    var folderIds = new List<string>();
+                    foreach (var folderId in folderArray)
                     {
-                        if (stationNode == null)
+                        if (folderId != null)
+                        {
+                            try
+                            {
+                                // Try to get it as a number first (most likely)
+                                folderIds.Add(folderId.GetValue<int>().ToString());
+                            }
+                            catch
+                            {
+                                try
+                                {
+                                    // Fall back to string if necessary
+                                    folderIds.Add(folderId.GetValue<string>());
+                                }
+                                catch
+                                {
+                                    // Ignore if we can't parse it
+                                }
+                            }
+                        }
+                    }
+                    userResponse.User.FolderIds = folderIds.ToArray();
+                }
+            }
+            // Handle UsersResponse - for multiple users
+            else if (
+                response is Responses.User.UsersResponse usersResponse
+                && rootNode["users"] != null
+            )
+            {
+                var usersNode = rootNode["users"];
+
+                if (usersNode?["user"] is JsonArray usersArray)
+                {
+                    foreach (var userNode in usersArray)
+                    {
+                        if (userNode == null)
                         {
                             continue;
                         }
 
-                        var station = new Responses.Radio.Models.InternetRadioStation
+                        var user = new Responses.User.Models.User
                         {
-                            Id = stationNode["id"]?.GetValue<string>() ?? string.Empty,
-                            Name = stationNode["name"]?.GetValue<string>() ?? string.Empty,
-                            StreamUrl =
-                                stationNode["streamUrl"]?.GetValue<string>() ?? string.Empty,
-                            HomepageUrl = stationNode["homepageUrl"]?.GetValue<string>(),
+                            Username = userNode["username"]?.GetValue<string>() ?? string.Empty,
+                            Email = userNode["email"]?.GetValue<string>() ?? string.Empty,
+                            ScrobblingEnabled =
+                                userNode["scrobblingEnabled"]?.GetValue<string>() ?? string.Empty,
+                            AvatarScheme =
+                                userNode["avatarScheme"]?.GetValue<string>() ?? string.Empty,
+
+                            // Parse boolean roles
+                            IsAdmin = userNode["adminRole"]?.GetValue<bool>() ?? false,
+                            SettingsRole = userNode["settingsRole"]?.GetValue<bool>() ?? false,
+                            DownloadRole = userNode["downloadRole"]?.GetValue<bool>() ?? false,
+                            UploadRole = userNode["uploadRole"]?.GetValue<bool>() ?? false,
+                            PlaylistRole = userNode["playlistRole"]?.GetValue<bool>() ?? false,
+                            CoverArtRole = userNode["coverArtRole"]?.GetValue<bool>() ?? false,
+                            CommentRole = userNode["commentRole"]?.GetValue<bool>() ?? false,
+                            PodcastRole = userNode["podcastRole"]?.GetValue<bool>() ?? false,
+                            StreamRole = userNode["streamRole"]?.GetValue<bool>() ?? false,
+                            JukeboxRole = userNode["jukeboxRole"]?.GetValue<bool>() ?? false,
+                            ShareRole = userNode["shareRole"]?.GetValue<bool>() ?? false,
+                            VideoConversionRole =
+                                userNode["videoConversionRole"]?.GetValue<bool>() ?? false,
                         };
 
-                        radioStationsResponse.InternetRadioStations.InternetRadioStation.Add(
-                            station
-                        );
+                        // Parse nullable values
+                        if (userNode["ldapAuthenticated"] != null)
+                        {
+                            user.LdapAuthenticated = userNode["ldapAuthenticated"]
+                                ?.GetValue<bool>();
+                        }
+
+                        if (userNode["maxBitRate"] != null)
+                        {
+                            user.MaxBitRate = userNode["maxBitRate"]?.GetValue<int>();
+                        }
+
+                        // Parse folder IDs if present
+                        if (userNode["folder"] is JsonArray folderArray)
+                        {
+                            var folderIds = new List<string>();
+                            foreach (var folderId in folderArray)
+                            {
+                                if (folderId != null)
+                                {
+                                    try
+                                    {
+                                        // Try to get it as a number first (most likely)
+                                        folderIds.Add(folderId.GetValue<int>().ToString());
+                                    }
+                                    catch
+                                    {
+                                        try
+                                        {
+                                            // Fall back to string if necessary
+                                            folderIds.Add(folderId.GetValue<string>());
+                                        }
+                                        catch
+                                        {
+                                            // Ignore if we can't parse it
+                                        }
+                                    }
+                                }
+                            }
+                            user.FolderIds = folderIds.ToArray();
+                        }
+
+                        usersResponse.Users.User.Add(user);
+                    }
+                }
+            }
+            // Handle Genres response
+            else if (
+                response is Responses.Browsing.GenresResponse genresResponse
+                && rootNode["genres"] != null
+            )
+            {
+                var genresNode = rootNode["genres"];
+
+                // Parse genres array
+                if (genresNode?["genre"] is JsonArray genresArray)
+                {
+                    foreach (var genreNode in genresArray)
+                    {
+                        if (genreNode == null)
+                        {
+                            continue;
+                        }
+
+                        var genre = new Responses.Browsing.Models.Genre
+                        {
+                            Name = genreNode["value"]?.GetValue<string>() ?? string.Empty,
+                            SongCount = genreNode["songCount"]?.GetValue<int>() ?? 0,
+                            AlbumCount = genreNode["albumCount"]?.GetValue<int>() ?? 0,
+                        };
+
+                        genresResponse.Genres.Genre.Add(genre);
+                    }
+                }
+            }
+            // Handle Starred response
+            else if (
+                response is Responses.Browsing.StarredResponse starredResponse
+                && rootNode["starred"] != null
+            )
+            {
+                var starredNode = rootNode["starred"];
+
+                // Parse starred artists - create Artist objects (from Search.Models) as expected by Starred.Artist collection
+                if (starredNode?["artist"] is JsonArray artistsArray)
+                {
+                    foreach (var artistNode in artistsArray)
+                    {
+                        if (artistNode == null)
+                        {
+                            continue;
+                        }
+
+                        var artist = new Responses.Browsing.Artist
+                        {
+                            Id = artistNode["id"]?.GetValue<string>() ?? string.Empty,
+                            Name = artistNode["name"]?.GetValue<string>() ?? string.Empty,
+                            CoverArt = artistNode["coverArt"]?.GetValue<string>(),
+                            AlbumCount = artistNode["albumCount"]?.GetValue<int>() ?? 0,
+                        };
+
+                        starredResponse.Starred.Artist.Add(artist);
+                    }
+                }
+
+                // Parse starred albums - create Album objects (from Search.Models) as expected by Starred.Album collection
+                if (starredNode?["album"] is JsonArray albumsArray)
+                {
+                    foreach (var albumNode in albumsArray)
+                    {
+                        if (albumNode == null)
+                        {
+                            continue;
+                        }
+
+                        var album = new Responses.Search.Models.Album
+                        {
+                            Id = albumNode["id"]?.GetValue<string>() ?? string.Empty,
+                            Name = albumNode["name"]?.GetValue<string>() ?? string.Empty,
+                            Artist = albumNode["artist"]?.GetValue<string>() ?? string.Empty,
+                            ArtistId = albumNode["artistId"]?.GetValue<string>() ?? string.Empty,
+                            CoverArt = albumNode["coverArt"]?.GetValue<string>() ?? string.Empty,
+                            SongCount = albumNode["songCount"]?.GetValue<int>() ?? 0,
+                            Duration = albumNode["duration"]?.GetValue<int>() ?? 0,
+                            Year = albumNode["year"]?.GetValue<int>() ?? 0,
+                            Genre = albumNode["genre"]?.GetValue<string>(),
+                        };
+
+                        // Parse other fields if present
+                        if (albumNode["created"] != null)
+                        {
+                            try
+                            {
+                                album.Created = albumNode["created"]?.GetValue<long>();
+                            }
+                            catch
+                            {
+                                // If parsing fails, leave it as null
+                            }
+                        }
+
+                        if (albumNode["playCount"] != null)
+                        {
+                            try
+                            {
+                                album.PlayCount = albumNode["playCount"]?.GetValue<int>();
+                            }
+                            catch
+                            {
+                                // If parsing fails, leave it as null
+                            }
+                        }
+
+                        // Handle starred attribute - it's a string timestamp in StarredAlbum but a boolean in Album
+                        if (albumNode["starred"] != null)
+                        {
+                            album.Starred = true;
+                        }
+
+                        starredResponse.Starred.Album.Add(album);
+                    }
+                }
+
+                // Parse starred songs - create Song objects (from Search.Models) as expected by Starred.Song collection
+                if (starredNode?["song"] is JsonArray songsArray)
+                {
+                    foreach (var songNode in songsArray)
+                    {
+                        if (songNode == null)
+                        {
+                            continue;
+                        }
+
+                        var song = new Responses.Search.Models.Song
+                        {
+                            Id = songNode["id"]?.GetValue<string>() ?? string.Empty,
+                            Title = songNode["title"]?.GetValue<string>() ?? string.Empty,
+                            Album = songNode["album"]?.GetValue<string>() ?? string.Empty,
+                            Artist = songNode["artist"]?.GetValue<string>() ?? string.Empty,
+                            Duration = songNode["duration"]?.GetValue<int>() ?? 0,
+                            Genre = songNode["genre"]?.GetValue<string>(),
+                            CoverArt = songNode["coverArt"]?.GetValue<string>(),
+                            Size = songNode["size"]?.GetValue<long>() ?? 0,
+                            ContentType =
+                                songNode["contentType"]?.GetValue<string>() ?? string.Empty,
+                            Path = songNode["path"]?.GetValue<string>() ?? string.Empty,
+                            AlbumId = songNode["albumId"]?.GetValue<string>() ?? string.Empty,
+                            ArtistId = songNode["artistId"]?.GetValue<string>() ?? string.Empty,
+                            Track = songNode["track"]?.GetValue<int>(),
+                            Year = songNode["year"]?.GetValue<int>(),
+                            BitRate = songNode["bitRate"]?.GetValue<int>() ?? 0,
+                        };
+
+                        // Handle play count if present
+                        if (songNode["playCount"] != null)
+                        {
+                            try
+                            {
+                                song.PlayCount = songNode["playCount"]?.GetValue<int>();
+                            }
+                            catch
+                            {
+                                // If parsing fails, leave it as null
+                            }
+                        }
+
+                        // Handle created if present
+                        if (songNode["created"] != null)
+                        {
+                            try
+                            {
+                                song.Created = songNode["created"]?.GetValue<long>();
+                            }
+                            catch
+                            {
+                                // If parsing fails, leave it as null
+                            }
+                        }
+
+                        // Handle starred attribute - it's a string timestamp in StarredSong but a boolean in Song
+                        if (songNode["starred"] != null)
+                        {
+                            song.Starred = true;
+                        }
+
+                        starredResponse.Starred.Song.Add(song);
+                    }
+                }
+            }
+            // Handle SongsByGenre response
+            else if (
+                response is Responses.Browsing.SongsByGenreResponse songsByGenreResponse
+                && rootNode["songsByGenre"] != null
+            )
+            {
+                var songsNode = rootNode["songsByGenre"];
+
+                // Parse songs
+                if (songsNode?["song"] is JsonArray songsArray)
+                {
+                    foreach (var songNode in songsArray)
+                    {
+                        if (songNode == null)
+                        {
+                            continue;
+                        }
+
+                        var song = new Responses.Browsing.Models.Child
+                        {
+                            Id = songNode["id"]?.GetValue<string>() ?? string.Empty,
+                            Title = songNode["title"]?.GetValue<string>() ?? string.Empty,
+                            Album = songNode["album"]?.GetValue<string>() ?? string.Empty,
+                            Artist = songNode["artist"]?.GetValue<string>() ?? string.Empty,
+                            Duration = songNode["duration"]?.GetValue<int>(),
+                            Genre = songNode["genre"]?.GetValue<string>() ?? string.Empty,
+                        };
+
+                        songsByGenreResponse.SongsByGenre.Song.Add(song);
+                    }
+                }
+            }
+            // Handle Album List responses
+            else if (
+                response is Responses.Browsing.AlbumListResponse albumListResponse
+                && rootNode["albumList"] != null
+            )
+            {
+                var albumListNode = rootNode["albumList"];
+
+                // Parse albums - using Album objects (from Search.Models) as expected by AlbumList.Album collection
+                if (albumListNode?["album"] is JsonArray albumsArray)
+                {
+                    foreach (var albumNode in albumsArray)
+                    {
+                        if (albumNode == null)
+                        {
+                            continue;
+                        }
+
+                        var album = new Responses.Search.Models.Album
+                        {
+                            Id = albumNode["id"]?.GetValue<string>() ?? string.Empty,
+                            Name = albumNode["name"]?.GetValue<string>() ?? string.Empty,
+                            Artist = albumNode["artist"]?.GetValue<string>() ?? string.Empty,
+                            ArtistId = albumNode["artistId"]?.GetValue<string>() ?? string.Empty,
+                            CoverArt = albumNode["coverArt"]?.GetValue<string>() ?? string.Empty,
+                            SongCount = albumNode["songCount"]?.GetValue<int>() ?? 0,
+                            Duration = albumNode["duration"]?.GetValue<int>() ?? 0,
+                            Year = albumNode["year"]?.GetValue<int>() ?? 0,
+                            Genre = albumNode["genre"]?.GetValue<string>(),
+                        };
+
+                        // Parse other fields if present
+                        if (albumNode["created"] != null)
+                        {
+                            try
+                            {
+                                album.Created = albumNode["created"]?.GetValue<long>();
+                            }
+                            catch
+                            {
+                                // If parsing fails, leave it as null
+                            }
+                        }
+
+                        if (albumNode["playCount"] != null)
+                        {
+                            try
+                            {
+                                album.PlayCount = albumNode["playCount"]?.GetValue<int>();
+                            }
+                            catch
+                            {
+                                // If parsing fails, leave it as null
+                            }
+                        }
+
+                        // Handle starred attribute if present
+                        if (albumNode["starred"] != null)
+                        {
+                            album.Starred = true;
+                        }
+
+                        albumListResponse.AlbumList.Album.Add(album);
+                    }
+                }
+            }
+            // Handle Album List 2 responses
+            else if (
+                response is Responses.Browsing.AlbumList2Response albumList2Response
+                && rootNode["albumList2"] != null
+            )
+            {
+                var albumListNode = rootNode["albumList2"];
+
+                // Parse albums
+                if (albumListNode?["album"] is JsonArray albumsArray)
+                {
+                    foreach (var albumNode in albumsArray)
+                    {
+                        if (albumNode == null)
+                        {
+                            continue;
+                        }
+
+                        var album = new Responses.Search.Models.Album
+                        {
+                            Id = albumNode["id"]?.GetValue<string>() ?? string.Empty,
+                            Name = albumNode["name"]?.GetValue<string>() ?? string.Empty,
+                            Artist = albumNode["artist"]?.GetValue<string>() ?? string.Empty,
+                            ArtistId = albumNode["artistId"]?.GetValue<string>() ?? string.Empty,
+                            CoverArt = albumNode["coverArt"]?.GetValue<string>() ?? string.Empty,
+                            SongCount = albumNode["songCount"]?.GetValue<int>() ?? 0,
+                            Duration = albumNode["duration"]?.GetValue<int>() ?? 0,
+                            Year = albumNode["year"]?.GetValue<int>() ?? 0,
+                            Genre = albumNode["genre"]?.GetValue<string>() ?? string.Empty,
+                        };
+
+                        albumList2Response.AlbumList2.Album.Add(album);
+                    }
+                }
+            }
+            // Handle Song response
+            else if (
+                response is Responses.Browsing.SongResponse songResponse
+                && rootNode["song"] != null
+            )
+            {
+                var songNode = rootNode["song"];
+
+                songResponse.Song.Id = songNode?["id"]?.GetValue<string>() ?? string.Empty;
+                songResponse.Song.Title = songNode?["title"]?.GetValue<string>() ?? string.Empty;
+                songResponse.Song.Album = songNode?["album"]?.GetValue<string>() ?? string.Empty;
+                songResponse.Song.Artist = songNode?["artist"]?.GetValue<string>() ?? string.Empty;
+                songResponse.Song.Track = songNode?["track"]?.GetValue<int>() ?? 0;
+                songResponse.Song.Year = songNode?["year"]?.GetValue<int>() ?? 0;
+                songResponse.Song.Genre = songNode?["genre"]?.GetValue<string>() ?? string.Empty;
+                songResponse.Song.CoverArt =
+                    songNode?["coverArt"]?.GetValue<string>() ?? string.Empty;
+                songResponse.Song.Size = songNode?["size"]?.GetValue<long>() ?? 0;
+                songResponse.Song.ContentType =
+                    songNode?["contentType"]?.GetValue<string>() ?? string.Empty;
+                songResponse.Song.Suffix = songNode?["suffix"]?.GetValue<string>() ?? string.Empty;
+                songResponse.Song.Duration = songNode?["duration"]?.GetValue<int>() ?? 0;
+                songResponse.Song.BitRate = songNode?["bitRate"]?.GetValue<int>() ?? 0;
+                songResponse.Song.Path = songNode?["path"]?.GetValue<string>() ?? string.Empty;
+                songResponse.Song.PlayCount = songNode?["playCount"]?.GetValue<int>() ?? 0;
+                songResponse.Song.AlbumId =
+                    songNode?["albumId"]?.GetValue<string>() ?? string.Empty;
+                songResponse.Song.ArtistId =
+                    songNode?["artistId"]?.GetValue<string>() ?? string.Empty;
+                songResponse.Song.Type = songNode?["type"]?.GetValue<string>() ?? string.Empty;
+            }
+            // Handle Album response
+            else if (
+                response is Responses.Browsing.AlbumResponse albumResponse
+                && rootNode["album"] != null
+            )
+            {
+                var albumNode = rootNode["album"];
+
+                albumResponse.Album.Id = albumNode?["id"]?.GetValue<string>() ?? string.Empty;
+                albumResponse.Album.Name = albumNode?["name"]?.GetValue<string>() ?? string.Empty;
+                albumResponse.Album.Artist =
+                    albumNode?["artist"]?.GetValue<string>() ?? string.Empty;
+                albumResponse.Album.ArtistId =
+                    albumNode?["artistId"]?.GetValue<string>() ?? string.Empty;
+                albumResponse.Album.CoverArt =
+                    albumNode?["coverArt"]?.GetValue<string>() ?? string.Empty;
+                albumResponse.Album.SongCount = albumNode?["songCount"]?.GetValue<int>() ?? 0;
+                albumResponse.Album.Duration = albumNode?["duration"]?.GetValue<int>() ?? 0;
+                albumResponse.Album.Year = albumNode?["year"]?.GetValue<int>() ?? 0;
+                albumResponse.Album.Genre = albumNode?["genre"]?.GetValue<string>() ?? string.Empty;
+
+                // Parse songs
+                if (albumNode?["song"] is JsonArray songsArray)
+                {
+                    foreach (var songNode in songsArray)
+                    {
+                        if (songNode == null)
+                        {
+                            continue;
+                        }
+
+                        var song = new Responses.Search.Models.Song
+                        {
+                            Id = songNode["id"]?.GetValue<string>() ?? string.Empty,
+                            Title = songNode["title"]?.GetValue<string>() ?? string.Empty,
+                            Album = songNode["album"]?.GetValue<string>() ?? string.Empty,
+                            Artist = songNode["artist"]?.GetValue<string>() ?? string.Empty,
+                            Track = songNode["track"]?.GetValue<int>() ?? 0,
+                            Year = songNode["year"]?.GetValue<int>() ?? 0,
+                            Genre = songNode["genre"]?.GetValue<string>() ?? string.Empty,
+                            CoverArt = songNode["coverArt"]?.GetValue<string>() ?? string.Empty,
+                            Duration = songNode["duration"]?.GetValue<int>() ?? 0,
+                            BitRate = songNode["bitRate"]?.GetValue<int>() ?? 0,
+                            Size = songNode["size"]?.GetValue<long>() ?? 0,
+                        };
+
+                        albumResponse.Album.Song.Add(song);
                     }
                 }
             }
