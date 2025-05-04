@@ -11,7 +11,7 @@
     <Title>SubSonicMedia.TestKit</Title>
     <Description>A comprehensive testing toolkit for validating the SubSonicMedia API against your Subsonic server.</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageIcon>icon.png</PackageIcon>
+    <PackageIcon>icon.svg</PackageIcon>
     <PackageTags>subsonic;music;api;testing;toolkit</PackageTags>
 
   </PropertyGroup>
@@ -39,9 +39,9 @@
     <None Update=".env" Condition="Exists('$(MSBuildProjectDirectory)/.env')">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="README.md" Pack="true" PackagePath="\" />
-    <None Include="../assets/icon.png" Pack="true" PackagePath="\" />
-    <None Include="../assets/icon.svg" Pack="true" PackagePath="\" />
+    <None Include="$(MSBuildThisFileDirectory)/../README.md" Pack="true" PackagePath="\" />
+    <None Include="$(MSBuildThisFileDirectory)/../assets/icon.png" Pack="true" PackagePath="." />
+    <None Include="$(MSBuildThisFileDirectory)/../assets/icon.svg" Pack="true" PackagePath="." />
   </ItemGroup>
   <Target Name="RunTestsConditionally" Condition="Exists('$(MSBuildProjectDirectory)/.env')">
     <Message Importance="high" Text="Running SubSonicMedia TestKit..." />
