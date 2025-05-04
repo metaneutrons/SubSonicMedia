@@ -1,30 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
     <RootNamespace>SubSonicMedia</RootNamespace>
     <Title>SubSonicMedia</Title>
     <Product>SubSonicMedia - .NET library for Subsonic API</Product>
-    <Description>.NET library for interacting with the Subsonic API supporting Subsonic API $(SubsonicApiVersion)</Description>
-    <PackageProjectUrl>https://github.com/metaneutrons/SubSonicMedia</PackageProjectUrl>
-    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+    <Description>.NET library for interacting with the Subsonic API supporting Subsonic API
+      $(SubsonicApiVersion)</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <IsPackable>true</IsPackable>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>icon.svg</PackageIcon>
-    <PackageReleaseNotes>https://github.com/metaneutrons/SubSonicMedia/releases</PackageReleaseNotes>
+    <PackageTags>subsonic;music;api</PackageTags>
+    <IsPackable>true</IsPackable>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>bin/Debug</OutputPath>
@@ -35,7 +23,9 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Http" />
-    <PackageReference Include="GitVersion.MsBuild" PrivateAssets="all" />
+    <PackageReference Include="GitVersion.MsBuild">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="StyleCop.Analyzers">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -51,10 +41,6 @@
     <None Include="$(MSBuildThisFileDirectory)/../assets/icon.png" Pack="true" PackagePath="." />
     <None Include="$(MSBuildThisFileDirectory)/../assets/icon.svg" Pack="true" PackagePath="." />
   </ItemGroup>
-  <!-- Define assembly attributes from MSBuild properties -->
-  <PropertyGroup>
-    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-  </PropertyGroup>
   <ItemGroup>
     <!-- Expose SubsonicApiVersion as assembly metadata -->
     <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
@@ -62,5 +48,4 @@
       <_Parameter2>$(SubsonicApiVersion)</_Parameter2>
     </AssemblyAttribute>
   </ItemGroup>
-  <!-- GitVersion is imported via Directory.Build.props at solution level -->
 </Project>

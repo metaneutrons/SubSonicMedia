@@ -1,11 +1,26 @@
 <Project>
-  <!-- Import GitVersion properties if available (from CI build) -->
-  <Import Project="$(MSBuildThisFileDirectory)/GitVersion.props" Condition="Exists('$(MSBuildThisFileDirectory)/GitVersion.props')" />
+  <PropertyGroup>
+    <GitVersion_Enabled>true</GitVersion_Enabled>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <GenerateGitVersionInformationFile>true</GenerateGitVersionInformationFile>
+    <GenerateGitVersionAssemblyInfoFile>true</GenerateGitVersionAssemblyInfoFile>
+    <TargetFramework>net8.0</TargetFramework>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <!-- Suppress StyleCop warnings -->
+    <NoWarn>$(NoWarn);SA0001</NoWarn>
+    <!-- Warnins as errors -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
+
+  </PropertyGroup>
 
   <PropertyGroup>
     <!-- Sync with Subsonic API version supported -->
     <SubsonicApiVersion>1.16.1</SubsonicApiVersion>
-    
+
     <!-- Package metadata for NuGet -->
     <Authors>Fabian Schmieder</Authors>
     <Company>metaneutrons</Company>
@@ -14,60 +29,6 @@
     <RepositoryUrl>https://github.com/metaneutrons/SubSonicMedia</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://github.com/metaneutrons/SubSonicMedia</PackageProjectUrl>
-    
-    <!-- Suppress StyleCop warnings -->
-    <NoWarn>$(NoWarn);SA0001</NoWarn>
-    
-    <!-- Default version information (used when GitVersion is not available) -->
-    <VersionPrefix Condition="'$(GitVersion_MajorMinorPatch)' == ''">1.0.0</VersionPrefix>
-    
-    <!-- For feature branches, use alpha prerelease label -->
-    <VersionSuffix Condition="'$(GitVersion_MajorMinorPatch)' == '' And $(BranchName.StartsWith('feature/')) == 'true'">alpha.1</VersionSuffix>
-    <VersionSuffix Condition="'$(GitVersion_MajorMinorPatch)' != '' And $(BranchName.StartsWith('feature/')) == 'true'">alpha.$(GitVersion_PreReleaseNumber)</VersionSuffix>
-    
-    <!-- For develop branch, use beta prerelease label -->
-    <VersionSuffix Condition="'$(GitVersion_MajorMinorPatch)' == '' And $(BranchName) == 'develop'">beta.1</VersionSuffix>
-    <VersionSuffix Condition="'$(GitVersion_MajorMinorPatch)' != '' And $(BranchName) == 'develop'">beta.$(GitVersion_PreReleaseNumber)</VersionSuffix>
-    
-    <!-- For release branches, use rc prerelease label -->
-    <VersionSuffix Condition="'$(GitVersion_MajorMinorPatch)' == '' And $(BranchName.StartsWith('release/')) == 'true'">rc.1</VersionSuffix>
-    <VersionSuffix Condition="'$(GitVersion_MajorMinorPatch)' != '' And $(BranchName.StartsWith('release/')) == 'true'">rc.$(GitVersion_PreReleaseNumber)</VersionSuffix>
-    
-    <!-- For hotfix branches, use beta prerelease label -->
-    <VersionSuffix Condition="'$(GitVersion_MajorMinorPatch)' == '' And $(BranchName.StartsWith('hotfix/')) == 'true'">beta.1</VersionSuffix>
-    <VersionSuffix Condition="'$(GitVersion_MajorMinorPatch)' != '' And $(BranchName.StartsWith('hotfix/')) == 'true'">beta.$(GitVersion_PreReleaseNumber)</VersionSuffix>
-    
-    <!-- Use GitVersion when available -->
-    <VersionPrefix Condition="'$(GitVersion_MajorMinorPatch)' != ''">$(GitVersion_MajorMinorPatch)</VersionPrefix>
-    <!-- GitVersion 6.1 doesn't support pre-release-label in config, so we handle it here -->
-    <!-- Only apply these if GitVersion is available but no branch-specific suffix has been set above -->
-    <VersionSuffix Condition="'$(GitVersion_MajorMinorPatch)' != '' And '$(VersionSuffix)' == '' And '$(GitVersion_PreReleaseLabel)' != ''">$(GitVersion_PreReleaseLabel).$(GitVersion_PreReleaseNumber)</VersionSuffix>
-    
-    <!-- Assembly version (must be a valid 4-part version) -->
-    <AssemblyVersion Condition="'$(GitVersion_AssemblySemVer)' == ''">$(VersionPrefix).0</AssemblyVersion>
-    <AssemblyVersion Condition="'$(GitVersion_AssemblySemVer)' != ''">$(GitVersion_AssemblySemVer)</AssemblyVersion>
-    
-    <!-- File version -->
-    <FileVersion Condition="'$(GitVersion_AssemblySemFileVer)' == ''">$(VersionPrefix).0</FileVersion>
-    <FileVersion Condition="'$(GitVersion_AssemblySemFileVer)' != ''">$(GitVersion_AssemblySemFileVer)</FileVersion>
-    
-    <!-- Informational version (can include more info but no prerelease suffix for assembly) -->
-    <InformationalVersion Condition="'$(GitVersion_InformationalVersion)' == ''">$(VersionPrefix)</InformationalVersion>
-    <InformationalVersion Condition="'$(GitVersion_InformationalVersion)' != ''">$(GitVersion_InformationalVersion)</InformationalVersion>
-    
-    <!-- Version property used by MSBuild -->
-    <Version>$(VersionPrefix)</Version>
-    
-    <!-- NuGet package version can include prerelease suffix -->
-    <PackageVersion Condition="'$(VersionSuffix)' != ''">$(VersionPrefix)-$(VersionSuffix)</PackageVersion>
-    <PackageVersion Condition="'$(VersionSuffix)' == ''">$(VersionPrefix)</PackageVersion>
-    
-    <!-- Force assembly attribute generation with our specified values -->
-    <GenerateAssemblyFileVersionAttribute>true</GenerateAssemblyFileVersionAttribute>
-    <GenerateAssemblyVersionAttribute>true</GenerateAssemblyVersionAttribute>
-    <GenerateAssemblyInformationalVersionAttribute>true</GenerateAssemblyInformationalVersionAttribute>
+    <PackageReleaseNotes>https://github.com/metaneutrons/SubSonicMedia/releases</PackageReleaseNotes>
   </PropertyGroup>
-  
-  <!-- Import GitVersion target to generate version information during build -->
-  <Import Project="$(MSBuildThisFileDirectory)/GitVersionTarget.targets" />
 </Project>
