@@ -18,6 +18,6 @@
 - name: Contribute
   items:
     - href: articles/10-contributing.md
-    - href: articles/11-missing-implementations.md
+    - href: articles/11-implementation-status.md
 - name: API Reference
   href: api/SubSonicMedia.yml

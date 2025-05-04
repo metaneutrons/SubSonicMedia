@@ -27,15 +27,13 @@ SubSonicMedia is a comprehensive .NET client library for the Subsonic API, suppo
 These Subsonic API methods aren’t exposed yet:
 
 - [ ] scrobble
-- [ ] getShares / createShare / updateShare / deleteShare
-- [ ] getPodcasts / getNewestPodcasts / refreshPodcasts / createPodcastChannel / deletePodcastChannel / downloadPodcastEpisode
-- [ ] jukeboxControl
-- [ ] getInternetRadioStations / createInternetRadioStation / updateInternetRadioStation / deleteInternetRadioStation
-- [ ] getChatMessages / addChatMessage
-- [ ] getUser / getUsers / createUser / updateUser / deleteUser / changePassword
-- [ ] getBookmarks / createBookmark / deleteBookmark
-- [ ] getPlayQueue / savePlayQueue
-- [ ] getScanStatus / startScan
+- [ ] getSimilarSongs
+- [ ] getSimilarSongs2
+- [ ] getTopSongs
+- [ ] getNowPlaying
+- [ ] getShares
+- [ ] updateShare
+- [ ] deleteShare
 
 ## Getting Started
 
