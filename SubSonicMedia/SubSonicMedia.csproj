@@ -14,7 +14,7 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <IsPackable>true</IsPackable>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageIcon>icon.png</PackageIcon>
+    <PackageIcon>icon.svg</PackageIcon>
     <PackageReleaseNotes>https://github.com/metaneutrons/SubSonicMedia/releases</PackageReleaseNotes>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
