@@ -15,6 +15,7 @@
 // along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
 using System.Xml;
+
 using SubSonicMedia.TestKit.Models;
 using SubSonicMedia.TestKit.Tests;
 

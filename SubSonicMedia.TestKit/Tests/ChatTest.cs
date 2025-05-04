@@ -15,6 +15,7 @@
 // along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
 using Spectre.Console;
+
 using SubSonicMedia.Exceptions;
 using SubSonicMedia.TestKit.Helpers;
 using SubSonicMedia.TestKit.Models;

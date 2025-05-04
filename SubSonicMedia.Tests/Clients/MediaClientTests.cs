@@ -17,12 +17,15 @@
 
 using System.Net;
 using System.Text;
+
 using FluentAssertions;
+
 using SubSonicMedia.Exceptions;
 using SubSonicMedia.Models;
 using SubSonicMedia.Responses.Browsing;
 using SubSonicMedia.Tests.Fixtures;
 using SubSonicMedia.Tests.Helpers;
+
 using Xunit;
 
 namespace SubSonicMedia.Tests.Clients
@@ -86,7 +89,8 @@ namespace SubSonicMedia.Tests.Clients
 
             // We need to set up a specific request matcher to verify the parameters
             this._fixture.Server.Given(
-                    WireMock.RequestBuilders.Request.Create()
+                    WireMock
+                        .RequestBuilders.Request.Create()
                         .WithPath("/rest/stream.view")
                         .WithParam("id", "song-123")
                         .WithParam("maxBitRate", "192")
@@ -98,7 +102,8 @@ namespace SubSonicMedia.Tests.Clients
                         .UsingAnyMethod()
                 )
                 .RespondWith(
-                    WireMock.ResponseBuilders.Response.Create()
+                    WireMock
+                        .ResponseBuilders.Response.Create()
                         .WithStatusCode(HttpStatusCode.OK)
                         .WithHeader("Content-Type", "audio/mpeg")
                         .WithBody(testAudioData)
@@ -140,7 +145,11 @@ namespace SubSonicMedia.Tests.Clients
         {
             // Arrange
             var testFileData = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 }; // Dummy file data
-            this._fixture.SetupBinaryEndpoint("rest/download.view", testFileData, "application/octet-stream");
+            this._fixture.SetupBinaryEndpoint(
+                "rest/download.view",
+                testFileData,
+                "application/octet-stream"
+            );
 
             var connectionInfo = new SubsonicConnectionInfo
             {
@@ -169,8 +178,14 @@ namespace SubSonicMedia.Tests.Clients
         public async Task GetHlsPlaylistAsync_WithValidId_ShouldReturnHlsPlaylist()
         {
             // Arrange
-            var testPlaylistData = Encoding.UTF8.GetBytes("#EXTM3U\n#EXT-X-VERSION:3\n#EXT-X-STREAM-INF:BANDWIDTH=128000\nsong-123/128k/segment1.ts");
-            this._fixture.SetupBinaryEndpoint("rest/hls.view", testPlaylistData, "application/vnd.apple.mpegurl");
+            var testPlaylistData = Encoding.UTF8.GetBytes(
+                "#EXTM3U\n#EXT-X-VERSION:3\n#EXT-X-STREAM-INF:BANDWIDTH=128000\nsong-123/128k/segment1.ts"
+            );
+            this._fixture.SetupBinaryEndpoint(
+                "rest/hls.view",
+                testPlaylistData,
+                "application/vnd.apple.mpegurl"
+            );
 
             var connectionInfo = new SubsonicConnectionInfo
             {
@@ -199,11 +214,14 @@ namespace SubSonicMedia.Tests.Clients
         public async Task GetHlsPlaylistAsync_WithOptionalParameters_ShouldIncludeParameters()
         {
             // Arrange
-            var testPlaylistData = Encoding.UTF8.GetBytes("#EXTM3U\n#EXT-X-VERSION:3\n#EXT-X-STREAM-INF:BANDWIDTH=256000\nsong-123/256k/segment1.ts");
+            var testPlaylistData = Encoding.UTF8.GetBytes(
+                "#EXTM3U\n#EXT-X-VERSION:3\n#EXT-X-STREAM-INF:BANDWIDTH=256000\nsong-123/256k/segment1.ts"
+            );
 
             // We need to set up a specific request matcher to verify the parameters
             this._fixture.Server.Given(
-                    WireMock.RequestBuilders.Request.Create()
+                    WireMock
+                        .RequestBuilders.Request.Create()
                         .WithPath("/rest/hls.view")
                         .WithParam("id", "song-123")
                         .WithParam("bitRate", "256")
@@ -211,7 +229,8 @@ namespace SubSonicMedia.Tests.Clients
                         .UsingAnyMethod()
                 )
                 .RespondWith(
-                    WireMock.ResponseBuilders.Response.Create()
+                    WireMock
+                        .ResponseBuilders.Response.Create()
                         .WithStatusCode(HttpStatusCode.OK)
                         .WithHeader("Content-Type", "application/vnd.apple.mpegurl")
                         .WithBody(testPlaylistData)
@@ -228,7 +247,11 @@ namespace SubSonicMedia.Tests.Clients
             var client = new SubsonicClient(connectionInfo);
 
             // Act
-            var stream = await client.Media.GetHlsPlaylistAsync("song-123", bitRate: 256, audioTrack: 2);
+            var stream = await client.Media.GetHlsPlaylistAsync(
+                "song-123",
+                bitRate: 256,
+                audioTrack: 2
+            );
 
             // Assert
             stream.Should().NotBeNull();
@@ -247,11 +270,75 @@ namespace SubSonicMedia.Tests.Clients
             // Simple 1x1 PNG image
             var testImageData = new byte[]
             {
-                0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
-                0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x02, 0x00, 0x00, 0x00, 0x90, 0x77, 0x53,
-                0xDE, 0x00, 0x00, 0x00, 0x0C, 0x49, 0x44, 0x41, 0x54, 0x08, 0xD7, 0x63, 0xF8, 0xCF, 0xC0, 0x00,
-                0x00, 0x03, 0x01, 0x01, 0x00, 0x18, 0xDD, 0x8D, 0xB0, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E,
-                0x44, 0xAE, 0x42, 0x60, 0x82
+                0x89,
+                0x50,
+                0x4E,
+                0x47,
+                0x0D,
+                0x0A,
+                0x1A,
+                0x0A,
+                0x00,
+                0x00,
+                0x00,
+                0x0D,
+                0x49,
+                0x48,
+                0x44,
+                0x52,
+                0x00,
+                0x00,
+                0x00,
+                0x01,
+                0x00,
+                0x00,
+                0x00,
+                0x01,
+                0x08,
+                0x02,
+                0x00,
+                0x00,
+                0x00,
+                0x90,
+                0x77,
+                0x53,
+                0xDE,
+                0x00,
+                0x00,
+                0x00,
+                0x0C,
+                0x49,
+                0x44,
+                0x41,
+                0x54,
+                0x08,
+                0xD7,
+                0x63,
+                0xF8,
+                0xCF,
+                0xC0,
+                0x00,
+                0x00,
+                0x03,
+                0x01,
+                0x01,
+                0x00,
+                0x18,
+                0xDD,
+                0x8D,
+                0xB0,
+                0x00,
+                0x00,
+                0x00,
+                0x00,
+                0x49,
+                0x45,
+                0x4E,
+                0x44,
+                0xAE,
+                0x42,
+                0x60,
+                0x82,
             };
 
             this._fixture.SetupBinaryEndpoint("rest/getCoverArt.view", testImageData, "image/png");
@@ -285,23 +372,89 @@ namespace SubSonicMedia.Tests.Clients
             // Arrange
             var testImageData = new byte[]
             {
-                0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
-                0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x02, 0x00, 0x00, 0x00, 0x90, 0x77, 0x53,
-                0xDE, 0x00, 0x00, 0x00, 0x0C, 0x49, 0x44, 0x41, 0x54, 0x08, 0xD7, 0x63, 0xF8, 0xCF, 0xC0, 0x00,
-                0x00, 0x03, 0x01, 0x01, 0x00, 0x18, 0xDD, 0x8D, 0xB0, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E,
-                0x44, 0xAE, 0x42, 0x60, 0x82
+                0x89,
+                0x50,
+                0x4E,
+                0x47,
+                0x0D,
+                0x0A,
+                0x1A,
+                0x0A,
+                0x00,
+                0x00,
+                0x00,
+                0x0D,
+                0x49,
+                0x48,
+                0x44,
+                0x52,
+                0x00,
+                0x00,
+                0x00,
+                0x01,
+                0x00,
+                0x00,
+                0x00,
+                0x01,
+                0x08,
+                0x02,
+                0x00,
+                0x00,
+                0x00,
+                0x90,
+                0x77,
+                0x53,
+                0xDE,
+                0x00,
+                0x00,
+                0x00,
+                0x0C,
+                0x49,
+                0x44,
+                0x41,
+                0x54,
+                0x08,
+                0xD7,
+                0x63,
+                0xF8,
+                0xCF,
+                0xC0,
+                0x00,
+                0x00,
+                0x03,
+                0x01,
+                0x01,
+                0x00,
+                0x18,
+                0xDD,
+                0x8D,
+                0xB0,
+                0x00,
+                0x00,
+                0x00,
+                0x00,
+                0x49,
+                0x45,
+                0x4E,
+                0x44,
+                0xAE,
+                0x42,
+                0x60,
+                0x82,
             };
 
             // We need to set up a specific request matcher to verify the size parameter
             this._fixture.Server.Given(
-                    WireMock.RequestBuilders.Request.Create()
+                    WireMock
+                        .RequestBuilders.Request.Create()
                         .WithPath("/rest/getCoverArt.view")
                         .WithParam("id", "album-123")
                         .WithParam("size", "300")
                         .UsingAnyMethod()
                 )
                 .RespondWith(
-                    WireMock.ResponseBuilders.Response.Create()
+                    WireMock
+                        .ResponseBuilders.Response.Create()
                         .WithStatusCode(HttpStatusCode.OK)
                         .WithHeader("Content-Type", "image/png")
                         .WithBody(testImageData)
@@ -336,12 +489,17 @@ namespace SubSonicMedia.Tests.Clients
             // Arrange
             // The implementation extracts lyrics from XML, but we can just return the lyrics text directly
             // as that's the expected behavior (the MediaClient doesn't parse the XML in our tests)
-            const string lyricsText = "Yesterday, all my troubles seemed so far away\nNow it looks as though they're here to stay\nOh, I believe in yesterday";
-            
+            const string lyricsText =
+                "Yesterday, all my troubles seemed so far away\nNow it looks as though they're here to stay\nOh, I believe in yesterday";
+
             // We need to construct an XML response with the lyrics element
             string lyricsXml = $"<lyrics>{lyricsText}</lyrics>";
-            
-            this._fixture.SetupBinaryEndpoint("rest/getLyrics.view", Encoding.UTF8.GetBytes(lyricsXml), "text/xml");
+
+            this._fixture.SetupBinaryEndpoint(
+                "rest/getLyrics.view",
+                Encoding.UTF8.GetBytes(lyricsXml),
+                "text/xml"
+            );
 
             var connectionInfo = new SubsonicConnectionInfo
             {
@@ -365,7 +523,7 @@ namespace SubSonicMedia.Tests.Clients
         /// Tests that GetLyricsAsync throws exception when artist or title is null.
         /// </summary>
         [Fact]
-        public async Task GetLyricsAsync_WithNullArtist_ShouldThrowArgumentException()
+        public void GetLyricsAsync_WithNullArtist_ShouldThrowArgumentException()
         {
             // Skip this test - the current implementation doesn't check for null parameters
             // which causes a different exception to be thrown.
@@ -408,7 +566,11 @@ namespace SubSonicMedia.Tests.Clients
                     }
                 }";
 
-            this._fixture.SetupApiEndpoint("rest/stream.view", errorResponseJson, HttpStatusCode.NotFound);
+            this._fixture.SetupApiEndpoint(
+                "rest/stream.view",
+                errorResponseJson,
+                HttpStatusCode.NotFound
+            );
 
             var connectionInfo = new SubsonicConnectionInfo
             {
@@ -422,8 +584,9 @@ namespace SubSonicMedia.Tests.Clients
 
             // Act & Assert
             var ex = await Assert.ThrowsAsync<SubsonicApiException>(
-                () => client.Media.StreamAsync("invalid-id"));
-            
+                () => client.Media.StreamAsync("invalid-id")
+            );
+
             ex.Message.Should().Contain("Requested media is not available");
             ex.ErrorCode.Should().Be(70);
         }

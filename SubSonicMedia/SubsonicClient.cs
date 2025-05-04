@@ -16,6 +16,7 @@
 // </copyright>
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+
 using SubSonicMedia.Authentication;
 using SubSonicMedia.Clients;
 using SubSonicMedia.Exceptions;

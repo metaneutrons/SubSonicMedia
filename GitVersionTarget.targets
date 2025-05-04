@@ -1,15 +1,15 @@
 <Project>
   <!-- Target to run GitVersion and generate GitVersion.props -->
   <Target Name="GenerateGitVersionProps" BeforeTargets="CoreCompile">
-    <Exec Command="dotnet gitversion /output buildserver /updateprojectfiles" 
-          Condition="'$(GitVersion_SemVer)' == '' And $([MSBuild]::IsOSPlatform('Windows'))" 
+    <Exec Command="dotnet gitversion /output buildserver /updateprojectfiles"
+          Condition="'$(GitVersion_SemVer)' == '' And $([MSBuild]::IsOSPlatform('Windows'))"
           ContinueOnError="true" />
-    <Exec Command="dotnet gitversion /output buildserver /updateprojectfiles" 
-          Condition="'$(GitVersion_SemVer)' == '' And !$([MSBuild]::IsOSPlatform('Windows'))" 
+    <Exec Command="dotnet gitversion /output buildserver /updateprojectfiles"
+          Condition="'$(GitVersion_SemVer)' == '' And !$([MSBuild]::IsOSPlatform('Windows'))"
           ContinueOnError="true" />
-    
+
     <!-- Create GitVersion.props file with version info if GitVersion command succeeded -->
-    <WriteLinesToFile 
+    <WriteLinesToFile
       File="$(MSBuildThisFileDirectory)/GitVersion.props"
       Overwrite="true"
       Lines="&lt;Project&gt;

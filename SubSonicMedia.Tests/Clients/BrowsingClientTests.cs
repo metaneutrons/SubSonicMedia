@@ -16,12 +16,15 @@
 // </copyright>
 
 using System.Net;
+
 using FluentAssertions;
+
 using SubSonicMedia.Exceptions;
 using SubSonicMedia.Models;
 using SubSonicMedia.Responses.Browsing;
 using SubSonicMedia.Tests.Fixtures;
 using SubSonicMedia.Tests.Helpers;
+
 using Xunit;
 
 namespace SubSonicMedia.Tests.Clients
@@ -1000,7 +1003,7 @@ namespace SubSonicMedia.Tests.Clients
             // Act & Assert
             var ex = await Assert.ThrowsAsync<SubsonicApiException>(
                 () => client.Browsing.GetAlbumAsync("invalid-id"));
-            
+
             ex.Message.Should().Contain("HTTP error: NotFound");
             ex.ErrorCode.Should().Be(404);
         }

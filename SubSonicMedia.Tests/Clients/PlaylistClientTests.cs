@@ -17,10 +17,13 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+
 using FluentAssertions;
+
 using SubSonicMedia.Models;
 using SubSonicMedia.Tests.Fixtures;
 using SubSonicMedia.Tests.Helpers;
+
 using Xunit;
 
 namespace SubSonicMedia.Tests.Clients

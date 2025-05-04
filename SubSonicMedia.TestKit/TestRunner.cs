@@ -15,6 +15,7 @@
 // along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
 using System.Diagnostics;
+
 using SubSonicMedia.TestKit.Helpers;
 using SubSonicMedia.TestKit.Models;
 using SubSonicMedia.TestKit.Tests;
@@ -93,7 +94,7 @@ namespace SubSonicMedia.TestKit
                 Console.WriteLine();
             }
 
-            EndTests:
+EndTests:
             this._totalStopwatch.Stop();
 
             // Display summary

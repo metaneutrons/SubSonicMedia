@@ -18,6 +18,7 @@
 #pragma warning disable SA1028 // Code should not contain trailing whitespace
 
 using Spectre.Console;
+
 using SubSonicMedia.TestKit.Models;
 
 namespace SubSonicMedia.TestKit.Helpers

@@ -16,6 +16,7 @@
 // </copyright>
 
 using SubSonicMedia.Tests.Helpers;
+
 using Xunit;
 
 namespace SubSonicMedia.Tests

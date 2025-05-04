@@ -16,8 +16,11 @@
 // </copyright>
 using System.Linq;
 using System.Reflection;
+
 using Microsoft.Extensions.Configuration;
+
 using Spectre.Console;
+
 using SubSonicMedia;
 using SubSonicMedia.TestKit;
 using SubSonicMedia.TestKit.Helpers;
