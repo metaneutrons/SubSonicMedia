@@ -26,7 +26,7 @@ SubSonicMedia is a comprehensive .NET client library for the Subsonic API, suppo
 
 These Subsonic API methods aren’t exposed yet:
 
-- [ ] scrobble
+- [x] scrobble
 - [ ] getSimilarSongs
 - [ ] getSimilarSongs2
 - [ ] getTopSongs
