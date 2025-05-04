@@ -18,11 +18,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SubSonicMedia\SubSonicMedia.csproj" />
+    <ProjectReference Include="../SubSonicMedia/SubSonicMedia.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="TestResources\**\*.*">
+    <None Update="TestResources/**/*.*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

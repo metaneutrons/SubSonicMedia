@@ -17,12 +17,10 @@
     <PackageIcon>icon.png</PackageIcon>
     <PackageReleaseNotes>https://github.com/metaneutrons/SubSonicMedia/releases</PackageReleaseNotes>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <!-- Source Link Properties -->
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <!-- StyleCop and code analysis -->
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
@@ -32,10 +30,10 @@
     <Version>1.0.3-beta.5</Version>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <OutputPath>bin\Debug</OutputPath>
+    <OutputPath>bin/Debug</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <OutputPath>bin\Release</OutputPath>
+    <OutputPath>bin/Release</OutputPath>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
@@ -55,10 +53,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <AdditionalFiles Include="$(MSBuildThisFileDirectory)\..\stylecop.json" Link="stylecop.json" />
-    <None Include="$(MSBuildThisFileDirectory)\..\README.md" Pack="true" PackagePath="\" />
-    <None Include="icon.png" Pack="true" PackagePath="\" />
-    <None Include="icon.svg" Pack="true" PackagePath="\" />
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)/../stylecop.json" Link="stylecop.json" />
+    <None Include="$(MSBuildThisFileDirectory)/../README.md" Pack="true" PackagePath="\" />
+    <None Include="$(MSBuildThisFileDirectory)/../assets/icon.png" Pack="true" PackagePath="." />
+    <None Include="$(MSBuildThisFileDirectory)/../assets/icon.svg" Pack="true" PackagePath="." />
   </ItemGroup>
   <!-- Define assembly attributes from MSBuild properties -->
   <PropertyGroup>

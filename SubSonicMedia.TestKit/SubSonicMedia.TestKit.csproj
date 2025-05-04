@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>SubSonicMedia.TestKit</RootNamespace>
-    <IsPackable>true</IsPackable>
+    <IsPackable>false</IsPackable>
     <!-- Package metadata -->
     <Title>SubSonicMedia.TestKit</Title>
     <Description>A comprehensive testing toolkit for validating the SubSonicMedia API against your Subsonic server.</Description>
@@ -47,8 +47,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="README.md" Pack="true" PackagePath="\" />
-    <None Include="icon.png" Pack="true" PackagePath="\" />
-    <None Include="icon.svg" Pack="true" PackagePath="\" />
+    <None Include="../assets/icon.png" Pack="true" PackagePath="\" />
+    <None Include="../assets/icon.svg" Pack="true" PackagePath="\" />
   </ItemGroup>
   <!-- Custom MSBuild target for running tests conditionally -->
   <Target Name="RunTestsConditionally" Condition="Exists('$(MSBuildProjectDirectory)/.env')">
