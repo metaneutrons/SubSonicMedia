@@ -8,28 +8,27 @@
           "src": "SubSonicMedia"
         }
       ],
-      "dest": "docfx/api",
-      "manifest": "docfx/.manifest"
+      "dest": "docs/api",
+      "manifest": "docs/.manifest"
     }
   ],
   "build": {
     "content": [
       {
         "files": ["*.yml", "index.md"],
-        "src": "docfx/api",
+        "src": "docs/api",
         "dest": "api"
       },
       {
-        "files": ["index.md", "articles/*.md", "blueprint.md", "toc.yml"],
-        "src": "docfx",
+        "files": ["index.md", "articles/*.md", "toc.yml"],
+        "src": "docs",
         "toc": "toc.yml"
       }
     ],
     "resource": [
       {
         "files": [
-          "assets/logo.svg",
-          "assets/favicon.svg"
+          "assets/icon.svg"
         ],
         "src": "."
       }
@@ -39,10 +38,10 @@
     "template": ["default", "docs/templates/SingulinkFX/singulinkfx"],
     "postProcessors": ["ExtractSearchIndex"],
     "globalMetadata": {
-      "_appTitle": "EnvoyConfig",
-      "_appName": "Documentation",
-      "_appFaviconPath": "assets/favicon.svg",
-      "_appLogoPath": "assets/logo.svg",
+      "_appTitle": "SubSonicMedia",
+      "_appName": "SubSonicMedia Documentation",
+      "_appFaviconPath": "assets/icon.svg",
+      "_appLogoPath": "assets/icon.svg",
       "_appFooter": "<strong>DocFX + Singulink = ♥</strong>",
       "_copyrightFooter": "© Fabian Schmieder. Licensed under GPL3",
       "_enableSearch": true,

@@ -1,6 +1,8 @@
-![SubSonicMedia Logo](https://raw.githubusercontent.com/metaneutrons/SubSonicMedia/refs/heads/main/SubSonicMedia/icon.svg)
-
 # SubSonicMedia
+
+<p align="center">
+  <img src="assets/logo.svg" alt="SubSonicMedia Logo" width="64"/>
+</p>
 
 [![Build and Test](https://github.com/metaneutrons/SubSonicMedia/actions/workflows/build.yml/badge.svg)](https://github.com/metaneutrons/SubSonicMedia/actions/workflows/build.yml)
 [![Status: Beta](https://img.shields.io/badge/Status-Beta-yellow)](https://github.com/metaneutrons/SubSonicMedia/releases)
@@ -11,9 +13,9 @@
 [![GitHub Copilot](https://img.shields.io/badge/GitHub-Copilot-blue?logo=github)](https://github.com/features/copilot)
 [![Built with Claude](https://img.shields.io/badge/Built_with-Claude-8A2BE2)](https://claude.ai)
 
-A comprehensive .NET client library for the Subsonic API, supporting API version 1.16.1.
+SubSonicMedia is a comprehensive .NET client library for the Subsonic API, supporting API version 1.16.1.
 
-## 📋 Features
+## Features
 
 - Full implementation of Subsonic API v1.16.1
 - Strongly-typed response models
@@ -21,53 +23,56 @@ A comprehensive .NET client library for the Subsonic API, supporting API version
 - Async support throughout
 - Comprehensive documentation
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Installation
 
-#### Package Manager Console
-
 ```powershell
 Install-Package SubSonicMedia
-```bash
-
-#### .NET CLI
+```
 
 ```bash
 dotnet add package SubSonicMedia
-```bash
-
-#### PackageReference (in .csproj file)
+```
 
 ```xml
 <PackageReference Include="SubSonicMedia" Version="x.y.z" />
 ```
 
-You can find the latest version on [NuGet.org](https://www.nuget.org/packages/SubSonicMedia/).
-
 ### TestKit Usage
 
-```csharp
-// Create a connection to your Subsonic server
-var connectionInfo = new SubsonicConnectionInfo
-{
-    BaseUrl = "https://your-subsonic-server.com",
-    Username = "username",
-    Password = "password",
-    ApiVersion = "1.16.1"
-};
+The **TestKit** is a console application that validates the SubSonicMedia library against a real Subsonic-compatible server.
 
-// Create the client
-var client = new SubsonicClient(connectionInfo);
+1. Navigate to the TestKit directory and copy the example environment file:
 
-// Get all artists
-var response = await client.Browsing.GetArtists();
+    ```bash
+    cd SubSonicMedia.TestKit
+    cp .env.example .env
+    ```
 
-// Play a song
-var streamUrl = client.Media.GetStreamUrl("songId");
-```
+2. Open `.env` and set your server connection info:
 
-## 🧪 Testing
+    ```env
+    SUBSONIC_SERVER_URL=https://your-subsonic-server.com
+    SUBSONIC_USERNAME=your-username
+    SUBSONIC_PASSWORD=your-password
+    API_VERSION=1.16.1
+    RECORD_TEST_RESULTS=true
+    OUTPUT_DIRECTORY=./TestResults
+    JUNIT_XML_OUTPUT=true
+    ```
+
+3. Run the TestKit application:
+
+    ```bash
+    dotnet run
+    ```
+
+- Use `dotnet run -- --junit-xml` for JUnit XML output.
+- Use `dotnet run list` to list available tests.
+- Use `dotnet run help` for full CLI options.
+
+## Testing
 
 The project includes two complementary testing approaches:
 
@@ -81,10 +86,10 @@ Standard xUnit tests for the library with mocked API responses:
 - Uses recorded responses from the TestKit
 - Ideal for CI/CD pipelines and rapid local testing
 
-```bash
-# Run the unit tests
-dotnet test SubSonicMedia.Tests
-```
+    ```bash
+    # Run the unit tests
+    dotnet test SubSonicMedia.Tests
+    ```
 
 ### Integration Tests (SubSonicMedia.TestKit)
 
@@ -102,17 +107,17 @@ A comprehensive TestKit for validating against a real Subsonic server:
 
 The TestKit uses a `.env` file for configuration. Copy the `.env.example` file to `.env` in the TestKit directory and update the following settings:
 
-```env
-# Server information
-SUBSONIC_SERVER_URL=https://your-server-url
-SUBSONIC_USERNAME=your-username
-SUBSONIC_PASSWORD=your-password
+    ```env
+    # Server information
+    SUBSONIC_SERVER_URL=https://your-server-url
+    SUBSONIC_USERNAME=your-username
+    SUBSONIC_PASSWORD=your-password
 
-# Test configuration
-RECORD_TEST_RESULTS=true
-OUTPUT_DIRECTORY=./TestResults
-JUNIT_XML_OUTPUT=true
-```
+    # Test configuration
+    RECORD_TEST_RESULTS=true
+    OUTPUT_DIRECTORY=./TestResults
+    JUNIT_XML_OUTPUT=true
+    ```
 
 ### Usage
 
@@ -136,7 +141,11 @@ dotnet run list
 dotnet run help
 ```
 
-## 🛠️ Development
+## Documentation
+
+Explore the full documentation on [SubSonicMedia Documentation](https://metaneutrons.github.io/SubSonicMedia/).
+
+## Development
 
 ### Prerequisites
 
@@ -158,14 +167,6 @@ cd SubSonicMedia
 # Build the solution
 dotnet build
 ```
-
-### Detailed Documentation
-
-For detailed development information, please refer to the following documents:
-
-- [Git Hooks Setup](GIT-HOOKS.md) - Information about Git hooks and PowerShell requirements
-- [Versioning Process](docs/VERSIONING.md) - Details about our semantic versioning process
-- [VS Code Setup](docs/VSCODE.md) - VS Code configuration and recommended extensions
 
 ### Versioning
 
@@ -190,11 +191,11 @@ The repository includes a VS Code setup with:
 
 See [docs/VSCODE.md](docs/VSCODE.md) for details.
 
-## 📄 License
+## License
 
 This project is licensed under the [GNU General Public License v3.0](LICENSE) or later.
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 

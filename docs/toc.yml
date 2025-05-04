@@ -1,0 +1,21 @@
+- name: Introduction
+  href: index.md
+- name: Getting Started
+  items:
+    - href: articles/01-installation.md
+    - href: articles/02-configuration.md
+- name: Tooling
+  items:
+    - href: articles/03-dotnet-tools.md
+    - href: articles/04-vscode-setup.md
+    - href: articles/05-git-hooks-husky.md
+- name: Versioning & CI/CD
+  items:
+    - href: articles/06-versioning.md
+    - href: articles/07-testing.md
+    - href: articles/08-ci-cd-workflows.md
+    - href: articles/09-release-process.md
+- name: Contribute
+  href: articles/10-contributing.md
+- name: API Reference
+  href: api/SubSonicMedia.yml

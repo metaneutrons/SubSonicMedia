@@ -99,6 +99,9 @@ _ReSharper*/
 #!**/[Pp]ackages/repositories.config
 # NuGet v3's project.json files produces more ignorable files
 *.nuget.props
+
+# Allow API docs landing page
+!docs/api/index.md
 *.nuget.targets
 
 # NuGet Symbol Packages
@@ -204,3 +207,7 @@ tye.yaml
 
 # explicit local files
 .claudecode
+
+# DocFX
+docs/api
+_site

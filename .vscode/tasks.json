@@ -1,69 +1,106 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "build",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "build",
-                "${workspaceFolder}/SubSonicMedia.sln",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
-            ],
-            "problemMatcher": "$msCompile",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
-        },
-        {
-            "label": "build-library",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "build",
-                "${workspaceFolder}/SubSonicMedia/SubSonicMedia.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "build-testkit",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "build",
-                "${workspaceFolder}/SubSonicMedia.TestKit/SubSonicMedia.TestKit.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "publish",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "publish",
-                "${workspaceFolder}/SubSonicMedia/SubSonicMedia.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "watch",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "watch",
-                "run",
-                "--project",
-                "${workspaceFolder}/SubSonicMedia.TestKit/SubSonicMedia.TestKit.csproj"
-            ],
-            "problemMatcher": "$msCompile"
-        }
-    ]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "restore-dotnet-tools",
+      "type": "shell",
+      "command": "dotnet tool restore",
+      "problemMatcher": []
+    },
+    {
+      "label": "docfx-metadata",
+      "type": "shell",
+      "command": "docfx metadata docfx.json",
+      "problemMatcher": []
+    },
+    {
+      "label": "docfx-build",
+      "type": "shell",
+      "dependsOn": [
+        "docfx-metadata"
+      ],
+      "command": "docfx build docfx.json",
+      "problemMatcher": []
+    },
+    {
+      "label": "Build Documentation (DocFX)",
+      "type": "shell",
+      "command": "docfx",
+      "args": [
+        "build",
+        "docfx.json"
+      ],
+      "group": "build",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "build",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/SubSonicMedia.sln",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile",
+      "group": {
+        "kind": "build"
+      }
+    },
+    {
+      "label": "run-testkit",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "run",
+        "--project",
+        "${workspaceFolder}/SubSonicMedia.TestKit/SubSonicMedia.TestKit.csproj"
+      ],
+      "problemMatcher": "$msCompile",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "pack-with-gitversion",
+      "type": "shell",
+      "dependsOn": [
+        "restore-dotnet-tools"
+      ],
+      "command": "VERSION=$(dotnet gitversion /showvariable FullSemVer) && echo Packing with version $VERSION && dotnet pack -p:Version=$VERSION ${workspaceFolder}/SubSonicMedia/SubSonicMedia.csproj -c Release -o ${workspaceFolder}/artifacts",
+      "problemMatcher": "$msCompile",
+      "group": "build"
+    },
+    {
+      "label": "publish",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "publish",
+        "${workspaceFolder}/SubSonicMedia/SubSonicMedia.csproj",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "watch",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "watch",
+        "run",
+        "--project",
+        "${workspaceFolder}/SubSonicMedia.TestKit/SubSonicMedia.TestKit.csproj"
+      ],
+      "problemMatcher": "$msCompile"
+    }
+  ]
 }
