@@ -6,10 +6,7 @@
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
-    <AssemblyVersion>1.0.4.0</AssemblyVersion>
-    <FileVersion>1.0.4.0</FileVersion>
-    <InformationalVersion>1.0.4-beta.8+Branch.develop.Sha.14e1bad1986109bd29f35bf8a6d11dc939484bf9</InformationalVersion>
-    <Version>1.0.4-beta.8</Version>
+
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="coverlet.collector" />
