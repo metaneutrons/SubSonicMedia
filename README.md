@@ -35,6 +35,8 @@ These Subsonic API methods aren’t exposed yet:
 - [ ] updateShare
 - [ ] deleteShare
 
+Full implementation status is detailed in the [Implementation Status](https://metaneutrons.github.io/SubSonicMedia/articles/11-implementation-status.html) document.
+
 ## Getting Started
 
 ### Installation
