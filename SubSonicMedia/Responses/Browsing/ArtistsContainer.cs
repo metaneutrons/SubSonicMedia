@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
+using SubSonicMedia.Responses.Browsing.Models;
+
 namespace SubSonicMedia.Responses.Browsing
 {
     /// <summary>
@@ -39,6 +41,6 @@ namespace SubSonicMedia.Responses.Browsing
         /// <summary>
         /// Gets or sets the artist indexes.
         /// </summary>
-        public List<Index> Index { get; set; } = new List<Index>();
+        public List<SubSonicMedia.Responses.Browsing.Models.Index> Index { get; set; } = new List<SubSonicMedia.Responses.Browsing.Models.Index>();
     }
 }

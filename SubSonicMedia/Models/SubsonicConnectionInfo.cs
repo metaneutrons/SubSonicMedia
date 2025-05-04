@@ -53,6 +53,22 @@ namespace SubSonicMedia.Models
         /// </summary>
         public string ClientName { get; set; } = "SubSonicMedia";
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SubsonicConnectionInfo"/> class.
+        /// </summary>
+        public SubsonicConnectionInfo() { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SubsonicConnectionInfo"/> class.
+        /// Initializes a new instance with required parameters.
+        /// </summary>
+        public SubsonicConnectionInfo(string serverUrl, string username, string password)
+        {
+            this.ServerUrl = serverUrl;
+            this.Username = username;
+            this.Password = password;
+        }
+
         // Response format is always JSON in this version
     }
 }

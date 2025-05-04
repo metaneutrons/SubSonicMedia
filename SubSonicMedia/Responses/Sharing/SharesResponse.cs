@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
+using SubSonicMedia.Responses.Sharing.Models;
+
 namespace SubSonicMedia.Responses.Sharing
 {
     /// <summary>

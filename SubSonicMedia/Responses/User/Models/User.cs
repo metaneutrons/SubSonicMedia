@@ -102,9 +102,9 @@ namespace SubSonicMedia.Responses.User.Models
         public int? MaxBitRate { get; set; }
 
         /// <summary>
-        /// Gets or sets the scrobbling configuration.
+        /// Gets or sets a value indicating whether gets or sets the scrobbling configuration.
         /// </summary>
-        public string ScrobblingEnabled { get; set; } = string.Empty;
+        public bool ScrobblingEnabled { get; set; }
 
         /// <summary>
         /// Gets or sets the avatar scheme.

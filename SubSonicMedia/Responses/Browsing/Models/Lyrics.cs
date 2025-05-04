@@ -15,7 +15,7 @@
 // along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
 
-namespace SubSonicMedia.Responses.Browsing
+namespace SubSonicMedia.Responses.Browsing.Models
 {
     /// <summary>
     /// Contains lyrics for a song.
