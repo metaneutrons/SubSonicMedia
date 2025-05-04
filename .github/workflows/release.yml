@@ -106,6 +106,13 @@ jobs:
           fi
         shell: bash
 
+      - name: Re-determine version with new tag
+        id: gitversion_after_tag
+        uses: gittools/actions/gitversion/execute@v0.10.2
+        with:
+          useConfigFile: true
+          updateAssemblyInfo: true
+
       - name: Restore dependencies
         run: dotnet restore
 
@@ -122,9 +129,9 @@ jobs:
           files: |
             ./artifacts/*.nupkg
             ./artifacts/*.snupkg
-          name: ${{ steps.gitversion.outputs.preReleaseTag != '' && 'Beta' || 'Release' }} ${{ steps.gitversion.outputs.nuGetVersion }}
+          name: ${{ steps.gitversion_after_tag.outputs.preReleaseTag != '' && 'Pre-Release' || 'Release' }} ${{ steps.gitversion_after_tag.outputs.nuGetVersion }}
           draft: false
-          prerelease: ${{ steps.gitversion.outputs.preReleaseTag != '' }}
+          prerelease: ${{ steps.gitversion_after_tag.outputs.preReleaseTag != '' }}
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
