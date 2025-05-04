@@ -4,50 +4,28 @@ name: Build and Test
 # but NOT for tag pushes which are handled by the tag-release.yml workflow.
 # We also skip this workflow when a version tag was pushed along with commits.
 
+permissions:
+  contents: read
+
 on:
-  # Run on branch pushes
+  workflow_dispatch:
   push:
-    branches: [main, develop]
+    branches: [develop]
     paths-ignore:
+      - ".gitignore"
+      - ".github/**"
       - "**/*.md"
       - "docs/**"
-  # Handle pull requests separately
   pull_request:
-    branches: [main, develop]
+    branches: [develop]
     paths-ignore:
+      - ".gitignore"
+      - ".github/**"
       - "**/*.md"
       - "docs/**"
 
 jobs:
-  check-for-tag:
-    runs-on: ubuntu-latest
-    outputs:
-      has-tag: ${{ steps.check-tag.outputs.has-tag }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      
-      - name: Check if push includes a version tag
-        id: check-tag
-        run: |
-          # Get the tag for the current commit, if any
-          TAG=$(git tag --points-at HEAD | grep -E "^v[0-9]" || echo "")
-          
-          # Output whether we have a version tag
-          if [ -n "$TAG" ]; then
-            echo "has-tag=true" >> $GITHUB_OUTPUT
-            echo "Found version tag: $TAG"
-          else
-            echo "has-tag=false" >> $GITHUB_OUTPUT
-            echo "No version tag found for the current commit"
-          fi
-
   build:
-    needs: check-for-tag
-    # Skip build if tag-release workflow will handle this commit
-    if: needs.check-for-tag.outputs.has-tag != 'true'
     runs-on: ubuntu-latest
 
     steps:
@@ -79,19 +57,24 @@ jobs:
           echo "SemVer: ${{ steps.gitversion.outputs.semVer }}"
           echo "NuGetVersion: ${{ steps.gitversion.outputs.nuGetVersion }}"
           echo "FullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}"
-          echo "Updated project files with version info"
 
       - name: Restore dependencies
         run: dotnet restore
 
-      - name: Build
-        run: dotnet build --configuration Release --no-restore
+      - name: Run tests
+        run: dotnet test SubSonicMedia.Tests/SubSonicMedia.Tests.csproj --verbosity normal
 
-      - name: Run code style checks
-        run: dotnet build /p:TreatWarningsAsErrors=true
+      - name: Build
+        run: dotnet build --configuration Release --no-restore /p:TreatWarningsAsErrors=true
 
       - name: Pack NuGet package
-        run: dotnet pack --configuration Release --no-build -o ./artifacts
+        run: |
+          echo "Packing each project with version ${{ steps.gitversion.outputs.nuGetVersion }}"
+          for proj in $(find . -maxdepth 2 -name '*.csproj'); do
+            dotnet pack "$proj" --configuration Release --no-build \
+              -o ./artifacts \
+              /p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersion }}
+          done
 
       - name: Upload NuGet Package
         uses: actions/upload-artifact@v4

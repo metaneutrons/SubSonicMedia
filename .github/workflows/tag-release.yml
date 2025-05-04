@@ -36,40 +36,14 @@ jobs:
           useConfigFile: true
           updateAssemblyInfo: true
 
-      # If we're building from a tag, ensure version matches tag
-      - name: Override version from tag
-        id: version
-        run: |
-          TAG_NAME=${GITHUB_REF#refs/tags/}
-          TAG_VERSION=${TAG_NAME#v}
-          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
-          echo "version=$TAG_VERSION" >> $GITHUB_OUTPUT
-          echo "Tag version: $TAG_VERSION"
-
-          # Check if this is a prerelease tag (contains dash)
-          if [[ "$TAG_NAME" == *"-"* ]]; then
-            echo "is_prerelease=true" >> $GITHUB_OUTPUT
-            echo "This is a prerelease tag (contains '-')"
-          else
-            echo "is_prerelease=false" >> $GITHUB_OUTPUT
-            echo "This is a release tag (no '-')"
-          fi
-
-          # Instead of overwriting GitVersion.props, set environment variables
-          echo "GitVersion_SemVer=$TAG_VERSION" >> $GITHUB_ENV
-          echo "GitVersion_MajorMinorPatch=${TAG_VERSION%%-*}" >> $GITHUB_ENV
-          echo "GitVersion_NuGetVersion=$TAG_VERSION" >> $GITHUB_ENV
-
-          echo "Using version from tag: $TAG_VERSION"
-
       - name: Restore dependencies
         run: dotnet restore
 
       - name: Build Release
-        run: dotnet build --configuration Release --no-restore /p:Version=${{ env.GitVersion_SemVer }} /p:PackageVersion=${{ env.GitVersion_SemVer }}
+        run: dotnet build --configuration Release --no-restore
 
       - name: Pack NuGet package
-        run: dotnet pack --configuration Release --no-build -o ./artifacts /p:Version=${{ env.GitVersion_SemVer }} /p:PackageVersion=${{ env.GitVersion_SemVer }}
+        run: dotnet pack --configuration Release --no-build -o ./artifacts
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
@@ -77,9 +51,9 @@ jobs:
           files: |
             ./artifacts/*.nupkg
             ./artifacts/*.snupkg
-          name: ${{ steps.version.outputs.is_prerelease == 'true' && 'Beta' || 'Release' }} ${{ steps.version.outputs.tag_name }}
+          name: ${{ steps.gitversion.outputs.preReleaseTag != '' && 'Beta' || 'Release' }} ${{ steps.gitversion.outputs.nuGetVersion }}
           draft: false
-          prerelease: ${{ steps.version.outputs.is_prerelease == 'true' }}
+          prerelease: ${{ steps.gitversion.outputs.preReleaseTag != '' }}
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -2,9 +2,12 @@
 # Pre-commit hook for SubSonicMedia
 
 # Format code with CSharpier
-Write-Host "🎨 Running CSharpier to format code..." -ForegroundColor Cyan
-dotnet csharpier .
+# Write-Host "🎨 Running CSharpier to format code..." -ForegroundColor Cyan
+# dotnet csharpier .
 
+# Format code
+# Write-Host "🎨 Formating code..." -ForegroundColor Cyan
+dotnet format
 # Verify that all files have GPL-3.0 headers
 Write-Host "📝 Checking for GPL-3.0 headers..." -ForegroundColor Cyan
 $missingHeaders = Get-ChildItem -Path ./SubSonicMedia -Include *.cs -Recurse -File |

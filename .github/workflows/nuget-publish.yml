@@ -1,4 +1,8 @@
-name: Publish to NuGet.org
+name: Publish NuGet Packages from Release
+
+permissions:
+  contents: read
+  packages: write
 
 on:
   workflow_dispatch:
@@ -11,278 +15,36 @@ on:
 jobs:
   publish-nuget:
     runs-on: ubuntu-latest
-
     steps:
       - name: Validate input
         run: |
-          # Check if version_tag starts with v
           if [[ "${{ github.event.inputs.version_tag }}" != v* ]]; then
             echo "Error: Version tag must start with 'v' (e.g., v1.0.0)"
             exit 1
           fi
           echo "Publishing version: ${{ github.event.inputs.version_tag }}"
 
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Download release NuGet packages
+        uses: dawidd6/action-download-artifact@v6
         with:
-          fetch-depth: 0 # Full history
-          ref: ${{ github.event.inputs.version_tag }}
+          workflow: tag-release.yml
+          workflow_conclusion: success
+          name: nuget-package
+          path: ./artifacts
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: "8.0.x"
-
-      - name: Extract version number
-        id: version
-        run: |
-          TAG_VERSION="${{ github.event.inputs.version_tag }}"
-          VERSION=${TAG_VERSION#v}
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "Extracted version: $VERSION"
-
-      - name: Check if release exists
-        id: check_release
-        uses: actions/github-script@v6
-        with:
-          script: |
-            try {
-              const release = await github.rest.repos.getReleaseByTag({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                tag: '${{ github.event.inputs.version_tag }}'
-              });
-              console.log(`Release exists: ${release.data.html_url}`);
-              return true;
-            } catch (error) {
-              console.log('Release does not exist');
-              return false;
-            }
-
-      - name: Set version environment variables
-        if: steps.check_release.outputs.result == 'true'
-        run: |
-          VERSION="${{ steps.version.outputs.version }}"
-          echo "GitVersion_SemVer=$VERSION" >> $GITHUB_ENV
-          echo "GitVersion_MajorMinorPatch=${VERSION%%-*}" >> $GITHUB_ENV
-          echo "GitVersion_NuGetVersion=$VERSION" >> $GITHUB_ENV
-          echo "Set version environment variables to $VERSION"
-
-      - name: Restore dependencies
-        run: dotnet restore
-
-      - name: Build
-        run: dotnet build --configuration Release --no-restore /p:Version=${{ env.GitVersion_SemVer }} /p:PackageVersion=${{ env.GitVersion_SemVer }}
-
-      - name: Pack
-        run: dotnet pack --configuration Release --no-build -o ./artifacts /p:Version=${{ env.GitVersion_SemVer }} /p:PackageVersion=${{ env.GitVersion_SemVer }}
-
-      - name: List package to be published
+      - name: List packages to be published
         run: |
           echo "Packages to be published:"
-          ls -la ./artifacts/*.nupkg
+          ls -la ./artifacts/*.nupkg || echo "No .nupkg files found"
 
-      - name: Confirm publish
-        id: confirm
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const issue = await github.rest.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: `Confirm NuGet Publish: ${{ github.event.inputs.version_tag }}`,
-              body: `
-              ## Confirm NuGet Package Publication
-
-              You are about to publish the following version to NuGet.org:
-              **Version:** ${{ github.event.inputs.version_tag }}
-
-              ### ⚠️ Authorization Required
-              This action requires manual confirmation from a repository admin.
-
-              Please check the workflow run and add a comment with:
-              - \`/publish\` to confirm and proceed with publishing
-              - \`/cancel\` to cancel the operation
-
-              **Note:** Comments from other users will be ignored for security purposes.
-
-              This issue will be closed automatically after the action is completed.
-              `
-            });
-
-            console.log(`Created confirmation issue: #${issue.data.number}`);
-            return issue.data.number;
-          result-encoding: string
-
-      - name: Wait for confirmation
-        id: wait_confirmation
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            // core is already imported in GitHub Actions script context
-            const issueNumber = ${{ steps.confirm.outputs.result }};
-
-            console.log(`Waiting for confirmation on issue #${issueNumber}...`);
-
-            let confirmed = false;
-            let cancelled = false;
-            let maxAttempts = 60; // 30 minutes (checking every 30 seconds)
-
-            for (let attempt = 0; attempt < maxAttempts; attempt++) {
-              console.log(`Checking for confirmation (attempt ${attempt + 1}/${maxAttempts})...`);
-
-              const { data: comments } = await github.rest.issues.listComments({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issueNumber
-              });
-
-              for (const comment of comments) {
-                // Check if the comment author is repo admin or specifically metaneutrons
-                const commentAuthor = comment.user.login;
-                let isAuthorized = false;
-
-                // Check if user has admin permissions on the repo
-                try {
-                  const { data: permission } = await github.rest.repos.getCollaboratorPermissionLevel({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    username: commentAuthor
-                  });
-
-                  isAuthorized = permission.permission === 'admin';
-                  console.log(`User ${commentAuthor} has permission level: ${permission.permission}`);
-                } catch (error) {
-                  console.log(`Error checking permissions for ${commentAuthor}: ${error}`);
-                  isAuthorized = false;
-                }
-
-                if (!isAuthorized) {
-                  console.log(`Ignoring comment from unauthorized user: ${commentAuthor}`);
-                  continue;
-                }
-
-                // Process command from authorized user
-                if (comment.body.trim().toLowerCase() === '/publish') {
-                  confirmed = true;
-                  // Store who approved for output later
-                  core.exportVariable('APPROVER', commentAuthor);
-                  console.log(`Publish confirmed by authorized user: ${commentAuthor}`);
-                  break;
-                } else if (comment.body.trim().toLowerCase() === '/cancel') {
-                  cancelled = true;
-                  // Store who cancelled for output later
-                  core.exportVariable('CANCELLER', commentAuthor);
-                  console.log(`Publish cancelled by authorized user: ${commentAuthor}`);
-                  break;
-                }
-              }
-
-              if (confirmed || cancelled) break;
-
-              // Wait 30 seconds before checking again
-              await new Promise(resolve => setTimeout(resolve, 30000));
-            }
-
-            // Close the issue
-            await github.rest.issues.update({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issueNumber,
-              state: 'closed'
-            });
-
-            if (cancelled) {
-              console.log('Publish operation cancelled by user.');
-              const canceller = process.env.CANCELLER || 'an authorized user';
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issueNumber,
-                body: `✅ Publishing cancelled by @${canceller}.`
-              });
-              core.setOutput('status', 'cancelled');
-              return 'cancelled';
-            }
-
-            if (!confirmed) {
-              console.log('Timed out waiting for confirmation.');
-              // Make sure to close the issue when we time out
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issueNumber,
-                body: '⚠️ Timed out waiting for confirmation. Publishing cancelled.'
-              });
-              // Explicitly close the issue again to ensure it's closed
-              await github.rest.issues.update({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issueNumber,
-                state: 'closed'
-              });
-              core.setOutput('status', 'timeout');
-              core.setFailed('Timed out waiting for confirmation');
-              return 'timeout';
-            }
-
-            console.log('Publishing confirmed by user.');
-            const approver = process.env.APPROVER || 'an authorized user';
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issueNumber,
-              body: `✅ Publishing confirmed by @${approver}. Proceeding with NuGet.org publishing.`
-            });
-            
-            // Set output using the core module (automatically available in GitHub Actions script context)
-            core.setOutput('status', 'confirmed');
-            console.log('Setting status output to confirmed');
-            return 'confirmed';
-
-      - name: Debug Output
+      - name: Publish all .nupkg packages to NuGet.org
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
         run: |
-          echo "Confirmation status: ${{ steps.wait_confirmation.outputs.status }}"
-          echo "Confirmation result: ${{ steps.wait_confirmation.outputs.result }}"
-          echo "All outputs:"
-          echo "${{ toJSON(steps.wait_confirmation.outputs) }}"
-          
-      # Capture the output from the wait_confirmation step
-      - name: Set Confirmation Status
-        id: confirmation_status
-        run: |
-          if [[ "${{ steps.wait_confirmation.outputs.result }}" == "confirmed" || "${{ steps.wait_confirmation.outputs.status }}" == "confirmed" ]]; then
-            echo "Publishing was confirmed by admin"
-            echo "status=confirmed" >> $GITHUB_OUTPUT
-          else
-            echo "Publishing was NOT confirmed"
-            echo "status=not_confirmed" >> $GITHUB_OUTPUT
-          fi
-          
-      - name: Publish to NuGet.org
-        if: steps.confirmation_status.outputs.status == 'confirmed'
-        run: |
-          echo "Publishing to NuGet.org..."
-          dotnet nuget push "./artifacts/*.nupkg" --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
-
-          echo "✅ Package(s) published to NuGet.org successfully!"
-
-      - name: Update publish status
-        if: steps.confirmation_status.outputs.status == 'confirmed'
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const issueNumber = ${{ steps.confirm.outputs.result }};
-            const approver = process.env.APPROVER || 'an authorized user';
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issueNumber,
-              body: `✅ Package published to NuGet.org successfully!
-
-              **Version:** ${{ github.event.inputs.version_tag }}
-              **Approved by:** @${approver}
-              **Published at:** ${new Date().toISOString()}
-              `
-            });
+          for pkg in ./artifacts/*.nupkg; do
+            if [ -f "$pkg" ]; then
+              echo "Publishing $pkg..."
+              dotnet nuget push "$pkg" --api-key "$NUGET_API_KEY" \
+                --source "https://api.nuget.org/v3/index.json" --skip-duplicate
+            fi
+          done
