@@ -1,5 +1,4 @@
-name: Publish NuGet Packages from Release
-
+name: Publish NuGet
 permissions:
   contents: read
   packages: write
@@ -27,21 +26,17 @@ jobs:
       - name: Download release NuGet packages
         uses: dawidd6/action-download-artifact@v6
         with:
-          workflow: tag-release.yml
+          workflow: release.yml
           workflow_conclusion: success
           name: nuget-package
           path: ./artifacts
 
-      - name: List packages to be published
-        run: |
-          echo "Packages to be published:"
-          ls -la ./artifacts/*.nupkg || echo "No .nupkg files found"
-
-      - name: Publish all .nupkg packages to NuGet.org
+      - name: Publish all packages to NuGet.org
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
         run: |
-          for pkg in ./artifacts/*.nupkg; do
+          # Veröffentliche alle NuGet-Pakete und Symbol-Pakete
+          for pkg in ./artifacts/*.{nupkg,snupkg}; do
             if [ -f "$pkg" ]; then
               echo "Publishing $pkg..."
               dotnet nuget push "$pkg" --api-key "$NUGET_API_KEY" \
