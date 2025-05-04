@@ -1,0 +1,3 @@
+[submodule "docfx/templates/SingulinkFX"]
+	path = docfx/templates/SingulinkFX
+	url = https://github.com/Singulink/SingulinkFX.git
