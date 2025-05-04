@@ -23,7 +23,6 @@ namespace SubSonicMedia
     /// </summary>
     public static class VersionInfo
     {
-        // Fields are declared before properties according to StyleCop rules
         private static readonly Lazy<string> LazyVersion = new Lazy<string>(() =>
         {
             var assembly = typeof(VersionInfo).Assembly;
