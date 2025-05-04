@@ -100,7 +100,7 @@ namespace SubSonicMedia.Utilities
         {
             if (value.HasValue)
             {
-                long unixTimestamp = new DateTimeOffset(value.Value).ToUnixTimeMilliseconds();
+                var unixTimestamp = new DateTimeOffset(value.Value).ToUnixTimeMilliseconds();
                 this._parameters[name] = unixTimestamp.ToString();
             }
 
@@ -120,7 +120,7 @@ namespace SubSonicMedia.Utilities
                 var nonEmptyValues = values.Where(v => !string.IsNullOrEmpty(v)).ToList();
                 if (nonEmptyValues.Any())
                 {
-                    for (int i = 0; i < nonEmptyValues.Count; i++)
+                    for (var i = 0; i < nonEmptyValues.Count; i++)
                     {
                         this._parameters[$"{name}"] = string.Join(",", nonEmptyValues);
                     }
@@ -143,7 +143,7 @@ namespace SubSonicMedia.Utilities
                 var valuesList = values.ToList();
                 if (valuesList.Any())
                 {
-                    for (int i = 0; i < valuesList.Count; i++)
+                    for (var i = 0; i < valuesList.Count; i++)
                     {
                         this._parameters[$"{name}"] = string.Join(",", valuesList);
                     }

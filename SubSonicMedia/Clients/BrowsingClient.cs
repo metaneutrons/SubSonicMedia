@@ -64,7 +64,7 @@ namespace SubSonicMedia.Clients
 
             if (ifModifiedSince.HasValue)
             {
-                long timestamp = new DateTimeOffset(ifModifiedSince.Value).ToUnixTimeMilliseconds();
+                var timestamp = new DateTimeOffset(ifModifiedSince.Value).ToUnixTimeMilliseconds();
                 parameters.Add("ifModifiedSince", timestamp.ToString());
             }
 

@@ -40,8 +40,8 @@ namespace SubSonicMedia.Authentication
         {
 #pragma warning disable CA5351 // Do not use broken cryptographic algorithms
             // MD5 is required by the Subsonic API specification
-            byte[] inputBytes = Encoding.UTF8.GetBytes(input);
-            byte[] hashBytes = MD5.HashData(inputBytes);
+            var inputBytes = Encoding.UTF8.GetBytes(input);
+            var hashBytes = MD5.HashData(inputBytes);
 
             // Convert the byte array to a lowercase hexadecimal string
             return Convert.ToHexString(hashBytes).ToLowerInvariant();
@@ -59,10 +59,10 @@ namespace SubSonicMedia.Authentication
         )
         {
             // Generate a random salt
-            string salt = this.GenerateRandomSalt();
+            var salt = this.GenerateRandomSalt();
 
             // Calculate token: MD5(password + salt)
-            string token = CalculateMd5Hash(connectionInfo.Password + salt);
+            var token = CalculateMd5Hash(connectionInfo.Password + salt);
 
             // Add authentication parameters
             parameters["u"] = connectionInfo.Username;
@@ -88,9 +88,9 @@ namespace SubSonicMedia.Authentication
             Span<byte> randomBytes = stackalloc byte[length];
             RandomNumberGenerator.Fill(randomBytes);
 
-            for (int i = 0; i < length; i++)
+            for (var i = 0; i < length; i++)
             {
-                int index = randomBytes[i] % chars.Length;
+                var index = randomBytes[i] % chars.Length;
                 stringBuilder.Append(chars[index]);
             }
 

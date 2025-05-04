@@ -97,7 +97,7 @@ namespace SubSonicMedia
             this._httpClient = httpClient ?? new HttpClient();
 
             // Ensure the base address ends with a slash
-            string baseAddress = connectionInfo.ServerUrl.TrimEnd('/') + "/";
+            var baseAddress = connectionInfo.ServerUrl.TrimEnd('/') + "/";
             this._httpClient.BaseAddress = new Uri(baseAddress);
 
             this._authProvider = authProvider ?? new TokenAuthenticationProvider();
@@ -227,7 +227,7 @@ namespace SubSonicMedia
                     requestBuilder.AddParameter(parameter.Key, parameter.Value);
                 }
 
-                string requestUrl = requestBuilder.BuildRequestUrl();
+                var requestUrl = requestBuilder.BuildRequestUrl();
                 this.LogSanitizedRequest(LogLevel.Debug, "Executing request: {RequestUrl}", endpoint, requestParameters);
 
                 using var response = await this
@@ -242,7 +242,7 @@ namespace SubSonicMedia
                     );
                 }
 
-                string content = await response
+                var content = await response
                     .Content.ReadAsStringAsync(cancellationToken)
                     .ConfigureAwait(false);
 
@@ -309,7 +309,7 @@ namespace SubSonicMedia
                     requestBuilder.AddParameter(parameter.Key, parameter.Value);
                 }
 
-                string requestUrl = requestBuilder.BuildRequestUrl();
+                var requestUrl = requestBuilder.BuildRequestUrl();
                 this.LogSanitizedRequest(LogLevel.Debug, "Executing binary request: {RequestUrl}", endpoint, requestParameters);
 
                 var response = await this
@@ -334,12 +334,12 @@ namespace SubSonicMedia
                     )
                     {
                         // This is an error response
-                        string content = await response
+                        var content = await response
                             .Content.ReadAsStringAsync(cancellationToken)
                             .ConfigureAwait(false);
 
                         // Always use JSON parser for error responses
-                        SubsonicResponse errorResponse = JsonParser.Parse<SubsonicResponse>(
+                        var errorResponse = JsonParser.Parse<SubsonicResponse>(
                             content
                         );
 

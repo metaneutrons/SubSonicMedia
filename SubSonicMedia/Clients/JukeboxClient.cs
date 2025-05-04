@@ -100,7 +100,7 @@ namespace SubSonicMedia.Clients
             var parameters = new Dictionary<string, string> { { "action", "add" } };
 
             var idArray = ids.ToArray();
-            for (int i = 0; i < idArray.Length; i++)
+            for (var i = 0; i < idArray.Length; i++)
             {
                 parameters.Add($"id", idArray[i]);
             }
@@ -121,7 +121,7 @@ namespace SubSonicMedia.Clients
             var parameters = new Dictionary<string, string> { { "action", "remove" } };
 
             var indexArray = indexes.ToArray();
-            for (int i = 0; i < indexArray.Length; i++)
+            for (var i = 0; i < indexArray.Length; i++)
             {
                 parameters.Add($"index", indexArray[i].ToString());
             }
@@ -142,7 +142,7 @@ namespace SubSonicMedia.Clients
             var parameters = new Dictionary<string, string> { { "action", "set" } };
 
             var idArray = ids.ToArray();
-            for (int i = 0; i < idArray.Length; i++)
+            for (var i = 0; i < idArray.Length; i++)
             {
                 parameters.Add($"id", idArray[i]);
             }

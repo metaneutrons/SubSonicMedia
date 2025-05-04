@@ -66,8 +66,8 @@ namespace SubSonicMedia
 
             // Parse versions into Subsonic-style numeric format (e.g., "1.16.1" -> 1161)
             if (
-                !TryParseSubsonicVersion(apiVersion, out int requestedVersion)
-                || !TryParseSubsonicVersion(SubsonicApiVersion, out int supportedVersion)
+                !TryParseSubsonicVersion(apiVersion, out var requestedVersion)
+                || !TryParseSubsonicVersion(SubsonicApiVersion, out var supportedVersion)
             )
             {
                 return false;
@@ -91,12 +91,12 @@ namespace SubSonicMedia
                 return false;
             }
 
-            if (!int.TryParse(parts[0], out int major) || !int.TryParse(parts[1], out int minor))
+            if (!int.TryParse(parts[0], out var major) || !int.TryParse(parts[1], out var minor))
             {
                 return false;
             }
 
-            int patch = 0;
+            var patch = 0;
             if (parts.Length > 2 && !int.TryParse(parts[2], out patch))
             {
                 return false;

@@ -56,8 +56,8 @@ namespace SubSonicMedia.Authentication
             if (this._useHexEncoding)
             {
                 // Hex-encode the password
-                byte[] passwordBytes = Encoding.UTF8.GetBytes(connectionInfo.Password);
-                string hexPassword = BitConverter
+                var passwordBytes = Encoding.UTF8.GetBytes(connectionInfo.Password);
+                var hexPassword = BitConverter
                     .ToString(passwordBytes)
                     .Replace("-", string.Empty)
                     .ToLower();

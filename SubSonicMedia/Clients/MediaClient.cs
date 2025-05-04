@@ -188,11 +188,11 @@ namespace SubSonicMedia.Clients
             )
             using (var reader = new StreamReader(stream))
             {
-                string response = await reader.ReadToEndAsync().ConfigureAwait(false);
+                var response = await reader.ReadToEndAsync().ConfigureAwait(false);
 
                 // Simple extraction of lyrics text - in a real implementation this would use proper XML parsing
-                int startIndex = response.IndexOf("<lyrics>");
-                int endIndex = response.IndexOf("</lyrics>");
+                var startIndex = response.IndexOf("<lyrics>");
+                var endIndex = response.IndexOf("</lyrics>");
 
                 if (startIndex >= 0 && endIndex >= 0)
                 {
