@@ -129,9 +129,9 @@ jobs:
           files: |
             ./artifacts/*.nupkg
             ./artifacts/*.snupkg
-          name: ${{ steps.gitversion_after_tag.outputs.preReleaseTag != '' && 'Pre-Release' || 'Release' }} ${{ steps.gitversion_after_tag.outputs.nuGetVersion }}
+          name: ${{ contains(steps.determine_tag.outputs.tag, '-') && 'Pre-Release' || 'Release' }} ${{ steps.determine_tag.outputs.tag }}
           draft: false
-          prerelease: ${{ steps.gitversion_after_tag.outputs.preReleaseTag != '' }}
+          prerelease: ${{ contains(steps.determine_tag.outputs.tag, '-') }}
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
