@@ -16,7 +16,6 @@
 // </copyright>
 using Spectre.Console;
 
-using SubSonicMedia.Exceptions;
 using SubSonicMedia.TestKit.Helpers;
 using SubSonicMedia.TestKit.Models;
 

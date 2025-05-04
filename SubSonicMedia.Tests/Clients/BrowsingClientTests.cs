@@ -23,7 +23,6 @@ using SubSonicMedia.Exceptions;
 using SubSonicMedia.Models;
 using SubSonicMedia.Responses.Browsing;
 using SubSonicMedia.Tests.Fixtures;
-using SubSonicMedia.Tests.Helpers;
 
 using Xunit;
 
