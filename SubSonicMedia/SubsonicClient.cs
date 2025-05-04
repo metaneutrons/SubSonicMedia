@@ -32,12 +32,6 @@ namespace SubSonicMedia
     /// </summary>
     public class SubsonicClient : ISubsonicClient, IDisposable
     {
-        private readonly HttpClient _httpClient;
-        private readonly SubsonicConnectionInfo _connectionInfo;
-        private readonly IAuthenticationProvider _authProvider;
-        private readonly ILogger<SubsonicClient> _logger;
-        private bool _disposed;
-
         private static readonly HashSet<string> SensitiveKeys = new(StringComparer.OrdinalIgnoreCase)
         {
             "u",
@@ -49,6 +43,12 @@ namespace SubSonicMedia
             "token",
             "enc",
         };
+
+        private readonly HttpClient _httpClient;
+        private readonly SubsonicConnectionInfo _connectionInfo;
+        private readonly IAuthenticationProvider _authProvider;
+        private readonly ILogger<SubsonicClient> _logger;
+        private bool _disposed;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SubsonicClient"/> class.
