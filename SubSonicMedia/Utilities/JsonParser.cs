@@ -16,7 +16,6 @@
 // </copyright>
 using System.Text.Json;
 using System.Text.Json.Nodes;
-
 using SubSonicMedia.Exceptions;
 using SubSonicMedia.Responses;
 

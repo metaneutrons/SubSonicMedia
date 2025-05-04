@@ -16,7 +16,6 @@
 // </copyright>
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-
 using SubSonicMedia.Authentication;
 using SubSonicMedia.Clients;
 using SubSonicMedia.Exceptions;
@@ -246,7 +245,13 @@ namespace SubSonicMedia
             catch (Exception ex)
                 when (ex is not SubsonicApiException && ex is not OperationCanceledException)
             {
-                this._logger.LogError(ex, "Error executing request to {Endpoint}", endpoint);
+                LoggerExtensions.LogError(
+                    this._logger,
+                    ex,
+                    "Error executing request to {Endpoint}: {Message}",
+                    endpoint,
+                    ex.Message
+                );
                 throw new SubsonicApiException(0, $"Error executing request: {ex.Message}", ex);
             }
         }
@@ -328,7 +333,13 @@ namespace SubSonicMedia
             catch (Exception ex)
                 when (ex is not SubsonicApiException && ex is not OperationCanceledException)
             {
-                this._logger.LogError(ex, "Error executing binary request to {Endpoint}", endpoint);
+                LoggerExtensions.LogError(
+                    this._logger,
+                    ex,
+                    "Error executing binary request to {Endpoint}: {Message}",
+                    endpoint,
+                    ex.Message
+                );
                 throw new SubsonicApiException(
                     0,
                     $"Error executing binary request: {ex.Message}",
