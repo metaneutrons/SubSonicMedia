@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
@@ -7,34 +7,30 @@
     <Nullable>enable</Nullable>
     <RootNamespace>SubSonicMedia.TestKit</RootNamespace>
     <IsPackable>false</IsPackable>
-    <!-- Package metadata -->
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <Title>SubSonicMedia.TestKit</Title>
     <Description>A comprehensive testing toolkit for validating the SubSonicMedia API against your Subsonic server.</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
     <PackageTags>subsonic;music;api;testing;toolkit</PackageTags>
-    <AssemblyVersion>1.0.3.0</AssemblyVersion>
-    <FileVersion>1.0.3.0</FileVersion>
-    <InformationalVersion>1.0.3-beta.5+Branch.develop.Sha.04ba150d19191ceb9eef32bf88a6e2ed011aa215</InformationalVersion>
-    <Version>1.0.3-beta.5</Version>
+    <AssemblyVersion>1.0.4.0</AssemblyVersion>
+    <FileVersion>1.0.4.0</FileVersion>
+    <InformationalVersion>1.0.4-beta.7+Branch.develop.Sha.514ac6c2054972a4550d03fed91f5cb6f00d7416</InformationalVersion>
+    <Version>1.0.4-beta.7</Version>
   </PropertyGroup>
-  <!-- Switch from NuGet package to project reference since both now target net8.0 -->
   <ItemGroup>
     <ProjectReference Include="..\SubSonicMedia\SubSonicMedia.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CSharpier.MsBuild" Version="0.30.6">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="DotNetEnv" Version="3.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
-    <PackageReference Include="Spectre.Console" Version="0.49.1" />
-    <PackageReference Include="CommandLineParser" Version="2.9.1" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.507">
+    <PackageReference Include="GitVersion.MsBuild" PrivateAssets="all" />
+    <PackageReference Include="DotNetEnv" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
+    <PackageReference Include="Microsoft.Extensions.Http" />
+    <PackageReference Include="Spectre.Console" />
+    <PackageReference Include="CommandLineParser" />
+    <PackageReference Include="StyleCop.Analyzers">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -50,7 +46,6 @@
     <None Include="../assets/icon.png" Pack="true" PackagePath="\" />
     <None Include="../assets/icon.svg" Pack="true" PackagePath="\" />
   </ItemGroup>
-  <!-- Custom MSBuild target for running tests conditionally -->
   <Target Name="RunTestsConditionally" Condition="Exists('$(MSBuildProjectDirectory)/.env')">
     <Message Importance="high" Text="Running SubSonicMedia TestKit..." />
     <Exec Command="dotnet run" WorkingDirectory="$(MSBuildProjectDirectory)" IgnoreExitCode="true">
