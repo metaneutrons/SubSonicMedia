@@ -16,6 +16,8 @@
 // </copyright>
 using Spectre.Console;
 
+using SubSonicMedia.Responses.Browsing;
+
 using SubSonicMedia.TestKit.Helpers;
 using SubSonicMedia.TestKit.Models;
 
@@ -179,9 +181,7 @@ namespace SubSonicMedia.TestKit.Tests
                     {
                         // Find the first artist with an ID
                         var firstArtist = artistsResponse
-                            .Artists.Index.SelectMany(i =>
-                                i.Artist ?? new List<Responses.Browsing.Artist>()
-                            )
+                            .Artists.Index.SelectMany(i => i.Artist)
                             .FirstOrDefault(a => !string.IsNullOrEmpty(a.Id));
 
                         if (firstArtist != null)

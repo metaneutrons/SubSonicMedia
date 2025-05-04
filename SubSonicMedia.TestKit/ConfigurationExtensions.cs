@@ -15,11 +15,6 @@
 // along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-
 using Microsoft.Extensions.Configuration;
 
 using SubSonicMedia.TestKit.Helpers;

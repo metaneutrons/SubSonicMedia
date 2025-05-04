@@ -16,8 +16,10 @@
 // </copyright>
 using System.Text.Json;
 using System.Text.Json.Nodes;
+
 using SubSonicMedia.Exceptions;
 using SubSonicMedia.Responses;
+using SubSonicMedia.Responses.Browsing.Models;
 
 namespace SubSonicMedia.Utilities
 {
@@ -27,7 +29,7 @@ namespace SubSonicMedia.Utilities
     internal static class JsonParser
     {
         /// <summary>
-        /// Parses a JSON string into a strongly-typed response object.
+        /// Parses a JSON string into a strongly typed response object.
         /// </summary>
         /// <typeparam name="T">The type of response to parse into.</typeparam>
         /// <param name="json">The JSON string to parse.</param>
@@ -94,7 +96,7 @@ namespace SubSonicMedia.Utilities
         }
 
         /// <summary>
-        /// Parses a JSON stream into a strongly-typed response object.
+        /// Parses a JSON stream into a strongly typed response object.
         /// </summary>
         /// <typeparam name="T">The type of response to parse into.</typeparam>
         /// <param name="stream">The JSON stream to parse.</param>
@@ -104,7 +106,7 @@ namespace SubSonicMedia.Utilities
         {
             using (var reader = new StreamReader(stream))
             {
-                string json = reader.ReadToEnd();
+                var json = reader.ReadToEnd();
                 return Parse<T>(json);
             }
         }
@@ -153,7 +155,7 @@ namespace SubSonicMedia.Utilities
                         {
                             DateTime.TryParse(
                                 playlistNode["created"]?.GetValue<string>(),
-                                out DateTime created
+                                out var created
                             );
                             playlist.Created = created;
                         }
@@ -162,7 +164,7 @@ namespace SubSonicMedia.Utilities
                         {
                             DateTime.TryParse(
                                 playlistNode["changed"]?.GetValue<string>(),
-                                out DateTime changed
+                                out var changed
                             );
                             playlist.Changed = changed;
                         }
@@ -199,7 +201,7 @@ namespace SubSonicMedia.Utilities
                 {
                     DateTime.TryParse(
                         playlistNode?["created"]?.GetValue<string>(),
-                        out DateTime created
+                        out var created
                     );
                     playlistResponse.Playlist.Created = created;
                 }
@@ -208,7 +210,7 @@ namespace SubSonicMedia.Utilities
                 {
                     DateTime.TryParse(
                         playlistNode?["changed"]?.GetValue<string>(),
-                        out DateTime changed
+                        out var changed
                     );
                     playlistResponse.Playlist.Changed = changed;
                 }
@@ -262,7 +264,7 @@ namespace SubSonicMedia.Utilities
                             continue;
                         }
 
-                        var folder = new Responses.Browsing.MusicFolder
+                        var folder = new MusicFolder
                         {
                             Id = folderNode["id"]?.GetValue<int>() ?? 0,
                             Name = folderNode["name"]?.GetValue<string>() ?? string.Empty,
@@ -306,7 +308,7 @@ namespace SubSonicMedia.Utilities
                             continue;
                         }
 
-                        var index = new Responses.Browsing.Index
+                        var index = new SubSonicMedia.Responses.Browsing.Models.Index
                         {
                             Name = indexNode["name"]?.GetValue<string>() ?? string.Empty,
                         };
@@ -321,10 +323,14 @@ namespace SubSonicMedia.Utilities
                                     continue;
                                 }
 
-                                var artist = new Responses.Browsing.Artist
+                                var artist = new SubSonicMedia.Responses.Browsing.Artist
                                 {
                                     Id = artistNode["id"]?.GetValue<string>() ?? string.Empty,
                                     Name = artistNode["name"]?.GetValue<string>() ?? string.Empty,
+                                    CoverArt = artistNode["coverArt"]?.GetValue<string>(),
+                                    AlbumCount = artistNode["albumCount"]?.GetValue<int>() ?? 0,
+                                    ArtistImageUrl = artistNode["artistImageUrl"]
+                                        ?.GetValue<string>(),
                                 };
 
                                 index.Artist.Add(artist);
@@ -357,7 +363,7 @@ namespace SubSonicMedia.Utilities
                             continue;
                         }
 
-                        var index = new Responses.Browsing.Index
+                        var index = new SubSonicMedia.Responses.Browsing.Models.Index
                         {
                             Name = indexNode["name"]?.GetValue<string>() ?? string.Empty,
                         };
@@ -372,7 +378,7 @@ namespace SubSonicMedia.Utilities
                                     continue;
                                 }
 
-                                var artist = new Responses.Browsing.Artist
+                                var artist = new SubSonicMedia.Responses.Browsing.Artist
                                 {
                                     Id = artistNode["id"]?.GetValue<string>() ?? string.Empty,
                                     Name = artistNode["name"]?.GetValue<string>() ?? string.Empty,
@@ -634,7 +640,7 @@ namespace SubSonicMedia.Utilities
                             SongCount = albumNode["songCount"]?.GetValue<int>() ?? 0,
                             Duration = albumNode["duration"]?.GetValue<int>() ?? 0,
                             Year = albumNode["year"]?.GetValue<int>() ?? 0,
-                            Genre = albumNode["genre"]?.GetValue<string>(),
+                            Genre = albumNode["genre"]?.GetValue<string>() ?? string.Empty,
                         };
 
                         search3Response.SearchResult.Albums.Add(album);
@@ -984,7 +990,7 @@ namespace SubSonicMedia.Utilities
                 {
                     DateTime.TryParse(
                         licenseNode["expires"]?.GetValue<string>(),
-                        out DateTime expires
+                        out var expires
                     );
                     licenseResponse.License.Expires = expires;
                 }
@@ -993,7 +999,7 @@ namespace SubSonicMedia.Utilities
                 {
                     DateTime.TryParse(
                         licenseNode["licenseExpires"]?.GetValue<string>(),
-                        out DateTime licenseExpires
+                        out var licenseExpires
                     );
                     licenseResponse.License.LicenseExpires = licenseExpires;
                 }
@@ -1002,7 +1008,7 @@ namespace SubSonicMedia.Utilities
                 {
                     DateTime.TryParse(
                         licenseNode["trialExpires"]?.GetValue<string>(),
-                        out DateTime trialExpires
+                        out var trialExpires
                     );
                     licenseResponse.License.TrialExpires = trialExpires;
                 }
@@ -1035,8 +1041,30 @@ namespace SubSonicMedia.Utilities
                 userResponse.User.Username =
                     userNode?["username"]?.GetValue<string>() ?? string.Empty;
                 userResponse.User.Email = userNode?["email"]?.GetValue<string>() ?? string.Empty;
-                userResponse.User.ScrobblingEnabled =
-                    userNode?["scrobblingEnabled"]?.GetValue<string>() ?? string.Empty;
+
+                // Parse scrobblingEnabled
+                {
+                    var scrobbleNode = userNode["scrobblingEnabled"];
+                    if (scrobbleNode is JsonValue jval)
+                    {
+                        var element = jval.GetValue<JsonElement>();
+                        if (element.ValueKind == JsonValueKind.True || element.ValueKind == JsonValueKind.False)
+                        {
+                            userResponse.User.ScrobblingEnabled = element.GetBoolean();
+                        }
+                        else if (element.ValueKind == JsonValueKind.String)
+                        {
+                            var s = element.GetString() ?? string.Empty;
+                            if (!bool.TryParse(s, out var boolVal))
+                            {
+                                boolVal = false;
+                            }
+
+                            userResponse.User.ScrobblingEnabled = boolVal;
+                        }
+                    }
+                }
+
                 userResponse.User.AvatarScheme =
                     userNode?["avatarScheme"]?.GetValue<string>() ?? string.Empty;
 
@@ -1122,26 +1150,48 @@ namespace SubSonicMedia.Utilities
                         {
                             Username = userNode["username"]?.GetValue<string>() ?? string.Empty,
                             Email = userNode["email"]?.GetValue<string>() ?? string.Empty,
-                            ScrobblingEnabled =
-                                userNode["scrobblingEnabled"]?.GetValue<string>() ?? string.Empty,
-                            AvatarScheme =
-                                userNode["avatarScheme"]?.GetValue<string>() ?? string.Empty,
 
-                            // Parse boolean roles
-                            IsAdmin = userNode["adminRole"]?.GetValue<bool>() ?? false,
-                            SettingsRole = userNode["settingsRole"]?.GetValue<bool>() ?? false,
-                            DownloadRole = userNode["downloadRole"]?.GetValue<bool>() ?? false,
-                            UploadRole = userNode["uploadRole"]?.GetValue<bool>() ?? false,
-                            PlaylistRole = userNode["playlistRole"]?.GetValue<bool>() ?? false,
-                            CoverArtRole = userNode["coverArtRole"]?.GetValue<bool>() ?? false,
-                            CommentRole = userNode["commentRole"]?.GetValue<bool>() ?? false,
-                            PodcastRole = userNode["podcastRole"]?.GetValue<bool>() ?? false,
-                            StreamRole = userNode["streamRole"]?.GetValue<bool>() ?? false,
-                            JukeboxRole = userNode["jukeboxRole"]?.GetValue<bool>() ?? false,
-                            ShareRole = userNode["shareRole"]?.GetValue<bool>() ?? false,
-                            VideoConversionRole =
-                                userNode["videoConversionRole"]?.GetValue<bool>() ?? false,
+                            // Parse scrobblingEnabled
+                            ScrobblingEnabled = false,
                         };
+
+                        // Parse scrobblingEnabled
+                        {
+                            var scrobbleNode = userNode["scrobblingEnabled"];
+                            if (scrobbleNode is JsonValue jval)
+                            {
+                                var element = jval.GetValue<JsonElement>();
+                                if (element.ValueKind == JsonValueKind.True || element.ValueKind == JsonValueKind.False)
+                                {
+                                    user.ScrobblingEnabled = element.GetBoolean();
+                                }
+                                else if (element.ValueKind == JsonValueKind.String)
+                                {
+                                    var s = element.GetString() ?? string.Empty;
+                                    if (!bool.TryParse(s, out var boolVal))
+                                    {
+                                        boolVal = false;
+                                    }
+
+                                    user.ScrobblingEnabled = boolVal;
+                                }
+                            }
+                        }
+
+                        // Parse boolean roles
+                        user.IsAdmin = userNode["adminRole"]?.GetValue<bool>() ?? false;
+                        user.SettingsRole = userNode["settingsRole"]?.GetValue<bool>() ?? false;
+                        user.DownloadRole = userNode["downloadRole"]?.GetValue<bool>() ?? false;
+                        user.UploadRole = userNode["uploadRole"]?.GetValue<bool>() ?? false;
+                        user.PlaylistRole = userNode["playlistRole"]?.GetValue<bool>() ?? false;
+                        user.CoverArtRole = userNode["coverArtRole"]?.GetValue<bool>() ?? false;
+                        user.CommentRole = userNode["commentRole"]?.GetValue<bool>() ?? false;
+                        user.PodcastRole = userNode["podcastRole"]?.GetValue<bool>() ?? false;
+                        user.StreamRole = userNode["streamRole"]?.GetValue<bool>() ?? false;
+                        user.JukeboxRole = userNode["jukeboxRole"]?.GetValue<bool>() ?? false;
+                        user.ShareRole = userNode["shareRole"]?.GetValue<bool>() ?? false;
+                        user.VideoConversionRole =
+                            userNode["videoConversionRole"]?.GetValue<bool>() ?? false;
 
                         // Parse nullable values
                         if (userNode["ldapAuthenticated"] != null)
@@ -1226,7 +1276,7 @@ namespace SubSonicMedia.Utilities
             {
                 var starredNode = rootNode["starred"];
 
-                // Parse starred artists - create Artist objects (from Search.Models) as expected by Starred.Artist collection
+                // Parse starred artists - create Artist objects (from Browsing.Models) as expected by Starred.Artist collection
                 if (starredNode?["artist"] is JsonArray artistsArray)
                 {
                     foreach (var artistNode in artistsArray)
@@ -1236,12 +1286,13 @@ namespace SubSonicMedia.Utilities
                             continue;
                         }
 
-                        var artist = new Responses.Browsing.Artist
+                        var artist = new Artist
                         {
                             Id = artistNode["id"]?.GetValue<string>() ?? string.Empty,
                             Name = artistNode["name"]?.GetValue<string>() ?? string.Empty,
                             CoverArt = artistNode["coverArt"]?.GetValue<string>(),
                             AlbumCount = artistNode["albumCount"]?.GetValue<int>() ?? 0,
+                            ArtistImageUrl = artistNode["artistImageUrl"]?.GetValue<string>(),
                         };
 
                         starredResponse.Starred.Artist.Add(artist);
@@ -1296,7 +1347,7 @@ namespace SubSonicMedia.Utilities
                             }
                         }
 
-                        // Handle starred attribute - it's a string timestamp in StarredAlbum but a boolean in Album
+                        // Handle the starred attribute - it's a string timestamp in StarredAlbum but a boolean in Album
                         if (albumNode["starred"] != null)
                         {
                             album.Starred = true;
@@ -1323,8 +1374,8 @@ namespace SubSonicMedia.Utilities
                             Album = songNode["album"]?.GetValue<string>() ?? string.Empty,
                             Artist = songNode["artist"]?.GetValue<string>() ?? string.Empty,
                             Duration = songNode["duration"]?.GetValue<int>() ?? 0,
-                            Genre = songNode["genre"]?.GetValue<string>(),
-                            CoverArt = songNode["coverArt"]?.GetValue<string>(),
+                            Genre = songNode["genre"]?.GetValue<string>() ?? string.Empty,
+                            CoverArt = songNode["coverArt"]?.GetValue<string>() ?? string.Empty,
                             Size = songNode["size"]?.GetValue<long>() ?? 0,
                             ContentType =
                                 songNode["contentType"]?.GetValue<string>() ?? string.Empty,
@@ -1608,7 +1659,7 @@ namespace SubSonicMedia.Utilities
             try
             {
                 var stringValue = jsonNode.GetValue<string>();
-                if (DateTime.TryParse(stringValue, out DateTime result))
+                if (DateTime.TryParse(stringValue, out var result))
                 {
                     return result;
                 }
@@ -1657,7 +1708,7 @@ namespace SubSonicMedia.Utilities
         /// Parses an array of integers from a JSON node.
         /// </summary>
         /// <param name="jsonNode">The JSON node containing integers.</param>
-        /// <returns>A list of integers, or an empty list if parsing fails.</returns>
+        /// <returns>A list of integers or an empty list if parsing fails.</returns>
         private static List<int> ParseIntArrayValue(JsonNode jsonNode)
         {
             var result = new List<int>();

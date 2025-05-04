@@ -16,6 +16,7 @@
 // </copyright>
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+
 using SubSonicMedia.Authentication;
 using SubSonicMedia.Clients;
 using SubSonicMedia.Exceptions;
@@ -23,7 +24,6 @@ using SubSonicMedia.Interfaces;
 using SubSonicMedia.Models;
 using SubSonicMedia.Responses;
 using SubSonicMedia.Utilities;
-using System.Linq;
 
 namespace SubSonicMedia
 {
@@ -40,10 +40,14 @@ namespace SubSonicMedia
 
         private static readonly HashSet<string> SensitiveKeys = new(StringComparer.OrdinalIgnoreCase)
         {
-            "u","user","username",
-            "p","password",
-            "t","token",
-            "enc"
+            "u",
+            "user",
+            "username",
+            "p",
+            "password",
+            "t",
+            "token",
+            "enc",
         };
 
         /// <summary>
@@ -113,6 +117,7 @@ namespace SubSonicMedia
             this.Podcasts = new PodcastClient(this);
             this.Radio = new RadioClient(this);
             this.Bookmarks = new BookmarkClient(this);
+            this.Annotation = new AnnotationClient(this);
         }
 
         /// <summary>
@@ -180,6 +185,11 @@ namespace SubSonicMedia
         /// </summary>
         public IBookmarkClient Bookmarks { get; }
 
+        /// <summary>
+        /// Gets the annotation client for scrobble, star, unstar, setRating.
+        /// </summary>
+        public IAnnotationClient Annotation { get; }
+
         private void LogSanitizedRequest(LogLevel level, string messageTemplate, string endpoint, Dictionary<string, string> requestParameters)
         {
             var safeParams = requestParameters.ToDictionary(
@@ -218,7 +228,7 @@ namespace SubSonicMedia
                 }
 
                 string requestUrl = requestBuilder.BuildRequestUrl();
-                LogSanitizedRequest(LogLevel.Debug, "Executing request: {RequestUrl}", endpoint, requestParameters);
+                this.LogSanitizedRequest(LogLevel.Debug, "Executing request: {RequestUrl}", endpoint, requestParameters);
 
                 using var response = await this
                     ._httpClient.GetAsync(requestUrl, cancellationToken)
@@ -300,7 +310,7 @@ namespace SubSonicMedia
                 }
 
                 string requestUrl = requestBuilder.BuildRequestUrl();
-                LogSanitizedRequest(LogLevel.Debug, "Executing binary request: {RequestUrl}", endpoint, requestParameters);
+                this.LogSanitizedRequest(LogLevel.Debug, "Executing binary request: {RequestUrl}", endpoint, requestParameters);
 
                 var response = await this
                     ._httpClient.GetAsync(

@@ -15,13 +15,10 @@
 // along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
 
-using System.Threading.Tasks;
-
 using FluentAssertions;
 
 using SubSonicMedia.Models;
 using SubSonicMedia.Tests.Fixtures;
-using SubSonicMedia.Tests.Helpers;
 
 using Xunit;
 

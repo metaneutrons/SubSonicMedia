@@ -8,7 +8,7 @@
     <IsTestProject>true</IsTestProject>
     <AssemblyVersion>1.0.4.0</AssemblyVersion>
     <FileVersion>1.0.4.0</FileVersion>
-    <InformationalVersion>1.0.4+Branch.main.Sha.84699fa946d57ecd7bf63336608ad769d52af00b</InformationalVersion>
+    <InformationalVersion>1.0.4+Branch.main.Sha.d6ba3bc6ad8fc69e4d2529ebe264800842b005ed</InformationalVersion>
     <Version>1.0.4</Version>
   </PropertyGroup>
   <ItemGroup>
@@ -19,6 +19,7 @@
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio" />
   </ItemGroup>
+  <!-- Removed MockHttp version; using WireMock.Net central version -->
   <ItemGroup>
     <ProjectReference Include="../SubSonicMedia/SubSonicMedia.csproj" />
   </ItemGroup>

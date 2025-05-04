@@ -19,6 +19,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Text;
 
+using WireMock.Matchers;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
@@ -102,7 +103,19 @@ namespace SubSonicMedia.Tests.Fixtures
                 }";
             }
 
-            this.Server.Given(Request.Create().WithPath($"/{endpoint}").UsingAnyMethod())
+            // Normalize endpoint and match path with optional query
+            var epRaw = endpoint.StartsWith("rest/", StringComparison.OrdinalIgnoreCase)
+                ? endpoint.Substring("rest/".Length)
+                : endpoint;
+            var epName = epRaw.EndsWith(".view", StringComparison.OrdinalIgnoreCase)
+                ? epRaw
+                : epRaw + ".view";
+            var pattern = $"^/rest/{epName}(?:\\?.*)?$";
+            this.Server.Given(
+                    Request.Create()
+                        .WithPath(new RegexMatcher(pattern))
+                        .UsingAnyMethod()
+                )
                 .RespondWith(
                     Response
                         .Create()
