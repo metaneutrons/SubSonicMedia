@@ -2,6 +2,10 @@ name: Tag Release
 
 on:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag (leave empty to auto-bump via GitVersion)'
+        required: false
   push:
     tags:
       - "v*" # Push events to matching v*, i.e. v1.0.0, v20.15.10
@@ -37,6 +41,26 @@ jobs:
           useConfigFile: true
           updateAssemblyInfo: true
 
+      - name: Determine tag
+        id: determine_tag
+        run: |
+          if [ -n "${{ github.event.inputs.tag }}" ]; then
+            echo "tag=${{ github.event.inputs.tag }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            echo "tag=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          else
+            echo "tag=v${{ steps.gitversion.outputs.semVer }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Push tag to repo
+        run: |
+          TAG=${{ steps.determine_tag.outputs.tag }}
+          if ! git rev-parse "$TAG" >/dev/null 2>&1; then
+            git tag "$TAG"
+            git push origin "$TAG"
+          fi
+        shell: bash
+
       - name: Restore dependencies
         run: dotnet restore
 
@@ -49,6 +73,7 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: ${{ steps.determine_tag.outputs.tag }}
           files: |
             ./artifacts/*.nupkg
             ./artifacts/*.snupkg
