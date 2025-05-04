@@ -6,7 +6,7 @@
     <Description>A comprehensive testing toolkit for validating the SubSonicMedia API against your
       Subsonic server.</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageIcon>icon.svg</PackageIcon>
+    <PackageIcon>icon.png</PackageIcon>
     <PackageTags>subsonic;music;api;testing;toolkit</PackageTags>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
