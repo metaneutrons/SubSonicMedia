@@ -15,6 +15,7 @@
 // along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
 
+using System.Diagnostics;
 using System.Reflection;
 
 using Microsoft.Extensions.Configuration;
@@ -28,6 +29,30 @@ using SubSonicMedia.TestKit.Models;
 
 // Display application header
 ConsoleHelper.DisplayHeader();
+
+// Display version information
+var entryAsm = Assembly.GetEntryAssembly()!;
+var asmName = entryAsm.GetName();
+ConsoleHelper.LogInfo($"Assembly Name: {asmName.Name}");
+ConsoleHelper.LogInfo($"Assembly Version: {asmName.Version}");
+ConsoleHelper.LogInfo($"File Version: {FileVersionInfo.GetVersionInfo(entryAsm.Location).FileVersion}");
+ConsoleHelper.LogInfo($"Informational Version: {entryAsm.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion}");
+
+// Print all GitVersionInformation fields if present
+var gitVersionType = entryAsm.GetType("GitVersionInformation", false);
+if (gitVersionType != null)
+{
+    ConsoleHelper.LogInfo("GitVersion Information:");
+    foreach (var field in gitVersionType.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
+    {
+        var value = field.GetValue(null);
+        ConsoleHelper.LogInfo($"{field.Name}: {value}");
+    }
+}
+else
+{
+    ConsoleHelper.LogInfo("GitVersionInformation class not found in assembly.");
+}
 
 // Load configuration
 var appSettings = LoadConfiguration();
