@@ -22,10 +22,29 @@ namespace SubSonicMedia.Responses.Browsing
     /// </summary>
     public class Artist
     {
+        /// <summary>
+        /// Gets or sets the artist ID.
+        /// </summary>
         public string? Id { get; set; }
+
+        /// <summary>
+        /// Gets or sets the artist name.
+        /// </summary>
         public string? Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets the cover art identifier or URL.
+        /// </summary>
         public string? CoverArt { get; set; }
+
+        /// <summary>
+        /// Gets or sets the number of albums for the artist.
+        /// </summary>
         public int AlbumCount { get; set; }
+
+        /// <summary>
+        /// Gets or sets the URL of the artist image.
+        /// </summary>
         public string? ArtistImageUrl { get; set; }
     }
 }

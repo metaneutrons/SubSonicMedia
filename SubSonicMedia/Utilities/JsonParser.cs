@@ -1044,7 +1044,7 @@ namespace SubSonicMedia.Utilities
 
                 // Parse scrobblingEnabled
                 {
-                    var scrobbleNode = userNode["scrobblingEnabled"];
+                    var scrobbleNode = userNode?["scrobblingEnabled"];
                     if (scrobbleNode is JsonValue jval)
                     {
                         var element = jval.GetValue<JsonElement>();
@@ -1088,15 +1088,16 @@ namespace SubSonicMedia.Utilities
                     userNode?["videoConversionRole"]?.GetValue<bool>() ?? false;
 
                 // Parse nullable values
-                if (userNode?["ldapAuthenticated"] != null)
+                var ldapNode1 = userNode?["ldapAuthenticated"];
+                if (ldapNode1 != null)
                 {
-                    userResponse.User.LdapAuthenticated = userNode["ldapAuthenticated"]
-                        ?.GetValue<bool>();
+                    userResponse.User.LdapAuthenticated = ldapNode1.GetValue<bool>();
                 }
 
-                if (userNode?["maxBitRate"] != null)
+                var maxBitRateNode1 = userNode?["maxBitRate"];
+                if (maxBitRateNode1 != null)
                 {
-                    userResponse.User.MaxBitRate = userNode["maxBitRate"]?.GetValue<int>();
+                    userResponse.User.MaxBitRate = maxBitRateNode1.GetValue<int>();
                 }
 
                 // Parse folder IDs if present
@@ -1157,7 +1158,7 @@ namespace SubSonicMedia.Utilities
 
                         // Parse scrobblingEnabled
                         {
-                            var scrobbleNode = userNode["scrobblingEnabled"];
+                            var scrobbleNode = userNode?["scrobblingEnabled"];
                             if (scrobbleNode is JsonValue jval)
                             {
                                 var element = jval.GetValue<JsonElement>();
@@ -1179,34 +1180,35 @@ namespace SubSonicMedia.Utilities
                         }
 
                         // Parse boolean roles
-                        user.IsAdmin = userNode["adminRole"]?.GetValue<bool>() ?? false;
-                        user.SettingsRole = userNode["settingsRole"]?.GetValue<bool>() ?? false;
-                        user.DownloadRole = userNode["downloadRole"]?.GetValue<bool>() ?? false;
-                        user.UploadRole = userNode["uploadRole"]?.GetValue<bool>() ?? false;
-                        user.PlaylistRole = userNode["playlistRole"]?.GetValue<bool>() ?? false;
-                        user.CoverArtRole = userNode["coverArtRole"]?.GetValue<bool>() ?? false;
-                        user.CommentRole = userNode["commentRole"]?.GetValue<bool>() ?? false;
-                        user.PodcastRole = userNode["podcastRole"]?.GetValue<bool>() ?? false;
-                        user.StreamRole = userNode["streamRole"]?.GetValue<bool>() ?? false;
-                        user.JukeboxRole = userNode["jukeboxRole"]?.GetValue<bool>() ?? false;
-                        user.ShareRole = userNode["shareRole"]?.GetValue<bool>() ?? false;
+                        user.IsAdmin = userNode?["adminRole"]?.GetValue<bool>() ?? false;
+                        user.SettingsRole = userNode?["settingsRole"]?.GetValue<bool>() ?? false;
+                        user.DownloadRole = userNode?["downloadRole"]?.GetValue<bool>() ?? false;
+                        user.UploadRole = userNode?["uploadRole"]?.GetValue<bool>() ?? false;
+                        user.PlaylistRole = userNode?["playlistRole"]?.GetValue<bool>() ?? false;
+                        user.CoverArtRole = userNode?["coverArtRole"]?.GetValue<bool>() ?? false;
+                        user.CommentRole = userNode?["commentRole"]?.GetValue<bool>() ?? false;
+                        user.PodcastRole = userNode?["podcastRole"]?.GetValue<bool>() ?? false;
+                        user.StreamRole = userNode?["streamRole"]?.GetValue<bool>() ?? false;
+                        user.JukeboxRole = userNode?["jukeboxRole"]?.GetValue<bool>() ?? false;
+                        user.ShareRole = userNode?["shareRole"]?.GetValue<bool>() ?? false;
                         user.VideoConversionRole =
-                            userNode["videoConversionRole"]?.GetValue<bool>() ?? false;
+                            userNode?["videoConversionRole"]?.GetValue<bool>() ?? false;
 
                         // Parse nullable values
-                        if (userNode["ldapAuthenticated"] != null)
+                        var ldapNode2 = userNode?["ldapAuthenticated"];
+                        if (ldapNode2 != null)
                         {
-                            user.LdapAuthenticated = userNode["ldapAuthenticated"]
-                                ?.GetValue<bool>();
+                            user.LdapAuthenticated = ldapNode2.GetValue<bool>();
                         }
 
-                        if (userNode["maxBitRate"] != null)
+                        var maxBitRateNode2 = userNode?["maxBitRate"];
+                        if (maxBitRateNode2 != null)
                         {
-                            user.MaxBitRate = userNode["maxBitRate"]?.GetValue<int>();
+                            user.MaxBitRate = maxBitRateNode2.GetValue<int>();
                         }
 
                         // Parse folder IDs if present
-                        if (userNode["folder"] is JsonArray folderArray)
+                        if (userNode?["folder"] is JsonArray folderArray)
                         {
                             var folderIds = new List<string>();
                             foreach (var folderId in folderArray)

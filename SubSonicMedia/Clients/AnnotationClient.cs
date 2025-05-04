@@ -15,6 +15,11 @@
 // along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
 
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+
 using SubSonicMedia.Interfaces;
 using SubSonicMedia.Responses.Annotation;
 
@@ -37,7 +42,7 @@ namespace SubSonicMedia.Clients
         /// Registers local playback (scrobble) of media files.
         /// </summary>
         /// <param name="ids">Collection of media file IDs that should be scrobbled.</param>
-        /// <param name="times">Optional. Collection of timestamps (Unix time in milliseconds) when each media file playback occurred. If specified, the collection should have the same size as the ids-collection.</param>
+        /// <param name="times">Optional. Collection of timestamps (Unix time in milliseconds) when each media file playback occurred. If specified, the collection should have the same size as the ids collection.</param>
         /// <param name="submission">Optional. Whether this is a "submission" or a "now playing" notification. Default is true (submission).</param>
         /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
         /// <returns>A <see cref="ScrobbleResponse"/> containing the result of the operation.</returns>
@@ -47,28 +52,18 @@ namespace SubSonicMedia.Clients
             bool? submission = null,
             CancellationToken cancellationToken = default)
         {
-            var parameters = new Dictionary<string, string>();
-            var idx = 0;
-            foreach (var id in ids)
-            {
-                parameters.Add($"id[{idx}]", id);
-                idx++;
-            }
+            var parameters = new Dictionary<string, string>
+            { { "id", string.Join(",", ids) } };
             if (times != null)
             {
-                idx = 0;
-                foreach (var time in times)
-                {
-                    parameters.Add($"time[{idx}]", time.ToString());
-                    idx++;
-                }
+                parameters.Add("time", string.Join(",", times));
             }
             if (submission.HasValue)
             {
                 parameters.Add("submission", submission.Value.ToString().ToLowerInvariant());
             }
-            return await this._client.ExecuteRequestAsync<ScrobbleResponse>("scrobble", parameters, cancellationToken)
-                .ConfigureAwait(false);
+            return await this._client.ExecuteRequestAsync<ScrobbleResponse>(
+                "scrobble", parameters, cancellationToken);
         }
 
         /// <summary>
@@ -117,7 +112,7 @@ namespace SubSonicMedia.Clients
         /// Sets the rating for the specified media file (0-5).
         /// </summary>
         /// <param name="id">The unique identifier of the media file to rate.</param>
-        /// <param name="rating">The rating to set  must be between 0 and 5 (inclusive). 0 removes the rating.</param>
+        /// <param name="rating">The rating to set, must be between 0 and 5 (inclusive). 0 removes the rating.</param>
         /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
         /// <returns>A <see cref="RatingResponse"/> indicating the result of the operation.</returns>
         /// <exception cref="ArgumentException">Thrown when the ID is null or empty.</exception>
