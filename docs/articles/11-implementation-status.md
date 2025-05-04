@@ -91,4 +91,4 @@ This document provides an overview of all API function groups and their endpoint
 - ✅ = Implemented
 - ❌ = Not Implemented
 
-*Last updated: 2025-05-04*
+Last updated: *2025-05-04*
