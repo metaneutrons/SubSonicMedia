@@ -16,6 +16,8 @@
     - href: articles/08-ci-cd-workflows.md
     - href: articles/09-release-process.md
 - name: Contribute
-  href: articles/10-contributing.md
+  items:
+    - href: articles/10-contributing.md
+    - href: articles/11-missing-implementations.md
 - name: API Reference
   href: api/SubSonicMedia.yml
