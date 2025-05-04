@@ -22,6 +22,24 @@ namespace SubSonicMedia.Models
     public class SubsonicConnectionInfo
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="SubsonicConnectionInfo"/> class.
+        /// </summary>
+        public SubsonicConnectionInfo() { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SubsonicConnectionInfo"/> class with required parameters.
+        /// </summary>
+        /// <param name="serverUrl">The URL of the Subsonic server.</param>
+        /// <param name="username">The username for authentication.</param>
+        /// <param name="password">The password for authentication.</param>
+        public SubsonicConnectionInfo(string serverUrl, string username, string password)
+        {
+            this.ServerUrl = serverUrl;
+            this.Username = username;
+            this.Password = password;
+        }
+
+        /// <summary>
         /// Gets or sets the URL of the Subsonic server.
         /// </summary>
         /// <remarks>
@@ -52,23 +70,5 @@ namespace SubSonicMedia.Models
         /// Gets or sets the client name for identification to the Subsonic server.
         /// </summary>
         public string ClientName { get; set; } = "SubSonicMedia";
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SubsonicConnectionInfo"/> class.
-        /// </summary>
-        public SubsonicConnectionInfo() { }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SubsonicConnectionInfo"/> class.
-        /// Initializes a new instance with required parameters.
-        /// </summary>
-        public SubsonicConnectionInfo(string serverUrl, string username, string password)
-        {
-            this.ServerUrl = serverUrl;
-            this.Username = username;
-            this.Password = password;
-        }
-
-        // Response format is always JSON in this version
     }
 }
