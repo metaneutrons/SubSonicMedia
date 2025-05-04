@@ -1,4 +1,4 @@
-name: Tag Release
+name: Release
 
 on:
   workflow_dispatch:
@@ -40,6 +40,51 @@ jobs:
         with:
           useConfigFile: true
           updateAssemblyInfo: true
+
+      - name: Validate manual tag and compare with GitVersion
+        id: validate_tag
+        if: github.event.inputs.tag != ''
+        run: |
+          MANUAL_TAG="${{ github.event.inputs.tag }}"
+          GITVERSION_TAG="v${{ steps.gitversion.outputs.semVer }}"
+
+          # Semver validation
+          SEMVER_REGEX="^v?(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-((0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*))*))?(\+([0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*))?$"
+          if ! [[ $MANUAL_TAG =~ $SEMVER_REGEX ]]; then
+            echo "Error: manual tag '$MANUAL_TAG' doesn't comply with SemVer standard"
+            exit 1
+          fi
+
+          # remove leading 'v' for comparison
+          CLEAN_MANUAL_TAG=${MANUAL_TAG#v}
+          CLEAN_GITVERSION_TAG=${GITVERSION_TAG#v}
+
+          # Split versions into components for comparison
+          IFS='.' read -ra MANUAL_PARTS <<< "${CLEAN_MANUAL_TAG%-*}"
+          IFS='.' read -ra GITVERSION_PARTS <<< "${CLEAN_GITVERSION_TAG%-*}"
+
+          # Compare major.minor.patch versions
+          for i in {0..2}; do
+            if [[ ${MANUAL_PARTS[$i]} -lt ${GITVERSION_PARTS[$i]} ]]; then
+              echo "Error: manual tag '$MANUAL_TAG' is lower as GitVersion-tag '$GITVERSION_TAG'"
+              exit 1
+            elif [[ ${MANUAL_PARTS[$i]} -gt ${GITVERSION_PARTS[$i]} ]]; then
+              # Manual tag is higher, which is valid
+              break
+            fi
+          done
+
+          # Check for prerelease comparison if major.minor.patch are equal
+          if [[ "${MANUAL_PARTS[0]}" == "${GITVERSION_PARTS[0]}" && "${MANUAL_PARTS[1]}" == "${GITVERSION_PARTS[1]}" && "${MANUAL_PARTS[2]}" == "${GITVERSION_PARTS[2]}" ]]; then
+            # If GitVersion has no prerelease but manual has, manual is lower (invalid)
+            if [[ "$CLEAN_GITVERSION_TAG" != *"-"* && "$CLEAN_MANUAL_TAG" == *"-"* ]]; then
+              echo "Error: Manual Tag '$MANUAL_TAG' (Prerelease) is lower as GitVersion-tag '$GITVERSION_TAG' (Release)"
+              exit 1
+            fi
+          fi
+
+          echo "Manual tag '$MANUAL_TAG' valid and not lower as GitVersion-tag '$GITVERSION_TAG'"
+        shell: bash
 
       - name: Determine tag
         id: determine_tag
