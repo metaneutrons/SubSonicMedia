@@ -1,11 +1,13 @@
 <Project>
   <PropertyGroup>
-    <GitVersion_SemVer>1.0.3-beta.5</GitVersion_SemVer>
-    <GitVersion_MajorMinorPatch>1.0.3</GitVersion_MajorMinorPatch>
-    <GitVersion_PreReleaseLabel>beta</GitVersion_PreReleaseLabel>
-    <GitVersion_PreReleaseNumber>5</GitVersion_PreReleaseNumber>
-    <GitVersion_AssemblySemVer>1.0.3.0</GitVersion_AssemblySemVer>
-    <GitVersion_AssemblySemFileVer>1.0.3.0</GitVersion_AssemblySemFileVer>
-    <GitVersion_InformationalVersion>1.0.3-beta.5+Branch.develop.Sha.04ba150d19191ceb9eef32bf88a6e2ed011aa215</GitVersion_InformationalVersion>
+    <GitVersion_SemVer Condition="'1.0.4-beta.7' == ''">1.0.4</GitVersion_SemVer>
+    <GitVersion_MajorMinorPatch Condition="'1.0.4' == ''">1.0.4</GitVersion_MajorMinorPatch>
+    <!-- Support for alpha, beta, and rc prerelease labels -->
+    <GitVersion_PreReleaseLabel Condition="'beta' == ''">beta.7</GitVersion_PreReleaseLabel>
+    <GitVersion_PreReleaseNumber Condition="'7' == ''">1</GitVersion_PreReleaseNumber>
+    <GitVersion_PreReleaseTagWithDash Condition="'beta' != ''">-beta.7</GitVersion_PreReleaseTagWithDash>
+    <GitVersion_AssemblySemVer Condition="'1.0.4.0' == ''">1.0.4.0</GitVersion_AssemblySemVer>
+    <GitVersion_AssemblySemFileVer Condition="'1.0.4.0' == ''">1.0.4.0</GitVersion_AssemblySemFileVer>
+    <GitVersion_InformationalVersion Condition="'1.0.4-beta.7+Branch.develop.Sha.514ac6c2054972a4550d03fed91f5cb6f00d7416' == ''">1.0.4</GitVersion_InformationalVersion>
   </PropertyGroup>
 </Project>

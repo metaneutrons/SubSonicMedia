@@ -1,54 +1,49 @@
 {
-    "editor.formatOnSave": true,
-    "editor.formatOnType": true,
-    "editor.rulers": [
-        120
-    ],
-    "editor.tabSize": 4,
-    "editor.insertSpaces": true,
-    "editor.detectIndentation": false,
-    "editor.codeActionsOnSave": {
-        "source.fixAll": "explicit",
-        "source.organizeImports": "explicit"
-    },
-    "files.trimTrailingWhitespace": true,
-    "files.insertFinalNewline": true,
-    "files.trimFinalNewlines": true,
-    "files.exclude": {
-        "**/.git": true,
-        "**/.vs": true,
-        "**/bin": true,
-        "**/obj": true
-    },
-    "omnisharp.enableRoslynAnalyzers": true,
-    "omnisharp.enableEditorConfigSupport": true,
-    "csharp.format.enable": true,
-    "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": true,
-    "[csharp]": {
-        "editor.defaultFormatter": "csharpier.csharpier-vscode"
-    },
-    "cSpell.words": [
-        "Ansi",
-        "appsettings",
-        "bitrate",
-        "buildtransitive",
-        "contentfiles",
-        "coverart",
-        "csharpier",
-        "dotnet",
-        "EXTM",
-        "github",
-        "grey",
-        "initializers",
-        "mpegurl",
-        "newuser",
-        "nullable",
-        "pwsh",
-        "Schmieder",
-        "scrobbling",
-        "stylecop",
-        "xunit",
-        "yourpassword",
-        "yourusername"
-    ]
+  "editor.formatOnSave": true,
+  "editor.rulers": [
+    120
+  ],
+  "editor.tabSize": 4,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.organizeImports": "explicit"
+  },
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "files.exclude": {
+    "**/.git": true,
+    "**/.vs": true,
+    "**/bin": true,
+    "**/obj": true
+  },
+  "omnisharp.enableRoslynAnalyzers": true,
+  "omnisharp.enableEditorConfigSupport": true,
+  "csharp.format.enable": true,
+  "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": true,
+  "cSpell.words": [
+    "Ansi",
+    "appsettings",
+    "bitrate",
+    "buildtransitive",
+    "contentfiles",
+    "coverart",
+    "dotnet",
+    "EXTM",
+    "github",
+    "grey",
+    "initializers",
+    "mpegurl",
+    "newuser",
+    "nullable",
+    "pwsh",
+    "Schmieder",
+    "scrobbling",
+    "stylecop",
+    "xunit",
+    "yourpassword",
+    "yourusername"
+  ]
 }

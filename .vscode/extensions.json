@@ -2,7 +2,6 @@
   "recommendations": [
     "ms-dotnettools.csharp",
     "ms-dotnettools.csdevkit",
-    "csharpier.csharpier-vscode",
     "formulahendry.dotnet-test-explorer",
     "streetsidesoftware.code-spell-checker",
     "editorconfig.editorconfig",
