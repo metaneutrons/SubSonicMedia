@@ -16,7 +16,7 @@ SubSonicMedia is a comprehensive .NET client library for the Subsonic API, suppo
 
 ## ✨ Features
 
-- Full implementation of Subsonic API v1.16.1
+- (mostly) full implementation of Subsonic API v1.16.1
 - Strongly-typed response models
 - Interface-based architecture for easy testing and extensibility
 - Async support throughout
