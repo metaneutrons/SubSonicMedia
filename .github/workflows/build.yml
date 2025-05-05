@@ -62,7 +62,7 @@ jobs:
         run: dotnet restore
 
       - name: Run tests
-        run: dotnet test SubSonicMedia.Tests/SubSonicMedia.Tests.csproj --verbosity normal
+        run: dotnet test --verbosity normal
 
       - name: Build
         run: dotnet build --configuration Release --no-restore /p:TreatWarningsAsErrors=true
