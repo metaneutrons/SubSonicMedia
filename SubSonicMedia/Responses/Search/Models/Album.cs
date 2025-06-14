@@ -14,6 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
+using System.Text.Json.Serialization;
+using SubSonicMedia.Serialization.Converters;
+
 namespace SubSonicMedia.Responses.Search.Models
 {
     /// <summary>
@@ -64,12 +67,13 @@ namespace SubSonicMedia.Responses.Search.Models
         /// <summary>
         /// Gets or sets the creation date.
         /// </summary>
+        [JsonConverter(typeof(FlexibleDateTimeToLongConverter))]
         public long? Created { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this album is starred.
+        /// Gets or sets the starred date.
         /// </summary>
-        public bool Starred { get; set; }
+        public string? Starred { get; set; }
 
         /// <summary>
         /// Gets or sets the year.

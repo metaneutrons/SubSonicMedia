@@ -14,6 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
+using System.Text.Json.Serialization;
+using SubSonicMedia.Serialization.Converters;
+
 namespace SubSonicMedia.Responses.Browsing.Models
 {
     /// <summary>
@@ -24,6 +27,7 @@ namespace SubSonicMedia.Responses.Browsing.Models
         /// <summary>
         /// Gets or sets the list of genres.
         /// </summary>
+        [JsonConverter(typeof(SubsonicCollectionConverter<Genre>))]
         public List<Genre> Genre { get; set; } = new List<Genre>();
     }
 }

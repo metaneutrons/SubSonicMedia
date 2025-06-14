@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
+using System.Text.Json.Serialization;
 using SubSonicMedia.Responses.Search.Models;
 
 namespace SubSonicMedia.Responses.Search
@@ -26,6 +27,7 @@ namespace SubSonicMedia.Responses.Search
         /// <summary>
         /// Gets or sets the search result.
         /// </summary>
+        [JsonPropertyName("searchResult3")]
         public Search3Result SearchResult { get; set; } = new Search3Result();
     }
 }

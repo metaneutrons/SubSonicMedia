@@ -1,4 +1,4 @@
-// <copyright file="SearchResponse.cs" company="Fabian Schmieder">
+// <copyright file="Search2Response.cs" company="Fabian Schmieder">
 // This file is part of SubSonicMedia.
 //
 // SubSonicMedia is free software: you can redistribute it and/or modify
@@ -20,14 +20,14 @@ using SubSonicMedia.Responses.Search.Models;
 namespace SubSonicMedia.Responses.Search
 {
     /// <summary>
-    /// Response for search method.
+    /// Response for search2 method.
     /// </summary>
-    public class SearchResponse : SubsonicResponse
+    public class Search2Response : SubsonicResponse
     {
         /// <summary>
         /// Gets or sets the search result.
         /// </summary>
-        [JsonPropertyName("searchResult")]
+        [JsonPropertyName("searchResult2")]
         public SearchResult SearchResult { get; set; } = new SearchResult();
     }
 }
