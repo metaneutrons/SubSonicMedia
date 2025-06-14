@@ -24,8 +24,17 @@ namespace SubSonicMedia.Serialization.Converters
     /// Handles Subsonic's object-wrapped arrays for collection inconsistencies.
     /// Some Subsonic responses wrap single items in objects instead of arrays.
     /// </summary>
+    /// <typeparam name="T">The type of elements in the collection.</typeparam>
     public class SubsonicCollectionConverter<T> : JsonConverter<List<T>>
     {
+        /// <summary>
+        /// Reads and converts JSON tokens to a List of type T.
+        /// Handles both standard JSON arrays and single objects that should be treated as single-item collections.
+        /// </summary>
+        /// <param name="reader">The Utf8JsonReader to read from.</param>
+        /// <param name="typeToConvert">The type to convert to.</param>
+        /// <param name="options">JSON serializer options.</param>
+        /// <returns>A List of type T containing the deserialized items.</returns>
         public override List<T> Read(
             ref Utf8JsonReader reader,
             Type typeToConvert,
@@ -85,6 +94,12 @@ namespace SubSonicMedia.Serialization.Converters
             }
         }
 
+        /// <summary>
+        /// Writes a List of type T to JSON as an array.
+        /// </summary>
+        /// <param name="writer">The Utf8JsonWriter to write to.</param>
+        /// <param name="value">The List of type T to write.</param>
+        /// <param name="options">JSON serializer options.</param>
         public override void Write(
             Utf8JsonWriter writer,
             List<T> value,

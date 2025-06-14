@@ -25,6 +25,12 @@ namespace SubSonicMedia.Serialization.Converters
     /// </summary>
     public class SubsonicCollectionConverterFactory : JsonConverterFactory
     {
+        /// <summary>
+        /// Determines whether this factory can convert the specified type.
+        /// Returns true for generic List types.
+        /// </summary>
+        /// <param name="typeToConvert">The type to check for conversion capability.</param>
+        /// <returns>True if the type can be converted, false otherwise.</returns>
         public override bool CanConvert(Type typeToConvert)
         {
             if (!typeToConvert.IsGenericType)
@@ -36,6 +42,13 @@ namespace SubSonicMedia.Serialization.Converters
             return genericTypeDefinition == typeof(List<>);
         }
 
+        /// <summary>
+        /// Creates a JsonConverter instance for the specified type.
+        /// Creates a SubsonicCollectionConverter for the generic List type.
+        /// </summary>
+        /// <param name="typeToConvert">The type to create a converter for.</param>
+        /// <param name="options">JSON serializer options.</param>
+        /// <returns>A JsonConverter instance for the specified type.</returns>
         public override JsonConverter CreateConverter(
             Type typeToConvert,
             JsonSerializerOptions options

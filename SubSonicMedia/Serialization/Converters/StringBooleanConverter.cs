@@ -26,6 +26,14 @@ namespace SubSonicMedia.Serialization.Converters
     /// </summary>
     public class StringBooleanConverter : JsonConverter<bool>
     {
+        /// <summary>
+        /// Reads and converts JSON tokens to boolean values.
+        /// Handles string representations like "true"/"false", "1"/"0", "yes"/"no", as well as numeric and boolean JSON tokens.
+        /// </summary>
+        /// <param name="reader">The Utf8JsonReader to read from.</param>
+        /// <param name="typeToConvert">The type to convert to.</param>
+        /// <param name="options">JSON serializer options.</param>
+        /// <returns>A boolean value representing the converted input.</returns>
         public override bool Read(
             ref Utf8JsonReader reader,
             Type typeToConvert,
@@ -82,6 +90,12 @@ namespace SubSonicMedia.Serialization.Converters
             }
         }
 
+        /// <summary>
+        /// Writes a boolean value to JSON.
+        /// </summary>
+        /// <param name="writer">The Utf8JsonWriter to write to.</param>
+        /// <param name="value">The boolean value to write.</param>
+        /// <param name="options">JSON serializer options.</param>
         public override void Write(Utf8JsonWriter writer, bool value, JsonSerializerOptions options)
         {
             writer.WriteBooleanValue(value);

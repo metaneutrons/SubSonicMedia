@@ -28,6 +28,14 @@ namespace SubSonicMedia.Serialization.Converters
     {
         private static readonly DateTime UnixEpoch = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
+        /// <summary>
+        /// Reads and converts JSON tokens to DateTime values.
+        /// Handles Unix timestamps (in milliseconds) as numbers or strings, and ISO date strings.
+        /// </summary>
+        /// <param name="reader">The Utf8JsonReader to read from.</param>
+        /// <param name="typeToConvert">The type to convert to.</param>
+        /// <param name="options">JSON serializer options.</param>
+        /// <returns>A DateTime representing the converted timestamp.</returns>
         public override DateTime Read(
             ref Utf8JsonReader reader,
             Type typeToConvert,
@@ -75,6 +83,13 @@ namespace SubSonicMedia.Serialization.Converters
             }
         }
 
+        /// <summary>
+        /// Writes a DateTime value to JSON as a Unix timestamp in milliseconds.
+        /// Writes null if the DateTime is MinValue, otherwise converts to Unix timestamp.
+        /// </summary>
+        /// <param name="writer">The Utf8JsonWriter to write to.</param>
+        /// <param name="value">The DateTime value to write.</param>
+        /// <param name="options">JSON serializer options.</param>
         public override void Write(
             Utf8JsonWriter writer,
             DateTime value,

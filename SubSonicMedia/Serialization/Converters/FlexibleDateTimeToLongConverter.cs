@@ -28,6 +28,14 @@ namespace SubSonicMedia.Serialization.Converters
     {
         private static readonly DateTime UnixEpoch = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
+        /// <summary>
+        /// Reads and converts JSON tokens to nullable long values.
+        /// Handles both ISO date strings and Unix timestamps, converting dates to Unix timestamp format.
+        /// </summary>
+        /// <param name="reader">The Utf8JsonReader to read from.</param>
+        /// <param name="typeToConvert">The type to convert to.</param>
+        /// <param name="options">JSON serializer options.</param>
+        /// <returns>A nullable long representing the Unix timestamp, or null if the input is null or empty.</returns>
         public override long? Read(
             ref Utf8JsonReader reader,
             Type typeToConvert,
@@ -80,6 +88,13 @@ namespace SubSonicMedia.Serialization.Converters
             }
         }
 
+        /// <summary>
+        /// Writes a nullable long value to JSON.
+        /// Writes the numeric value if not null, otherwise writes null.
+        /// </summary>
+        /// <param name="writer">The Utf8JsonWriter to write to.</param>
+        /// <param name="value">The nullable long value to write.</param>
+        /// <param name="options">JSON serializer options.</param>
         public override void Write(
             Utf8JsonWriter writer,
             long? value,
