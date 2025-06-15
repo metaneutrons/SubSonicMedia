@@ -14,7 +14,11 @@
     <!-- Warnins as errors -->
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
-
+    <!-- Enable .NET analyzers -->
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <!-- Project to run -->
+    <StartupProject>SubSonicMedia.TestKit</StartupProject>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -28,7 +32,7 @@
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/metaneutrons/SubSonicMedia</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageProjectUrl>https://github.com/metaneutrons/SubSonicMedia</PackageProjectUrl>
+    <PackageProjectUrl>https://metaneutrons.github.io/SubSonicMedia/</PackageProjectUrl>
     <PackageReleaseNotes>https://github.com/metaneutrons/SubSonicMedia/releases</PackageReleaseNotes>
   </PropertyGroup>
 </Project>
