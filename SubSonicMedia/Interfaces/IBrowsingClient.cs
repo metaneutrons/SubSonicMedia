@@ -122,29 +122,15 @@ namespace SubSonicMedia.Interfaces
         Task<SongResponse> GetSongAsync(string id, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Returns artist info with biography, image URLs and similar artists, using data from last.fm.
+        /// Returns artist info with biography, image URLs, similar artists, and albums, using data from last.fm.
+        /// This method transparently handles `getArtistInfo` and `getArtistInfo2` based on server API version.
         /// </summary>
         /// <param name="id">The artist ID.</param>
         /// <param name="count">Max number of similar artists to return.</param>
         /// <param name="includeNotPresent">Whether to include artists that are not present in the media library.</param>
         /// <param name="cancellationToken">A token for canceling the operation.</param>
-        /// <returns>A response containing artist info.</returns>
-        Task<ArtistInfoResponse> GetArtistInfoAsync(
-            string id,
-            int? count = null,
-            bool? includeNotPresent = null,
-            CancellationToken cancellationToken = default
-        );
-
-        /// <summary>
-        /// Similar to getArtistInfo, but organizes music according to ID3 tags.
-        /// </summary>
-        /// <param name="id">The artist ID.</param>
-        /// <param name="count">Max number of similar artists to return.</param>
-        /// <param name="includeNotPresent">Whether to include artists that are not present in the media library.</param>
-        /// <param name="cancellationToken">A token for canceling the operation.</param>
-        /// <returns>A response containing artist info (version 2).</returns>
-        Task<ArtistInfo2Response> GetArtistInfo2Async(
+        /// <returns>A response containing artist info (potentially adapted from older version).</returns>
+        Task<ArtistInfo2Response> GetArtistInfoAsync(
             string id,
             int? count = null,
             bool? includeNotPresent = null,
@@ -153,22 +139,12 @@ namespace SubSonicMedia.Interfaces
 
         /// <summary>
         /// Returns album notes, image URLs etc, using data from last.fm.
+        /// This method transparently handles `getAlbumInfo` and `getAlbumInfo2` based on server API version.
         /// </summary>
         /// <param name="id">The album ID.</param>
         /// <param name="cancellationToken">A token for canceling the operation.</param>
-        /// <returns>A response containing album info.</returns>
-        Task<AlbumInfoResponse> GetAlbumInfoAsync(
-            string id,
-            CancellationToken cancellationToken = default
-        );
-
-        /// <summary>
-        /// Similar to getAlbumInfo, but organizes music according to ID3 tags.
-        /// </summary>
-        /// <param name="id">The album ID.</param>
-        /// <param name="cancellationToken">A token for canceling the operation.</param>
-        /// <returns>A response containing album info (version 2).</returns>
-        Task<AlbumInfo2Response> GetAlbumInfo2Async(
+        /// <returns>A response containing album info (potentially adapted from older version).</returns>
+        Task<AlbumInfo2Response> GetAlbumInfoAsync(
             string id,
             CancellationToken cancellationToken = default
         );
@@ -232,23 +208,13 @@ namespace SubSonicMedia.Interfaces
         );
 
         /// <summary>
-        /// Gets starred items (songs, albums, artists).
+        /// Gets starred songs, albums, and artists.
+        /// This method transparently handles `getStarred` and `getStarred2` based on server API version.
         /// </summary>
-        /// <param name="musicFolderId">Only return items from the music folder with the given ID.</param>
+        /// <param name="musicFolderId">Only return items from the music folder with the given ID. (Optional)</param>
         /// <param name="cancellationToken">A token for canceling the operation.</param>
-        /// <returns>A response containing starred items.</returns>
-        Task<StarredResponse> GetStarredAsync(
-            string? musicFolderId = null,
-            CancellationToken cancellationToken = default
-        );
-
-        /// <summary>
-        /// Similar to getStarred, but organizes music according to ID3 tags.
-        /// </summary>
-        /// <param name="musicFolderId">Only return items from the music folder with the given ID.</param>
-        /// <param name="cancellationToken">A token for canceling the operation.</param>
-        /// <returns>A response containing starred items (version 2).</returns>
-        Task<Starred2Response> GetStarred2Async(
+        /// <returns>A response containing starred items, potentially adapted from an older version's structure.</returns>
+        Task<Starred2Response> GetStarredAsync(
             string? musicFolderId = null,
             CancellationToken cancellationToken = default
         );

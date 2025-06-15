@@ -14,6 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
+using System.Collections.Generic; // Required for List<>
+using SubSonicMedia.Responses.Search.Models; // Required for Album
+
 namespace SubSonicMedia.Responses.Browsing.Models
 {
     /// <summary>
@@ -55,5 +58,10 @@ namespace SubSonicMedia.Responses.Browsing.Models
         /// Gets or sets the similar artists.
         /// </summary>
         public List<Artist> SimilarArtist { get; set; } = new List<Artist>();
+
+        /// <summary>
+        /// Gets or sets the list of albums by this artist.
+        /// </summary>
+        public List<Album> Album { get; set; } = new List<Album>();
     }
 }

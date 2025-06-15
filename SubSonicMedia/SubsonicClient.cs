@@ -50,6 +50,7 @@ namespace SubSonicMedia
         private readonly IAuthenticationProvider _authProvider;
         private readonly ILogger<SubsonicClient> _logger;
         private bool _disposed;
+        private readonly string _serverApiVersion = string.Empty;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SubsonicClient"/> class.
@@ -119,6 +120,50 @@ namespace SubSonicMedia
             this.Radio = new RadioClient(this);
             this.Bookmarks = new BookmarkClient(this);
             this.Annotation = new AnnotationClient(this);
+
+            // Negotiate API version with the server
+            this.NegotiateApiVersionAsync().GetAwaiter().GetResult();
+
+            // Log the discovered server API version
+            this._logger.LogInformation("Discovered server API version: {ServerApiVersion}", this._serverApiVersion);
+
+            // Re-evaluate API version check: Warn if user-specified API version is newer than library's supported version
+            if (
+                !string.IsNullOrWhiteSpace(connectionInfo.ApiVersion)
+                && !VersionInfo.IsApiVersionSupported(connectionInfo.ApiVersion)
+            )
+            {
+                this._logger.LogWarning(
+                    "User-specified API version {UserApiVersion} is newer than the library's supported version {LibraryApiVersion}. "
+                        + "This may lead to unexpected behavior or errors. The actual server API version {ServerApiVersion} will be used.",
+                    connectionInfo.ApiVersion,
+                    VersionInfo.SubsonicApiVersion,
+                    this._serverApiVersion
+                );
+            }
+        }
+
+        private async Task NegotiateApiVersionAsync()
+        {
+            try
+            {
+                var pingResponse = await this.System.PingAsync().ConfigureAwait(false);
+                if (pingResponse != null && !string.IsNullOrWhiteSpace(pingResponse.Version))
+                {
+                    this._serverApiVersion = pingResponse.Version;
+                    this._logger.LogInformation("Successfully negotiated API version with server: {ServerApiVersion}", this._serverApiVersion);
+                }
+                else
+                {
+                    this._serverApiVersion = "1.0.0"; // Default to a known minimum if negotiation fails
+                    this._logger.LogWarning("Could not determine server API version via ping. Defaulting to {DefaultApiVersion}.", this._serverApiVersion);
+                }
+            }
+            catch (Exception ex)
+            {
+                this._serverApiVersion = "1.0.0"; // Default to a known minimum on error
+                this._logger.LogWarning(ex, "Error negotiating API version with server. Defaulting to {DefaultApiVersion}.", this._serverApiVersion);
+            }
         }
 
         /// <summary>
@@ -190,6 +235,11 @@ namespace SubSonicMedia
         /// Gets the annotation client for scrobble, star, unstar, setRating.
         /// </summary>
         public IAnnotationClient Annotation { get; }
+
+        /// <summary>
+        /// Gets the negotiated API version of the Subsonic server.
+        /// </summary>
+        public string ServerApiVersion => this._serverApiVersion;
 
         private void LogSanitizedRequest(
             LogLevel level,
