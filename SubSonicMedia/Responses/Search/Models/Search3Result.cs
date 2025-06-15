@@ -14,6 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
+using System.Text.Json.Serialization;
+using SubSonicMedia.Serialization.Converters;
+
 namespace SubSonicMedia.Responses.Search.Models
 {
     /// <summary>
@@ -24,46 +27,58 @@ namespace SubSonicMedia.Responses.Search.Models
         /// <summary>
         /// Gets or sets the list of matching artists.
         /// </summary>
+        [JsonPropertyName("artist")]
+        [JsonConverter(typeof(SubsonicCollectionConverter<Artist>))]
         public List<Artist> Artists { get; set; } = new List<Artist>();
 
         /// <summary>
         /// Gets or sets the list of matching albums.
         /// </summary>
+        [JsonPropertyName("album")]
+        [JsonConverter(typeof(SubsonicCollectionConverter<Album>))]
         public List<Album> Albums { get; set; } = new List<Album>();
 
         /// <summary>
         /// Gets or sets the list of matching songs.
         /// </summary>
+        [JsonPropertyName("song")]
+        [JsonConverter(typeof(SubsonicCollectionConverter<Song>))]
         public List<Song> Songs { get; set; } = new List<Song>();
 
         /// <summary>
         /// Gets or sets the offset for artists.
         /// </summary>
+        [JsonPropertyName("artistOffset")]
         public int ArtistOffset { get; set; }
 
         /// <summary>
         /// Gets or sets the offset for albums.
         /// </summary>
+        [JsonPropertyName("albumOffset")]
         public int AlbumOffset { get; set; }
 
         /// <summary>
         /// Gets or sets the offset for songs.
         /// </summary>
+        [JsonPropertyName("songOffset")]
         public int SongOffset { get; set; }
 
         /// <summary>
         /// Gets or sets the total number of artists found.
         /// </summary>
+        [JsonPropertyName("artistCount")]
         public int ArtistCount { get; set; }
 
         /// <summary>
         /// Gets or sets the total number of albums found.
         /// </summary>
+        [JsonPropertyName("albumCount")]
         public int AlbumCount { get; set; }
 
         /// <summary>
         /// Gets or sets the total number of songs found.
         /// </summary>
+        [JsonPropertyName("songCount")]
         public int SongCount { get; set; }
     }
 }

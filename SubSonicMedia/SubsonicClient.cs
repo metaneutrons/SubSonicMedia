@@ -16,7 +16,6 @@
 // </copyright>
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-
 using SubSonicMedia.Authentication;
 using SubSonicMedia.Clients;
 using SubSonicMedia.Exceptions;
@@ -32,7 +31,9 @@ namespace SubSonicMedia
     /// </summary>
     public class SubsonicClient : ISubsonicClient, IDisposable
     {
-        private static readonly HashSet<string> SensitiveKeys = new(StringComparer.OrdinalIgnoreCase)
+        private static readonly HashSet<string> SensitiveKeys = new(
+            StringComparer.OrdinalIgnoreCase
+        )
         {
             "u",
             "user",
@@ -190,14 +191,23 @@ namespace SubSonicMedia
         /// </summary>
         public IAnnotationClient Annotation { get; }
 
-        private void LogSanitizedRequest(LogLevel level, string messageTemplate, string endpoint, Dictionary<string, string> requestParameters)
+        private void LogSanitizedRequest(
+            LogLevel level,
+            string messageTemplate,
+            string endpoint,
+            Dictionary<string, string> requestParameters
+        )
         {
             var safeParams = requestParameters.ToDictionary(
                 kvp => kvp.Key,
                 kvp => SensitiveKeys.Contains(kvp.Key) ? "****" : Uri.EscapeDataString(kvp.Value)
             );
-            var sanitizedQuery = string.Join("&", safeParams.Select(kvp => $"{Uri.EscapeDataString(kvp.Key)}={kvp.Value}"));
-            var sanitizedUrl = $"{this._httpClient.BaseAddress}rest/{endpoint}.view?{sanitizedQuery}";
+            var sanitizedQuery = string.Join(
+                "&",
+                safeParams.Select(kvp => $"{Uri.EscapeDataString(kvp.Key)}={kvp.Value}")
+            );
+            var sanitizedUrl =
+                $"{this._httpClient.BaseAddress}rest/{endpoint}.view?{sanitizedQuery}";
             this._logger.Log(level, messageTemplate, sanitizedUrl);
         }
 
@@ -228,7 +238,12 @@ namespace SubSonicMedia
                 }
 
                 var requestUrl = requestBuilder.BuildRequestUrl();
-                this.LogSanitizedRequest(LogLevel.Debug, "Executing request: {RequestUrl}", endpoint, requestParameters);
+                this.LogSanitizedRequest(
+                    LogLevel.Debug,
+                    "Executing request: {RequestUrl}",
+                    endpoint,
+                    requestParameters
+                );
 
                 using var response = await this
                     ._httpClient.GetAsync(requestUrl, cancellationToken)
@@ -248,8 +263,8 @@ namespace SubSonicMedia
 
                 T result;
 
-                // Always use JSON parser
-                result = JsonParser.Parse<T>(content);
+                // Use simple modern serializer
+                result = SubSonicMedia.Serialization.SimpleSubsonicSerializer.Parse<T>(content);
 
                 if (!result.IsSuccess)
                 {
@@ -310,7 +325,12 @@ namespace SubSonicMedia
                 }
 
                 var requestUrl = requestBuilder.BuildRequestUrl();
-                this.LogSanitizedRequest(LogLevel.Debug, "Executing binary request: {RequestUrl}", endpoint, requestParameters);
+                this.LogSanitizedRequest(
+                    LogLevel.Debug,
+                    "Executing binary request: {RequestUrl}",
+                    endpoint,
+                    requestParameters
+                );
 
                 var response = await this
                     ._httpClient.GetAsync(
@@ -338,10 +358,11 @@ namespace SubSonicMedia
                             .Content.ReadAsStringAsync(cancellationToken)
                             .ConfigureAwait(false);
 
-                        // Always use JSON parser for error responses
-                        var errorResponse = JsonParser.Parse<SubsonicResponse>(
-                            content
-                        );
+                        // Use simple modern serializer for error responses
+                        var errorResponse =
+                            SubSonicMedia.Serialization.SimpleSubsonicSerializer.Parse<SubsonicResponse>(
+                                content
+                            );
 
                         if (!errorResponse.IsSuccess && errorResponse.Error != null)
                         {

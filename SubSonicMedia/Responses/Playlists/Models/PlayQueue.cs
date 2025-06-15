@@ -14,7 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
+using System.Text.Json.Serialization;
 using SubSonicMedia.Responses.Browsing.Models;
+using SubSonicMedia.Serialization.Converters;
 
 namespace SubSonicMedia.Responses.Playlists.Models
 {
@@ -41,7 +43,8 @@ namespace SubSonicMedia.Responses.Playlists.Models
         /// <summary>
         /// Gets or sets the time when the play queue was saved, in milliseconds since 1970.
         /// </summary>
-        public long Changed { get; set; }
+        [JsonConverter(typeof(FlexibleDateTimeToLongConverter))]
+        public long? Changed { get; set; }
 
         /// <summary>
         /// Gets or sets the songs in the play queue.

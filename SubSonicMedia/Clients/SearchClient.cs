@@ -80,7 +80,7 @@ namespace SubSonicMedia.Clients
         }
 
         /// <inheritdoc/>
-        public Task<SearchResponse> Search2Async(
+        public Task<Search2Response> Search2Async(
             string query,
             int? artistCount = null,
             int? artistOffset = null,
@@ -134,7 +134,7 @@ namespace SubSonicMedia.Clients
                 parameters.Add("musicFolderId", musicFolderId);
             }
 
-            return this._client.ExecuteRequestAsync<SearchResponse>(
+            return this._client.ExecuteRequestAsync<Search2Response>(
                 "search2",
                 parameters,
                 cancellationToken

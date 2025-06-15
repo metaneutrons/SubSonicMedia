@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
+using System.Text.Json.Serialization;
 using SubSonicMedia.Responses.Browsing.Models;
 
 namespace SubSonicMedia.Responses.Browsing
@@ -24,8 +25,16 @@ namespace SubSonicMedia.Responses.Browsing
     public class MusicFoldersResponse : SubsonicResponse
     {
         /// <summary>
-        /// Gets or sets the music folders.
+        /// Gets or sets the music folders container.
         /// </summary>
-        public List<MusicFolder> MusicFolders { get; set; } = new List<MusicFolder>();
+        [JsonPropertyName("musicFolders")]
+        public MusicFoldersContainer MusicFoldersContainer { get; set; } =
+            new MusicFoldersContainer();
+
+        /// <summary>
+        /// Gets the music folders list.
+        /// </summary>
+        [JsonIgnore]
+        public List<MusicFolder> MusicFolders => this.MusicFoldersContainer.MusicFolder;
     }
 }

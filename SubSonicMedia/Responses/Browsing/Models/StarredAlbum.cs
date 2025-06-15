@@ -14,7 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
+using System.Text.Json.Serialization;
 using System.Xml.Serialization;
+using SubSonicMedia.Serialization.Converters;
 
 namespace SubSonicMedia.Responses.Browsing.Models
 {
@@ -63,7 +65,9 @@ namespace SubSonicMedia.Responses.Browsing.Models
         /// Gets or sets the creation date in milliseconds since epoch.
         /// </summary>
         [XmlAttribute("created")]
-        public long Created { get; set; }
+        [JsonPropertyName("created")]
+        [JsonConverter(typeof(FlexibleDateTimeToLongConverter))]
+        public long? Created { get; set; }
 
         /// <summary>
         /// Gets or sets the duration in seconds.

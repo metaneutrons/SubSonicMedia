@@ -55,7 +55,7 @@ namespace SubSonicMedia.Interfaces
         /// <param name="musicFolderId">Only return results from the music folder with this ID.</param>
         /// <param name="cancellationToken">A token for canceling the operation.</param>
         /// <returns>A response containing search results.</returns>
-        Task<SearchResponse> Search2Async(
+        Task<Search2Response> Search2Async(
             string query,
             int? artistCount = null,
             int? artistOffset = null,

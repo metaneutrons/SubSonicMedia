@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
+using System.Text.Json.Serialization;
+
 namespace SubSonicMedia.Responses.Browsing.Models
 {
     /// <summary>
@@ -24,6 +26,7 @@ namespace SubSonicMedia.Responses.Browsing.Models
         /// <summary>
         /// Gets or sets the genre name.
         /// </summary>
+        [JsonPropertyName("value")]
         public string? Name { get; set; }
 
         /// <summary>

@@ -1,4 +1,4 @@
-// <copyright file="SearchResponse.cs" company="Fabian Schmieder">
+// <copyright file="MusicFoldersContainer.cs" company="Fabian Schmieder">
 // This file is part of SubSonicMedia.
 //
 // SubSonicMedia is free software: you can redistribute it and/or modify
@@ -14,20 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
-using System.Text.Json.Serialization;
-using SubSonicMedia.Responses.Search.Models;
 
-namespace SubSonicMedia.Responses.Search
+using System.Text.Json.Serialization;
+using SubSonicMedia.Serialization.Converters;
+
+namespace SubSonicMedia.Responses.Browsing.Models
 {
     /// <summary>
-    /// Response for search method.
+    /// Container for music folders that handles the nested JSON structure.
     /// </summary>
-    public class SearchResponse : SubsonicResponse
+    public class MusicFoldersContainer
     {
         /// <summary>
-        /// Gets or sets the search result.
+        /// Gets or sets the music folder array.
         /// </summary>
-        [JsonPropertyName("searchResult")]
-        public SearchResult SearchResult { get; set; } = new SearchResult();
+        [JsonPropertyName("musicFolder")]
+        [JsonConverter(typeof(SubsonicCollectionConverter<MusicFolder>))]
+        public List<MusicFolder> MusicFolder { get; set; } = new List<MusicFolder>();
     }
 }

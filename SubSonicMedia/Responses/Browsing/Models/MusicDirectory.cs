@@ -14,7 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
+using System.Text.Json.Serialization;
 using System.Xml.Serialization;
+using SubSonicMedia.Serialization.Converters;
 
 namespace SubSonicMedia.Responses.Browsing.Models
 {
@@ -27,48 +29,57 @@ namespace SubSonicMedia.Responses.Browsing.Models
         /// Gets or sets the directory ID.
         /// </summary>
         [XmlAttribute("id")]
+        [JsonPropertyName("id")]
         public string Id { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the parent directory ID.
         /// </summary>
         [XmlAttribute("parent")]
+        [JsonPropertyName("parent")]
         public string? Parent { get; set; }
 
         /// <summary>
         /// Gets or sets the directory name.
         /// </summary>
         [XmlAttribute("name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets a value indicating whether this directory is starred.
         /// </summary>
         [XmlAttribute("starred")]
+        [JsonPropertyName("starred")]
         public bool Starred { get; set; }
 
         /// <summary>
         /// Gets or sets the user's rating (1-5).
         /// </summary>
         [XmlAttribute("userRating")]
+        [JsonPropertyName("userRating")]
         public int? UserRating { get; set; }
 
         /// <summary>
         /// Gets or sets the average rating (1-5).
         /// </summary>
         [XmlAttribute("averageRating")]
+        [JsonPropertyName("averageRating")]
         public double? AverageRating { get; set; }
 
         /// <summary>
         /// Gets or sets the play count.
         /// </summary>
         [XmlAttribute("playCount")]
+        [JsonPropertyName("playCount")]
         public int? PlayCount { get; set; }
 
         /// <summary>
         /// Gets or sets the child items (files and subdirectories).
         /// </summary>
         [XmlElement("child")]
+        [JsonPropertyName("child")]
+        [JsonConverter(typeof(SubsonicCollectionConverter<Child>))]
         public List<Child> Children { get; set; } = new List<Child>();
     }
 }

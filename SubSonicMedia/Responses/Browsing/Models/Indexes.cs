@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
+
+using System.Text.Json.Serialization;
+using SubSonicMedia.Serialization.Converters;
+
 namespace SubSonicMedia.Responses.Browsing.Models
 {
     /// <summary>
@@ -24,6 +28,7 @@ namespace SubSonicMedia.Responses.Browsing.Models
         /// <summary>
         /// Gets or sets the timestamp when the index was last modified.
         /// </summary>
+        [JsonConverter(typeof(UnixTimestampToDateTimeConverter))]
         public DateTime LastModified { get; set; }
 
         /// <summary>

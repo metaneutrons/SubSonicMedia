@@ -14,6 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with SubSonicMedia. If not, see https://www.gnu.org/licenses/.
 // </copyright>
+using System.Text.Json.Serialization;
+using SubSonicMedia.Serialization.Converters;
+
 namespace SubSonicMedia.Responses.User.Models
 {
     /// <summary>
@@ -34,6 +37,8 @@ namespace SubSonicMedia.Responses.User.Models
         /// <summary>
         /// Gets or sets a value indicating whether the user is an administrator.
         /// </summary>
+        [JsonPropertyName("adminRole")]
+        [JsonConverter(typeof(StringBooleanConverter))]
         public bool IsAdmin { get; set; }
 
         /// <summary>
@@ -104,6 +109,7 @@ namespace SubSonicMedia.Responses.User.Models
         /// <summary>
         /// Gets or sets a value indicating whether gets or sets the scrobbling configuration.
         /// </summary>
+        [JsonConverter(typeof(StringBooleanConverter))]
         public bool ScrobblingEnabled { get; set; }
 
         /// <summary>
